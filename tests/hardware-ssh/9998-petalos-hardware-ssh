@@ -1,0 +1,16 @@
+#!/bin/sh
+set -eu
+grep -qw 'petalos_hardware_ssh=1' /proc/cmdline || exit 0
+install -d -m 700 /run/petalos-hardware-ssh
+install -d -m 755 /run/sshd
+/usr/bin/python3 -I -c 'import sys;sys.path.insert(0,"/usr/local/lib/portable");import system_state;system_state.require()'
+# Private host identity stays only inside encrypted SYSTEM and protected RAM.
+install -m 600 /mnt/system-state/.hardware-ssh/ssh_host_ed25519_key /run/petalos-hardware-ssh/ssh_host_ed25519_key
+test ! -e /usr/sbin/policy-rc.d
+install -m 755 /usr/share/petalos-hardware-ssh/policy-rc.d /usr/sbin/policy-rc.d
+trap 'rm -f /usr/sbin/policy-rc.d' EXIT
+DEBIAN_FRONTEND=noninteractive dpkg --force-confold --force-confdef -i /usr/share/petalos-hardware-ssh/packages/*.deb > /run/petalos-hardware-ssh/install.log 2>&1
+rm /usr/sbin/policy-rc.d
+trap - EXIT
+systemctl daemon-reload
+systemctl start --no-block petalos-hardware-ssh.service

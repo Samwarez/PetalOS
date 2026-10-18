@@ -1,0 +1,8 @@
+#include <tunables/global>
+
+profile petalos_offline_lazpaint flags=(attach_disconnected,mediate_deleted) {
+  #include <abstractions/petalos-offline-common>
+  owner /mnt/ram/{,**} rwkl,
+  /mnt/private/Documents/lazpaint/{,**} rwkl,
+  deny network inet,
+}

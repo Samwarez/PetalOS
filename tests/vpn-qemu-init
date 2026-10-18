@@ -1,0 +1,61 @@
+#!/bin/bash
+export PATH=/mock:/bin
+mount -t proc proc /proc
+mkdir -p /run /etc/wireguard /mnt/private/Network /sys/class/net
+cat > /mnt/private/Network/wg0.conf <<'PROFILE'
+[Interface]
+Address = 10.0.0.2/32
+[Peer]
+PublicKey = AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
+AllowedIPs = 0.0.0.0/0, ::/0
+Endpoint = 192.0.2.1:9929
+PROFILE
+# This is a synthetic profile with no private key or personal data.
+cp /mnt/private/Network/wg0.conf /etc/wireguard/wg0.conf
+chmod 600 /etc/wireguard/wg0.conf
+failures=0
+check() {
+ local expected=$1 label=$2 result
+ shift 2
+ "$@" >/run/result 2>&1; result=$?
+ if [[ $expected == pass && $result == 0 || $expected == fail && $result != 0 ]]; then
+  echo "PASS: $label"
+ else
+  echo "FAIL: $label"; failures=$((failures+1))
+ fi
+}
+export SCENARIO=ok
+mkdir -p /sys/class/net/wg0
+check pass 'guard consumes large nft output' /usr/local/sbin/portable-check-vpn
+mv /etc/wireguard/wg0.conf /etc/wireguard/wg0.saved
+check fail 'guard rejects absent runtime config' /usr/local/sbin/portable-check-vpn
+mv /etc/wireguard/wg0.saved /etc/wireguard/wg0.conf
+chmod 644 /etc/wireguard/wg0.conf
+check fail 'guard rejects unsafe runtime permissions' /usr/local/sbin/portable-check-vpn
+chmod 600 /etc/wireguard/wg0.conf
+for SCENARIO in policy firewall route mark transport peer handshake; do
+ export SCENARIO
+ check fail "guard rejects $SCENARIO" /usr/local/sbin/portable-check-vpn
+done
+export SCENARIO=ok
+rm -rf /sys/class/net/wg0
+check fail 'guard rejects absent interface' /usr/local/sbin/portable-check-vpn
+export SCENARIO=upfail
+check fail 'failed connect' /usr/local/sbin/portable-vpn connect
+check pass 'failed connect removed interface and config' /bin/bash -c '[[ ! -d /sys/class/net/wg0 && ! -f /etc/wireguard/wg0.conf ]]'
+export SCENARIO=transport
+check fail 'blocked transport rolls back' /usr/local/sbin/portable-vpn connect
+check pass 'blocked transport removed interface and config' /bin/bash -c '[[ ! -d /sys/class/net/wg0 && ! -f /etc/wireguard/wg0.conf ]]'
+export SCENARIO=ok
+check pass 'retry connects' /usr/local/sbin/portable-vpn connect
+check fail 'repeat connect preserves active interface' /usr/local/sbin/portable-vpn connect
+check pass 'disconnect' /usr/local/sbin/portable-vpn disconnect
+check pass 'repeat disconnect' /usr/local/sbin/portable-vpn disconnect
+export SCENARIO=downfail
+mkdir -p /sys/class/net/wg0; touch /etc/wireguard/wg0.conf
+check fail 'failed teardown reported' /usr/local/sbin/portable-vpn disconnect
+check pass 'failed teardown retains retry configuration' /bin/bash -c '[[ -f /etc/wireguard/wg0.conf ]]'
+export SCENARIO=ok
+check pass 'teardown retry' /usr/local/sbin/portable-vpn disconnect
+echo "QEMU_TEST_FAILURES=$failures"
+poweroff -f

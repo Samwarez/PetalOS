@@ -1,0 +1,17 @@
+{
+  "fixture": "tests/tor-control-guest.py",
+  "exit": 0,
+  "elapsed_seconds": 0.95,
+  "stderr": "",
+  "result": {
+    "bootstrap_complete": true,
+    "client_authenticated": true,
+    "loadconf_denied": true,
+    "server_authenticated": true,
+    "shutdown_denied": true,
+    "socks_change_denied": true,
+    "transport_exec_denied": true,
+    "unauthenticated_denied": true,
+    "vpn_address_denied": true
+  }
+}

@@ -1,0 +1,51 @@
+#!/usr/bin/python3 -I
+"""Restore configured outputs after successful native session authentication."""
+import json
+import os
+from pathlib import Path
+import re
+import subprocess
+import sys
+
+sys.path.insert(0, '/usr/local/lib/portable')
+
+
+def wake(environment):
+    result = subprocess.run(['/usr/bin/wlr-randr', '--json'], env=environment,
+                            capture_output=True, text=True, timeout=5)
+    if result.returncode or len(result.stdout) > 256 * 1024:
+        return False
+    outputs = json.loads(result.stdout)
+    if not isinstance(outputs, list) or len(outputs) > 32:
+        return False
+    lid_closed = any('closed' in p.read_text() for p in
+                     Path('/proc/acpi/button/lid').glob('*/state'))
+    command = ['/usr/bin/wlr-randr']
+    for output in outputs:
+        name = output.get('name', '')
+        if not re.fullmatch(r'[A-Za-z0-9_.-]{1,128}', name):
+            return False
+        # Leave intentionally disabled monitors alone. An output can remain
+        # logically enabled while its physical scanout is powered off.
+        if not output.get('enabled') or (lid_closed and name.startswith(('eDP-', 'LVDS-'))):
+            continue
+        command += ['--output', name, '--on']
+    if len(command) == 1:
+        return True
+    return subprocess.run(command, env=environment, stdin=subprocess.DEVNULL,
+                          stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+                          timeout=5).returncode == 0
+
+
+def main():
+    if os.getuid() != 1000 or sys.argv[1:]:
+        return 1
+    from desktop_session import environment
+    return 0 if wake(environment()) else 1
+
+
+if __name__ == '__main__':
+    try:
+        raise SystemExit(main())
+    except (OSError, ValueError, TypeError, AttributeError, subprocess.TimeoutExpired):
+        raise SystemExit(1)

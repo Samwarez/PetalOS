@@ -1,0 +1,7 @@
+[Unit]
+Description=Legacy SABnzbd bridge disabled
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/false
+Restart=no

@@ -1,0 +1,14 @@
+{
+  "fixture": "tests/hardening-mac-guest.py",
+  "exit": 0,
+  "elapsed_seconds": 2.01,
+  "stderr": "",
+  "result": {
+    "mac_changes": 2,
+    "locally_administered_unicast": true,
+    "dhcp_packets_checked": 6,
+    "hostname_absent": true,
+    "client_id_matches_random_mac": true,
+    "firewall_unchanged": true
+  }
+}

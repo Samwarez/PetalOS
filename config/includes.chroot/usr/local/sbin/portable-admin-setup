@@ -1,0 +1,31 @@
+#!/usr/bin/python3 -I
+"""Root-owned first-boot setup; neither a password nor hash leaves the guest."""
+import os
+from pathlib import Path
+import subprocess
+import sys
+import time
+sys.path.insert(0, '/usr/local/lib/portable')
+from account_auth import load_hash, apply_admin_hash
+from desktop_session import environment
+
+assert os.geteuid() == 0
+from compartments import root_admin_configured
+if root_admin_configured():
+    raise SystemExit(0)
+try:
+    apply_admin_hash(load_hash())
+    raise SystemExit(0)
+except FileNotFoundError:
+    pass
+for _ in range(90):
+    try:
+        desktop = environment()
+        break
+    except RuntimeError:
+        pass
+    time.sleep(1)
+else:
+    raise SystemExit(1)
+raise SystemExit(subprocess.run(['/usr/local/sbin/portable-set-admin-password'],
+                                env=desktop, stdin=subprocess.DEVNULL).returncode)

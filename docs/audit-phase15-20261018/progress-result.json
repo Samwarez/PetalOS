@@ -1,0 +1,70 @@
+{
+  "fixture": "tests/phase15-20261018/progress.py",
+  "exit": 0,
+  "elapsed_seconds": 0.9,
+  "stderr": "",
+  "result": {
+    "soak": {
+      "phase": "soak",
+      "last_sample": {
+        "elapsed": 856,
+        "available_MiB": 10645,
+        "run_used_MiB": 9,
+        "apps_alive": {
+          "tor": true,
+          "browser": true,
+          "transmission": true,
+          "pan": true,
+          "amule": true,
+          "sabnzbd": true,
+          "sab-viewer": true,
+          "offline-lazpaint": true,
+          "offline-geany": true,
+          "offline-gthumb": true,
+          "offline-keepassxc": true,
+          "offline-libreoffice": true,
+          "offline-atril": true,
+          "offline-parole": true,
+          "offline-ristretto": true,
+          "offline-mousepad": true,
+          "offline-quodlibet": true,
+          "offline-html": true,
+          "offline-vim": true
+        },
+        "workers_alive": 0
+      },
+      "stress_workers_reaped": false
+    },
+    "soak-load": {
+      "phase": "soak",
+      "last_sample": {
+        "elapsed": 585,
+        "available_MiB": 10648,
+        "run_used_MiB": 9,
+        "apps_alive": {
+          "tor": true,
+          "browser": true,
+          "transmission": true,
+          "pan": true,
+          "amule": true,
+          "sabnzbd": true,
+          "sab-viewer": true,
+          "offline-lazpaint": true,
+          "offline-geany": true,
+          "offline-gthumb": true,
+          "offline-keepassxc": true,
+          "offline-libreoffice": true,
+          "offline-atril": true,
+          "offline-parole": true,
+          "offline-ristretto": true,
+          "offline-mousepad": true,
+          "offline-quodlibet": true,
+          "offline-html": true,
+          "offline-vim": true
+        },
+        "workers_alive": 4
+      },
+      "stress_workers_reaped": false
+    }
+  }
+}

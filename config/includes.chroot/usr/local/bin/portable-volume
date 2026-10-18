@@ -1,0 +1,67 @@
+#!/usr/bin/python3 -I
+"""Trusted-desktop audio keys with a visible, replacing volume notification."""
+import fcntl
+import os
+from pathlib import Path
+import re
+import stat
+import subprocess
+import sys
+
+
+def command(*args):
+    result = subprocess.run(args, capture_output=True, text=True, timeout=4,
+                            env={**os.environ, 'LC_ALL': 'C'})
+    if result.returncode:
+        raise RuntimeError('Desktop audio is unavailable.')
+    return result.stdout
+
+
+def main():
+    if os.getuid() != 1000 or sys.argv[1:] not in (['up'], ['down'], ['mute']):
+        return 1
+    lock = os.open('/run/user/1000/petalos-volume.lock',
+                   os.O_CREAT | os.O_RDWR | os.O_NOFOLLOW, 0o600)
+    with os.fdopen(lock, 'r+') as lease:
+        info = os.fstat(lease.fileno())
+        if not stat.S_ISREG(info.st_mode) or info.st_uid != 1000 or info.st_mode & 0o077:
+            return 1
+        fcntl.flock(lease, fcntl.LOCK_EX)
+        stored = lease.read(32).strip()
+        notification_id = stored if stored.isdecimal() and 0 < int(stored) < 2**32 else '0'
+        action = sys.argv[1]
+        if action == 'mute':
+            command('/usr/bin/pactl', 'set-sink-mute', '@DEFAULT_SINK@', 'toggle')
+        else:
+            text = command('/usr/bin/pactl', 'get-sink-volume', '@DEFAULT_SINK@')
+            current = int(re.search(r'(\d+)%', text).group(1))
+            value = max(0, min(100, current + (5 if action == 'up' else -5)))
+            command('/usr/bin/pactl', 'set-sink-volume', '@DEFAULT_SINK@', str(value) + '%')
+        text = command('/usr/bin/pactl', 'get-sink-volume', '@DEFAULT_SINK@')
+        value = int(re.search(r'(\d+)%', text).group(1))
+        muted = command('/usr/bin/pactl', 'get-sink-mute', '@DEFAULT_SINK@').strip().endswith('yes')
+        icon = 'audio-volume-muted' if muted else 'audio-volume-high'
+        title = 'Sound muted' if muted else 'Volume ' + str(value) + '%'
+        # Notifications belong to the trusted desktop, never an app's restricted
+        # security-context display. Explicit notification IDs work with XFCE;
+        # the Canonical synchronous hint alone does not replace its alerts.
+        notification = subprocess.run(['/usr/bin/notify-send', '--app-name=PetalOS',
+            '--print-id', '--replace-id=' + notification_id,
+            '--expire-time=1500', '--hint=string:x-canonical-private-synchronous:petalos-volume',
+            '--hint=int:value:' + str(0 if muted else min(value, 100)),
+            '--icon=' + icon, '--', title],
+            capture_output=True, text=True, timeout=4)
+        next_id = notification.stdout.strip()
+        if notification.returncode == 0 and next_id.isdecimal() and 0 < int(next_id) < 2**32:
+            lease.seek(0)
+            lease.write(next_id + '\n')
+            lease.truncate()
+            lease.flush()
+    return 0
+
+
+if __name__ == '__main__':
+    try:
+        raise SystemExit(main())
+    except (OSError, RuntimeError, subprocess.TimeoutExpired, AttributeError):
+        raise SystemExit(1)

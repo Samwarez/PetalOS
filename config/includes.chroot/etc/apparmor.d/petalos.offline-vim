@@ -1,0 +1,11 @@
+#include <tunables/global>
+
+profile petalos_offline_vim flags=(attach_disconnected,mediate_deleted) {
+  #include <abstractions/petalos-offline-common>
+  owner /mnt/ram/{,**} rwkl,
+  /mnt/private/Documents/vim/{,**} rwkl,
+  /dev/ptmx rw,
+  /dev/pts/{,**} rw,
+  /dev/tty rw,
+  deny network inet,
+}

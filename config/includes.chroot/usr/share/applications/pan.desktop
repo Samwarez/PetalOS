@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Pan Usenet Reader (VPN)
+Comment=Read Usenet with encrypted persistent settings
+Exec=/usr/local/bin/portable-desktop pan %F
+Icon=pan
+Terminal=false
+Categories=Network;News;
+MimeType=application/x-nzb;

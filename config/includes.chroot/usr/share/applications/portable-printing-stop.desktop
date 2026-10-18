@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Stop Printing
+Comment=Stop printing and disable its activation socket
+Exec=/usr/local/bin/portable-desktop printing-stop
+Icon=printer
+Terminal=false
+Categories=System;

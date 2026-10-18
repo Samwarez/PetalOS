@@ -1,0 +1,9 @@
+#!/bin/sh
+set -eu
+
+systemctl mask \
+    apt-daily.service \
+    apt-daily.timer \
+    apt-daily-upgrade.service \
+    apt-daily-upgrade.timer \
+    packagekit.service

@@ -1,0 +1,13 @@
+[Desktop Entry]
+Type=Application
+Name=SABnzbd (VPN)
+Comment=Manage Usenet downloads through a local offline window
+Exec=/usr/local/bin/portable-desktop sab-open
+Icon=sabnzbdplus
+Terminal=false
+Categories=Network;FileTransfer;
+Actions=Stop;
+
+[Desktop Action Stop]
+Name=Stop SABnzbd
+Exec=/usr/local/bin/portable-desktop sab-stop

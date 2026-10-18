@@ -1,0 +1,27 @@
+#!/usr/bin/python3 -I
+"""Close Private before system sleep, independently of desktop notifications."""
+import os
+import sys
+import time
+if os.geteuid() != 0 or len(sys.argv) != 3:
+    raise SystemExit(1)
+if sys.argv[1] == 'post':
+    raise SystemExit(0)
+if sys.argv[1] != 'pre':
+    raise SystemExit(1)
+sys.path.insert(0, '/usr/local/lib/portable')
+from private_storage import lock, power_off
+deadline = time.monotonic() + 15
+while True:
+    try:
+        # The desktop's before-sleep lock may already be closing the volumes.
+        # Wait for that fixed operation, then verify closure through this one.
+        lock()
+        break
+    except BlockingIOError:
+        if time.monotonic() >= deadline:
+            power_off()
+        time.sleep(.1)
+    except Exception:
+        # Hooks cannot veto sleep through an exit status. Fail closed instead.
+        power_off()

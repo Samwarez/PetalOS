@@ -1,0 +1,17 @@
+{
+  "fixture": "tests/offline-file-handoff-guest.py",
+  "exit": 0,
+  "elapsed_seconds": 1.88,
+  "stderr": "",
+  "result": {
+    "authorized_inode_pinned_across_rename": true,
+    "mode_0600_selection_readable_as_ram_snapshot": true,
+    "neighbor_not_exposed": true,
+    "nonregular_item_rejected": true,
+    "private_selection_original_permissions_preserved": true,
+    "root_permissions_not_used": true,
+    "selected_file_read_only": true,
+    "selected_file_readable": true,
+    "symlink_leaf_rejected": true
+  }
+}

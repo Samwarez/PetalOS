@@ -1,0 +1,13 @@
+{
+  "fixture": "tests/phase15-20261018/persistence-check.py",
+  "exit": 0,
+  "elapsed_seconds": 3.49,
+  "stderr": "",
+  "result": {
+    "Private_canary_retained": true,
+    "Private_closed_after_boot": true,
+    "RAM_canary_gone": true,
+    "SYSTEM_numeric_preference_retained": true,
+    "desktop_setting_restored": false
+  }
+}

@@ -1,0 +1,4 @@
+[D-BUS Service]
+Name=org.freedesktop.Notifications
+Exec=/usr/lib/x86_64-linux-gnu/xfce4/notifyd/xfce4-notifyd
+# Activate on the requesting desktop bus; the user manager has a separate bus.

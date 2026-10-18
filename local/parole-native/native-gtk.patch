@@ -1,0 +1,214 @@
+--- a/src/gst/parole-gst.c
++++ b/src/gst/parole-gst.c
+@@ -168,7 +168,7 @@
+ 
+ static guint signals[LAST_SIGNAL] = { 0 };
+ 
+-G_DEFINE_TYPE_WITH_PRIVATE(ParoleGst, parole_gst, GTK_TYPE_WIDGET)
++G_DEFINE_TYPE_WITH_PRIVATE(ParoleGst, parole_gst, GTK_TYPE_BIN)
+ 
+ static void
+ parole_gst_finalize(GObject *object) {
+@@ -342,46 +342,7 @@
+ 
+ static void
+ parole_gst_size_allocate(GtkWidget *widget, GtkAllocation *allocation) {
+-#ifdef HAVE_CLUTTER
+-    ParoleGst *gst;
+-#endif
+-    g_return_if_fail(allocation != NULL);
+-#ifdef HAVE_CLUTTER
+-    gst = PAROLE_GST(parole_gst_get());
+-    if (gst->priv->image_sink == CLUTTERSINK)
+-        return;
+-#endif
+-
+-    gtk_widget_set_allocation(widget, allocation);
+-
+-    if (gtk_widget_get_realized(widget)) {
+-        gint w, h;
+-        gdouble ratio, width, height;
+-
+-        w = allocation->width;
+-        h = allocation->height;
+-
+-        parole_gst_get_video_output_size(PAROLE_GST(widget), &w, &h);
+-
+-        width = w;
+-        height = h;
+-
+-        if ( (gdouble) allocation->width / width > allocation->height / height)
+-            ratio = (gdouble) allocation->height / height;
+-        else
+-            ratio = (gdouble) allocation->width / width;
+-
+-        width *= ratio;
+-        height *= ratio;
+-
+-        gdk_window_move_resize(gtk_widget_get_window(widget),
+-                                allocation->x + (allocation->width - width)/2,
+-                                allocation->y + (allocation->height - height)/2,
+-                                width,
+-                                height);
+-
+-        gtk_widget_queue_draw(widget);
+-    }
++    GTK_WIDGET_CLASS(parole_gst_parent_class)->size_allocate(widget, allocation);
+ }
+ 
+ static void
+@@ -1543,6 +1504,13 @@
+                   NULL);
+ 
+     if ( source ) {
++        /* Replay of an inherited regular-file descriptor starts at byte zero. */
++        if (g_strcmp0(G_OBJECT_TYPE_NAME(source), "GstFdSrc") == 0) {
++            gint fd = -1;
++            g_object_get(source, "fd", &fd, NULL);
++            if (fd >= 3)
++                lseek(fd, 0, SEEK_SET);
++        }
+         if (G_LIKELY(gst->priv->device)) {
+             g_object_set(source,
+                           "device", gst->priv->device,
+@@ -1982,40 +1950,17 @@
+         g_error("autoaudiosink load failed");
+     }
+ 
+-    /* Configure the video sink */
+-    if (g_strcmp0(videosink, "autoimagesink") == 0) {
++    /* PetalOS: embed a native GTK sink; never create an X11 overlay. */
++    {
++        GtkWidget *video_widget = NULL;
+         gst->priv->image_sink = AUTOIMAGESINK;
+-        gst->priv->video_sink = gst_element_factory_make("autoimagesink", "video");
+-    }
+-
+-    if (g_strcmp0(videosink, "xvimagesink") == 0) {
+-        gst->priv->image_sink = XVIMAGESINK;
+-        gst->priv->video_sink = gst_element_factory_make("xvimagesink", "video");
+-    }
+-
+-#ifdef HAVE_CLUTTER
+-    if (g_strcmp0(videosink, "cluttersink") == 0) {
+-        gst->priv->image_sink = CLUTTERSINK;
+-        gst->priv->video_sink = gst_element_factory_make("cluttersink", "video");
+-    }
+-#endif
+-
+-    if (G_UNLIKELY(gst->priv->video_sink == NULL)) {
+-        gst->priv->image_sink = XIMAGESINK;
+-        g_debug("%s trying to load ximagesink",
+-                g_strcmp0(videosink, "xvimagesink") ? "xvimagesink not found " : "xv disabled ");
+-        gst->priv->video_sink = gst_element_factory_make("ximagesink", "video");
+-
+-        if (G_UNLIKELY(gst->priv->video_sink == NULL)) {
+-            GError *error;
+-            error = g_error_new(1, 0, _("Unable to load \"%s\" plugin"
+-                                     ", check your GStreamer installation."),
+-                                     videosink);
+-            parole_gst_show_error(GTK_WINDOW(gtk_widget_get_toplevel(GTK_WIDGET(gst))),
+-                                    error);
+-            g_error_free(error);
+-            g_error("ximagesink load failed");
+-        }
++        gst->priv->video_sink = gst_element_factory_make("gtksink", "video");
++        if (gst->priv->video_sink == NULL)
++            g_error("Native GTK GStreamer video sink is unavailable");
++        g_object_get(gst->priv->video_sink, "widget", &video_widget, NULL);
++        gtk_container_add(GTK_CONTAINER(gst), video_widget);
++        gtk_widget_show(video_widget);
++        g_object_unref(video_widget);
+     }
+ 
+     g_object_set(G_OBJECT(gst->priv->playbin),
+@@ -2071,9 +2016,9 @@
+     object_class->set_property = parole_gst_set_property;
+     object_class->get_property = parole_gst_get_property;
+ 
+-    widget_class->realize = parole_gst_realize;
++    /* GtkBin realizes and allocates the embedded native sink. */
+     widget_class->show = parole_gst_show;
+-    widget_class->size_allocate = parole_gst_size_allocate;
++
+ 
+     widget_class->motion_notify_event = parole_gst_motion_notify_event;
+     widget_class->button_press_event = parole_gst_button_press_event;
+@@ -2212,7 +2157,7 @@
+      * Deprecated in GTK+ 3.12, but clutter is broken so adding back.
+      */
+     G_GNUC_BEGIN_IGNORE_DEPRECATIONS
+-    gtk_widget_set_double_buffered(GTK_WIDGET(gst), FALSE);
++    gtk_widget_set_double_buffered(GTK_WIDGET(gst), TRUE);
+     G_GNUC_END_IGNORE_DEPRECATIONS
+ }
+ 
+--- a/src/gst/parole-gst.h
++++ b/src/gst/parole-gst.h
+@@ -57,12 +57,12 @@
+ typedef struct ParoleGstPrivate ParoleGstPrivate;
+ 
+ typedef struct {
+-    GtkWidget           parent;
++    GtkBin              parent;
+     ParoleGstPrivate   *priv;
+ } ParoleGst;
+ 
+ typedef struct {
+-    GtkWidgetClass  parent_class;
++    GtkBinClass     parent_class;
+ 
+     void        (*media_state)              (ParoleGst *gst,
+                                              const ParoleStream *stream,
+--- a/src/misc/parole-file.c
++++ b/src/misc/parole-file.c
+@@ -161,6 +161,16 @@
+     file = PAROLE_FILE(object);
+ 
+     filename = g_strdup(file->priv->filename);
++
++    /* Broker-provided, already-open read-only media; no filesystem lookup. */
++    if (g_str_has_prefix(filename, "fd://")) {
++        file->priv->uri = g_strdup(filename);
++        file->priv->directory = NULL;
++        file->priv->display_name = g_strdup("Selected media");
++        file->priv->content_type = g_strdup("application/octet-stream");
++        g_free(filename);
++        return;
++    }
+ 
+     if ( g_str_has_prefix(filename, "cdda") ) {
+         file->priv->directory = NULL;
+--- a/src/misc/parole-stream.c
++++ b/src/misc/parole-stream.c
+@@ -112,7 +112,7 @@
+ 
+     ParoleMediaType type = PAROLE_MEDIA_TYPE_UNKNOWN;
+ 
+-    if ( g_str_has_prefix (uri, "file:/") )
++    if ( g_str_has_prefix (uri, "file:/") || g_str_has_prefix(uri, "fd://") )
+         type = PAROLE_MEDIA_TYPE_LOCAL_FILE;
+     else if ( g_str_has_prefix (uri, "http:/") || g_str_has_prefix (uri, "https:/") )
+         type = PAROLE_MEDIA_TYPE_REMOTE;
+--- a/src/parole-player.c
++++ b/src/parole-player.c
+@@ -1299,6 +1299,9 @@
+                  "media-type", &media_type,
+                  NULL);
+ 
++    if (g_str_has_prefix(uri, "fd://"))
++        goto out;
++
+     if ( media_type == PAROLE_MEDIA_TYPE_LOCAL_FILE ) {
+         gtk_recent_manager_add_item(player->priv->recent, uri);
+         goto out;
+@@ -1734,6 +1737,9 @@
+ parole_player_get_filename_from_uri(gchar *uri) {
+     gchar *filename = NULL;
+     gchar *scheme;
++
++    if (g_str_has_prefix(uri, "fd://"))
++        return g_strdup("Selected media");
+ 
+     scheme = g_uri_parse_scheme(uri);
+     if (strcmp(scheme, "http") == 0 || strcmp(scheme, "https") == 0 || strcmp(scheme, "ftp") == 0) {

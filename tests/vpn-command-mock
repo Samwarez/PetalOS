@@ -1,0 +1,25 @@
+#!/bin/bash
+case ${0##*/} in
+ systemctl|mountpoint|chronyc) exit 0;;
+ findmnt) echo /dev/mapper/portable_data;;
+ nft)
+  [[ $SCENARIO == firewall ]] && exit 1
+  [[ $* == *'list table'* ]] && exit 0
+  if [[ $SCENARIO == policy ]]; then echo 'policy accept;'; else echo 'policy drop;'; fi
+  for ((i=0;i<5000;i++)); do echo '# filler for pipe regression'; done;;
+ wg)
+  case $3 in
+   fwmark) [[ $SCENARIO == mark ]] && echo 0 || echo 0xca6c;;
+   peers) [[ $SCENARIO == peer ]] && echo wrong-peer || echo AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=;;
+   latest-handshakes) [[ $SCENARIO == handshake ]] && printf 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=\t0\n' || printf 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=\t1\n';;
+   *) exit 1;;
+  esac;;
+ ip)
+  if [[ $1 == link ]]; then [[ -d /sys/class/net/wg0 ]]; exit; fi
+  [[ $SCENARIO == route ]] || echo 'default dev wg0 scope link';;
+ curl) [[ $SCENARIO != transport ]];;
+ wg-quick)
+  if [[ $1 == up ]]; then mkdir -p /sys/class/net/wg0; [[ $SCENARIO != upfail ]];
+  else [[ $SCENARIO == downfail ]] && exit 1; rm -rf /sys/class/net/wg0; fi;;
+ *) exit 1;;
+esac

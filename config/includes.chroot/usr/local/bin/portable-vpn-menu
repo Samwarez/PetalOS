@@ -1,0 +1,38 @@
+#!/bin/bash
+set -uo pipefail
+
+action="${1:-}"
+message=/usr/local/bin/portable-message
+
+case "$action" in
+    connect)
+        "$message" info "Starting VPN and synchronizing the clock."
+        ;;
+    disconnect)
+        "$message" info "Disconnecting VPN."
+        ;;
+    *)
+        echo "Usage: portable-vpn-menu connect|disconnect"
+        exit 1
+        ;;
+esac
+
+sudo /usr/local/sbin/portable-vpn "$action"
+result=$?
+
+if [[ $result -ne 0 ]]; then
+    "$message" --notify error \
+        "VPN action failed. See the terminal for details."
+elif [[ $action == disconnect ]]; then
+    "$message" --notify info \
+        "VPN disconnected. The firewall remains in place."
+elif sudo -n chronyc waitsync 1 0.5 0 1 >/dev/null 2>&1; then
+    "$message" --notify success \
+        "VPN interface started and clock synchronized."
+else
+    "$message" --notify warning \
+        "VPN interface started, but the clock is not synchronized. Keep Tor closed."
+fi
+
+read -r -p "Press Enter to close." || true
+exit "$result"

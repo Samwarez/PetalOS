@@ -1,0 +1,27 @@
+#!/bin/sh
+# Test-clone module only. No changes to production build inputs or firewall.
+set -eu
+grep -q 'petalos_qemu_ssh=1' /proc/cmdline || exit 0
+test "$(/usr/sbin/blkid -s LABEL -o value /dev/mapper/portable_system)" = LIVE_SYSTEM
+install -d -m 700 /run/petalos-qemu-ssh
+install -d -m 755 /run/sshd
+if /usr/bin/python3 -I -c 'import sys; sys.path.insert(0,"/usr/local/lib/portable"); import system_state; assert system_state.ready()' >/dev/null 2>&1; then
+    # New selective-state boots already have an identity-verified full view.
+    # Copy only the existing test SSH host identity into protected guest RAM.
+    install -m 600 /run/portable-storage/system-volume/.petalos-qemu-ssh/ssh_host_ed25519_key /run/petalos-qemu-ssh/ssh_host_ed25519_key
+else
+    mount -t ext4 -o ro,noload,nodev,nosuid,noexec /dev/mapper/portable_system /run/petalos-qemu-ssh
+    trap 'umount /run/petalos-qemu-ssh' EXIT
+    install -m 600 /run/petalos-qemu-ssh/.petalos-qemu-ssh/ssh_host_ed25519_key /run/petalos-ssh-host-key
+    umount /run/petalos-qemu-ssh
+    trap - EXIT
+    mv /run/petalos-ssh-host-key /run/petalos-qemu-ssh/ssh_host_ed25519_key
+fi
+# Prevent package post-installation from starting any IP-facing default daemon.
+install -m 755 /usr/share/petalos-qemu-ssh/policy-rc.d /usr/sbin/policy-rc.d
+DEBIAN_FRONTEND=noninteractive dpkg --force-confold --force-confdef -i /usr/share/petalos-qemu-ssh/packages/*.deb > /run/petalos-qemu-ssh/install.log 2>&1
+rm /usr/sbin/policy-rc.d
+/sbin/modprobe vmw_vsock_virtio_transport
+systemctl daemon-reload
+systemctl enable petalos-qemu-ssh.service petalos-qemu-vsock.service > /dev/null 2>&1
+systemctl start --no-block petalos-qemu-ssh.service petalos-qemu-vsock.service

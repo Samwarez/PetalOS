@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=VPN Profiles / Connect
+Exec=/usr/local/bin/portable-vpn-profiles
+Icon=network-vpn
+Terminal=false
+Categories=Network;

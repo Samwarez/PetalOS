@@ -1,0 +1,11 @@
+#!/bin/bash
+case "$1" in
+    prepare)
+        mkdir -p /run/portable-vpn
+        cp /mnt/private/Network/wg0.conf /etc/wireguard/wg0.conf
+        chmod 600 /etc/wireguard/wg0.conf
+        echo 'nameserver 10.0.0.1' >/run/portable-vpn/resolv.conf
+        ;;
+    reset|commit) ;;
+    *) exit 1 ;;
+esac

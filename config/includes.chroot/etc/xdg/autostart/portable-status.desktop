@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Portable Status Display
+Exec=/usr/bin/conky --pause=8 --config=/etc/conky/portable.conf
+TryExec=/usr/bin/conky
+OnlyShowIn=XFCE;
+Terminal=false

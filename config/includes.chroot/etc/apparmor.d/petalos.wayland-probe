@@ -1,0 +1,8 @@
+#include <tunables/global>
+# Public QEMU acceptance fixture; no Private/home delegation.
+profile petalos_wayland_probe {
+  #include <abstractions/petalos-compartment-common>
+  /run/probe.py r,
+  deny network inet,
+  deny network inet6,
+}

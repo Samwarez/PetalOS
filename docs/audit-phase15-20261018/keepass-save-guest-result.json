@@ -1,0 +1,14 @@
+{
+  "fixture": "tests/keepass-save-guest.py",
+  "exit": 0,
+  "elapsed_seconds": 3.92,
+  "stderr": "",
+  "result": {
+    "create": true,
+    "ipv4_denied": true,
+    "ipv6_denied": true,
+    "reopen": true,
+    "update": true,
+    "updated_group_readable": true
+  }
+}

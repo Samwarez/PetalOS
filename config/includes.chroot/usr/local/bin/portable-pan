@@ -1,0 +1,65 @@
+#!/bin/bash
+set -euo pipefail
+umask 007
+if ! /usr/bin/python3 -I -c 'import sys;sys.path.insert(0,"/usr/local/lib/portable");from compartments import inside;sys.exit(0 if inside("pan") else 1)'; then
+    if [[ ${1:-} == --prepare ]]; then
+        exec /usr/bin/sudo -n -- /usr/local/sbin/portable-compartment prepare pan
+    fi
+    exec /usr/bin/sudo -n -- /usr/local/sbin/portable-compartment launch pan "$@"
+fi
+
+fail() {
+    echo "$1" >&2
+    read -r -p "Press Enter to close." || true
+    exit 1
+}
+
+state=$(/usr/local/bin/portable-download-prepare pan) ||
+    fail "Pan was not started."
+
+homefs=$(findmnt -n -o FSTYPE --target "$HOME")
+case "$homefs" in
+    overlay|tmpfs) ;;
+    *) fail "This launcher requires the RAM-based live system." ;;
+esac
+
+cache="$HOME/.cache/portable-pan"
+mkdir -p "$cache/article-cache" "$cache/encode-cache"
+
+for name in article-cache encode-cache; do
+    link="$state/$name"
+    destination="$cache/$name"
+
+    if [[ -L "$link" ]]; then
+        current=$(readlink "$link")
+        if [[ $current == "$destination" ]]; then
+            :
+        elif [[ $current == "/home/user/.cache/portable-pan/$name" || $current == "/home/Petal/.cache/portable-pan/$name" ]]; then
+            # The default account changed, while its UID and encrypted state
+            # stayed the same. Rebind only the known legacy RAM-cache target.
+            temporary="$link.petal-migrate-$$"
+            ln -s -- "$destination" "$temporary"
+            mv -Tf -- "$temporary" "$link"
+        else
+            fail "Unexpected cache link: $link"
+        fi
+    elif [[ -e "$link" ]]; then
+        fail "An existing cache needs review before moving to RAM: $link"
+    else
+        ln -s "$destination" "$link"
+    fi
+done
+
+if [[ ! -e "$state/preferences.xml" ]]; then
+    cat > "$state/preferences.xml" <<PREFS
+<?xml version="1.0" encoding="utf-8"?>
+<preferences>
+  <int name="cache-size-megs" value="32"/>
+  <string name="default-save-attachments-path" value="$PORTABLE_STATE_ROOT/Downloads/pan"/>
+</preferences>
+PREFS
+fi
+
+export PAN_HOME="$state"
+[[ ${1:-} != --prepare ]] || exit 0
+exec -a pan /usr/bin/pan.portable-real "$@"

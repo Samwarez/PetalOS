@@ -1,0 +1,101 @@
+#!/usr/bin/python3
+"""Fixed graphical password prompts; secrets only travel through caller pipes."""
+import sys
+
+
+def main():
+    import gi
+    gi.require_version('Gtk', '3.0')
+    from gi.repository import Gtk, Gdk, GLib
+    modes = {'--sudo-password': ('Authorize desktop action', 'Enter your administrator password. This is different from the SYSTEM and Private passphrases.'),
+             '--data-password': ('Unlock Private Storage', 'Enter the Private passphrase. The administrator password and SYSTEM passphrase do not unlock Private.'),
+             '--data-password-retry': ('Unlock Private Storage', 'Incorrect Private passphrase. Please try again. The SYSTEM and administrator passwords do not unlock Private.'),
+             '--system-password': ('Unlock SYSTEM Storage', 'Enter the SYSTEM passphrase used at boot. This does not unlock Private Files.'),
+             '--new-admin-password': ('Set administrator password', 'Choose an administrator password of at least 12 characters, separate from the SYSTEM and Private passphrases. Petal password login is disabled.')}
+    if len(sys.argv) != 2 or sys.argv[1] not in modes:
+        return 1
+    title, text = modes[sys.argv[1]]
+    dialog = Gtk.Dialog(title=title, modal=True)
+    dialog.add_buttons('Cancel', Gtk.ResponseType.CANCEL,
+                       {'--new-admin-password': 'Save', '--sudo-password': 'Authorize'}.get(sys.argv[1], 'Unlock'), Gtk.ResponseType.OK)
+    box = dialog.get_content_area()
+    box.set_border_width(16)
+    box.add(Gtk.Label(label=text, wrap=True))
+    entry = Gtk.Entry(visibility=False, activates_default=True)
+    entry.set_max_length(1024)
+    entry.set_input_purpose(Gtk.InputPurpose.PASSWORD)
+    warning = None
+    warning_timer = {'id': None}
+    if sys.argv[1] == '--data-password-retry':
+        overlay = Gtk.Overlay()
+        overlay.add(entry)
+        warning = Gtk.Image.new_from_icon_name('dialog-warning', Gtk.IconSize.DIALOG)
+        warning.set_halign(Gtk.Align.CENTER)
+        warning.set_valign(Gtk.Align.CENTER)
+        warning.set_no_show_all(True)
+        overlay.add_overlay(warning)
+        overlay.set_overlay_pass_through(warning, True)
+        box.add(overlay)
+        entry.get_style_context().add_class('error')
+    else:
+        box.add(entry)
+    show = Gtk.CheckButton(label='Show passphrase on this screen')
+    show.connect('toggled', lambda toggle: entry.set_visibility(toggle.get_active()))
+    box.add(show)
+    caps = Gtk.Label(label='Caps Lock is on')
+    caps.set_no_show_all(True)
+    box.add(caps)
+    def update_caps(*_):
+        keymap = Gdk.Keymap.get_for_display(entry.get_display())
+        caps.set_visible(keymap.get_caps_lock_state())
+    keymap = Gdk.Keymap.get_for_display(entry.get_display())
+    keymap.connect('state-changed', update_caps)
+    confirmation = None
+    error = None
+    if sys.argv[1] == '--new-admin-password':
+        box.add(Gtk.Label(label='Confirm administrator password:'))
+        confirmation = Gtk.Entry(visibility=False, activates_default=True)
+        confirmation.set_max_length(1024)
+        confirmation.set_input_purpose(Gtk.InputPurpose.PASSWORD)
+        box.add(confirmation)
+        error = Gtk.Label(label='')
+        box.add(error)
+    dialog.set_default_response(Gtk.ResponseType.OK)
+    dialog.show_all()
+    update_caps()
+    entry.grab_focus()
+    if warning is not None:
+        warning.show()
+        steps = iter((0.25, 1.0, 0.25, 1.0, 0.0))
+        def pulse():
+            opacity = next(steps)
+            warning.set_opacity(opacity)
+            if opacity == 0:
+                warning.hide()
+                warning_timer['id'] = None
+                return False
+            return True
+        warning_timer['id'] = GLib.timeout_add(220, pulse)
+    while True:
+        response = dialog.run()
+        if response != Gtk.ResponseType.OK or confirmation is None:
+            break
+        if (len(entry.get_text()) >= 12 and entry.get_text() != 'prettyplease'
+                and entry.get_text() == confirmation.get_text()):
+            break
+        error.set_text('Use at least 12 characters, match both entries, and avoid the retired default password.')
+    response_secret = entry.get_text()
+    entry.set_text('')
+    if warning_timer['id'] is not None:
+        GLib.source_remove(warning_timer['id'])
+    if confirmation is not None:
+        confirmation.set_text('')
+    dialog.destroy()
+    if response != Gtk.ResponseType.OK:
+        return 1
+    sys.stdout.write(response_secret + ('\n' if sys.argv[1] == '--sudo-password' else ''))
+    return 0
+
+
+if __name__ == '__main__':
+    sys.exit(main())

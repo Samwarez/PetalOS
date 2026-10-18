@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=aMule (VPN)
+Comment=eD2k and Kad with encrypted persistent state
+Exec=/usr/local/bin/portable-desktop amule
+Icon=amule
+Terminal=false
+Categories=Network;FileTransfer;P2P;

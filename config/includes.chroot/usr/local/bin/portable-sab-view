@@ -1,0 +1,112 @@
+#!/usr/bin/python3
+import os
+import select
+import socket
+import socketserver
+import stat
+import threading
+from urllib.parse import urlsplit
+
+import gi
+gi.require_version("Gtk", "3.0")
+gi.require_version("WebKit2", "4.1")
+from gi.repository import Gtk, WebKit2
+
+runtime = os.environ.get("XDG_RUNTIME_DIR", "")
+bridge = os.path.join(runtime, "portable-sab-admin", "control.sock")
+
+if os.environ.get("PORTABLE_SAB_ADMIN") != "1":
+    raise SystemExit("Launch through the portable SABnzbd manager.")
+
+if not stat.S_ISSOCK(os.stat(bridge).st_mode):
+    raise SystemExit("SABnzbd administration socket is unavailable.")
+
+
+class Relay(socketserver.BaseRequestHandler):
+    def handle(self):
+        try:
+            with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as upstream:
+                upstream.connect(bridge)
+                peers = [self.request, upstream]
+                while True:
+                    readable, _, _ = select.select(peers, [], [], 60)
+                    if not readable:
+                        return
+                    for source in readable:
+                        data = source.recv(65536)
+                        if not data:
+                            return
+                        destination = upstream if source is self.request else self.request
+                        destination.sendall(data)
+        except OSError:
+            pass
+
+
+class Server(socketserver.ThreadingTCPServer):
+    allow_reuse_address = True
+    daemon_threads = True
+
+
+server = Server(("127.0.0.1", 8080), Relay)
+threading.Thread(target=server.serve_forever, daemon=True).start()
+
+context = WebKit2.WebContext.new_ephemeral()
+view = WebKit2.WebView.new_with_context(context)
+
+settings = view.get_settings()
+for property_name in ("enable-dns-prefetching", "enable-webrtc"):
+    if settings.find_property(property_name):
+        settings.set_property(property_name, False)
+
+
+def decide_policy(view, decision, kind):
+    if kind == WebKit2.PolicyDecisionType.NEW_WINDOW_ACTION:
+        decision.ignore()
+        return True
+
+    if kind == WebKit2.PolicyDecisionType.NAVIGATION_ACTION:
+        uri = decision.get_navigation_action().get_request().get_uri()
+        try:
+            parsed = urlsplit(uri)
+            allowed = (
+                uri == "about:blank"
+                or (
+                    parsed.scheme == "http"
+                    and parsed.hostname == "127.0.0.1"
+                    and parsed.port == 8080
+                    and parsed.username is None
+                    and parsed.password is None
+                )
+            )
+        except ValueError:
+            allowed = False
+
+        if not allowed:
+            decision.ignore()
+            return True
+
+    return False
+
+
+def deny_permission(view, request):
+    request.deny()
+    return True
+
+
+view.connect("decide-policy", decide_policy)
+view.connect("permission-request", deny_permission)
+view.connect("context-menu", lambda *args: True)
+context.connect("download-started", lambda context, download: download.cancel())
+
+window = Gtk.Window(title="SABnzbd — Private Management")
+window.set_default_size(1000, 720)
+window.connect("destroy", lambda *args: Gtk.main_quit())
+window.add(view)
+window.show_all()
+view.load_uri("http://127.0.0.1:8080/")
+
+try:
+    Gtk.main()
+finally:
+    server.shutdown()
+    server.server_close()

@@ -1,0 +1,11 @@
+{
+  "fixture": "tests/phase15-20261018/persistence-app-restore.py",
+  "exit": 0,
+  "elapsed_seconds": 4.57,
+  "stderr": "",
+  "result": {
+    "actual_Transmission_RAM_launch_ready": true,
+    "selected_preference_applied_after_reboot": true,
+    "Private_remained_closed": true
+  }
+}

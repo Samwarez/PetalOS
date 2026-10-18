@@ -1,0 +1,14 @@
+[Unit]
+Description=Load PetalOS policies for the live RAM filesystem
+DefaultDependencies=no
+After=local-fs.target
+Before=display-manager.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/sbin/apparmor_parser -r -K /etc/apparmor.d/petalos.browser /etc/apparmor.d/petalos.display /etc/apparmor.d/petalos.downloads /etc/apparmor.d/petalos.isolated-tor /etc/apparmor.d/petalos.offline /etc/apparmor.d/petalos.offline-atril /etc/apparmor.d/petalos.offline-geany /etc/apparmor.d/petalos.offline-gthumb /etc/apparmor.d/petalos.offline-html /etc/apparmor.d/petalos.offline-keepassxc /etc/apparmor.d/petalos.offline-lazpaint /etc/apparmor.d/petalos.offline-libreoffice /etc/apparmor.d/petalos.offline-mousepad /etc/apparmor.d/petalos.offline-parole /etc/apparmor.d/petalos.offline-quodlibet /etc/apparmor.d/petalos.offline-ristretto /etc/apparmor.d/petalos.offline-vim /etc/apparmor.d/petalos.playback /etc/apparmor.d/petalos.torbrowser.Browser.firefox /etc/apparmor.d/petalos.torbrowser.Tor.tor /etc/apparmor.d/petalos.window-manager
+RemainAfterExit=yes
+TimeoutStartSec=30
+
+[Install]
+WantedBy=multi-user.target

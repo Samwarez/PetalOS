@@ -1,0 +1,5 @@
+{
+  "exit": 0,
+  "stdout": "PASS: actual patched function matches all 512 combinations; upstream fails 131\n",
+  "stderr": ""
+}

@@ -1,0 +1,120 @@
+#!/usr/bin/python3
+import os
+from pathlib import Path
+import subprocess
+import time
+import json
+import stat
+import sys
+
+sys.path.insert(0, '/usr/local/lib/portable')
+from vpn_connection_checks import current_report
+
+def command(*args):
+    try:
+        result = subprocess.run(
+            args, capture_output=True, text=True, timeout=2,
+            stdin=subprocess.DEVNULL
+        )
+        return result.stdout.strip() if result.returncode == 0 else ""
+    except (OSError, subprocess.TimeoutExpired):
+        return ""
+
+def age(seconds):
+    seconds = max(0, int(seconds))
+    if seconds < 60:
+        return f"{seconds}s"
+    if seconds < 3600:
+        return f"{seconds // 60}m"
+    return f"{seconds // 3600}h"
+
+private = command(
+    "/usr/bin/findmnt", "-n", "-o", "SOURCE", "--mountpoint", "/mnt/private"
+)
+print("Private: " + (
+    "unlocked" if private == "/dev/mapper/portable_data" else "locked"
+))
+
+try:
+    state = json.loads(command('/usr/bin/sudo', '-n', '--', '/usr/local/sbin/portable-storage', 'status'))
+    print('Idle lock: ' + ('disabled by download mode' if state['download_mode'] else 'enabled (10 minutes)'))
+except (ValueError, KeyError, TypeError):
+    print('Idle lock: status unavailable')
+
+# Presentation only. Root ownership and age checks reject spoofed/stale UI
+# data; actual application guards still inspect current state and probe wg0.
+telemetry = {}
+try:
+    path = Path('/run/portable-telemetry/status.json')
+    info = path.lstat()
+    if not stat.S_ISREG(info.st_mode) or info.st_uid != 0 or info.st_mode & 0o022 or info.st_size > 1024:
+        raise ValueError()
+    value = json.loads(path.read_text())
+    if not 0 <= time.time()-int(value['checked_at']) <= 20:
+        raise ValueError()
+    telemetry = value
+except (OSError,ValueError,KeyError,TypeError):pass
+
+if Path("/sys/class/net/wg0").exists():
+    print("VPN interface: present")
+    latest = int(telemetry.get('latest_handshake',0))
+    if latest:
+        print(f"Handshake: {age(time.time() - latest)} ago")
+    elif telemetry:
+        print("Handshake: not yet established")
+    else:
+        print("Handshake: unavailable")
+else:
+    print("VPN interface: absent")
+    print("Handshake: no tunnel")
+
+synced = telemetry.get('clock_synced') is True
+print("Clock: " + ("synchronized" if synced else "not synchronized"))
+connection = current_report()
+if connection:
+    checks = connection['checks']
+    print('Connection tests: IPv4 ' + checks['ipv4']['status'] +
+          ', IPv6 ' + checks['ipv6']['status'] + ', DNS ' + checks['dns']['status'])
+    for family in (4, 6):
+        value = checks['ipv' + str(family)]
+        if value['status'] == 'passed':
+            print('Public IPv' + str(family) + ': ' + value['address'])
+    print('Tested at connect: ' + age(time.time() - connection['checked_at']) + ' ago')
+
+try:
+    import json
+    import ipaddress
+    if connection:
+        raise ValueError()
+    record = json.loads(
+        Path(f"/run/user/{os.getuid()}/portable-status/exit-ip.json").read_text()
+    )
+    address = str(ipaddress.IPv4Address(record["address"]))
+    elapsed = age(time.time() - int(record["checked_at"]))
+    print(f"Last exit IP: {address}")
+    print(f"IP check: observed through wg0, {elapsed} ago")
+except (OSError, ValueError, KeyError, TypeError):
+    if not connection:
+        print("Public IP: not checked")
+
+try:
+    if connection:
+        raise ValueError()
+    record = json.loads(Path(f"/run/user/{os.getuid()}/portable-status/exit-ipv6.json").read_text())
+    address = str(ipaddress.IPv6Address(record['address']))
+    elapsed = age(time.time() - int(record['checked_at']))
+    print(f'Last IPv6: {address}, {elapsed} ago through wg0')
+except (OSError, ValueError, KeyError, TypeError):
+    pass
+
+print()
+print("RECENT ACTIVITY")
+log = Path(f"/run/user/{os.getuid()}/portable-status/activity.log")
+try:
+    lines = log.read_text().splitlines()[-6:]
+except OSError:
+    lines = []
+for line in lines:
+    print(line)
+if not lines:
+    print("No messages yet.")

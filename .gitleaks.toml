@@ -1,0 +1,26 @@
+title = "PetalOS staged source scan"
+
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Verified SHA-256 file checksums; not credential hashes"
+condition = "AND"
+regexTarget = "secret"
+paths = ['''(?:^|/)docs/audit\-phase15\-20261018/evidence\-sha256\.json$''']
+regexes = [
+  '''^d67d157f838856a7b87f41f2a53202375460961bb1dd18f9042f6e005d5346e1$''',
+  '''^5df3b73c1deb467741968b1a6c7e946d955235dd404e2863ae3c4204eb66c2e3$''',
+]
+
+[[allowlists]]
+description = "Verified SHA-256 file checksums; not credential hashes"
+condition = "AND"
+regexTarget = "secret"
+paths = ['''(?:^|/)docs/audit\-phase15\-20261018/baseline\-result\.json$''']
+regexes = [
+  '''^c6635be692bef47fe18ca49f4d4940b58ab2ff3891a4934d6c4476394faac5f9$''',
+  '''^3ef96edaa55e88b73293275093c40b1d5ec50775189bd5dbcd8ee2d0ab475551$''',
+  '''^c87e1838cbac6b3bbf84b3201436b05343f1417b8ec15456c340b8e81f1e3a5c$''',
+  '''^0c4d4548b58f4b81e8414db2b4eb2f9ae6be3d219ea133e71df24e1a133fd3d1$''',
+]

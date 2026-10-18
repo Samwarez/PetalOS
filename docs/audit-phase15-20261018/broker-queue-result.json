@@ -1,0 +1,10 @@
+{
+  "fixture": "tests/phase15-20261018/broker-queue.py",
+  "exit": 0,
+  "elapsed_seconds": 4.0,
+  "stderr": "",
+  "result": {
+    "unrelated_app_launches_both_wait_on_global_lock": true,
+    "both_complete_after_lock_release": true
+  }
+}

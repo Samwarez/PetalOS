@@ -1,0 +1,38 @@
+#!/bin/bash
+set -euo pipefail
+
+# Only fixed, root-brokered application roles may use this entry point.
+if [[ ${1:-} == /usr/bin/dbus-run-session && ${2:-} == -- ]]; then
+    shift 2
+fi
+native_app=""
+case ${1:-} in
+    /usr/lib/firefox-esr/firefox-esr) native_app=html ;;
+    /usr/bin/*.portable-real)
+        native_app=${1##*/}
+        native_app=${native_app%.portable-real}
+        case $native_app in
+            lazpaint|geany|gthumb|keepassxc|libreoffice|atril|parole|ristretto|mousepad|quodlibet) ;;
+            soffice) native_app=libreoffice ;;
+            vim.basic) native_app=vim ;;
+            *) native_app="" ;;
+        esac
+        ;;
+esac
+if [[ -z $native_app ]]; then
+    /usr/local/bin/portable-message --notify error "This command has no configured offline application compartment." || true
+    exit 1
+fi
+shift
+for item in "$@"; do
+    case $item in
+        /mnt/private/Documents/"$native_app"/*|/mnt/ram/Documents/"$native_app"/*|/home/Petal/Documents/"$native_app"/*) ;;
+        /*|file://*)
+            /usr/local/bin/portable-message --notify info "Selected files outside this app's folders open read-only. Save edited copies in its RAM or Private documents folder." || true
+            break ;;
+    esac
+done
+if ! /usr/bin/sudo -n -- /usr/local/sbin/portable-compartment launch "offline-$native_app" "$@"; then
+    /usr/local/bin/portable-message --notify error "The offline application could not start. Check application confinement. Private is optional." || true
+    exit 1
+fi

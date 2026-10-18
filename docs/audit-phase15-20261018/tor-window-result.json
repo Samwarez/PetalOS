@@ -1,0 +1,33 @@
+{
+  "fixture": "tests/phase15-20261018/tor-window.py",
+  "exit": 0,
+  "elapsed_seconds": 0.91,
+  "stderr": "",
+  "result": {
+    "application_ids": [
+      "Tor Browser",
+      "amule",
+      "atril.portable-real",
+      "com.transmissionbt.transmission_64769_524290",
+      "firefox-esr",
+      "geany.portable-real",
+      "io.github.quodlibet.QuodLibet",
+      "io.github.quodlibet.QuodLibet",
+      "lazpaint",
+      "libreoffice-startcenter",
+      "mousepad.portable-real",
+      "org.gnome.gThumb",
+      "org.keepassxc.KeePassXC",
+      "pan",
+      "pan",
+      "pan",
+      "parole.portable-real",
+      "portable-sab-view",
+      "ristretto.portable-real",
+      "transmission-gtk",
+      "xfce4-terminal"
+    ],
+    "browser_target_count": 1,
+    "activation_requested": true
+  }
+}

@@ -1,0 +1,78 @@
+#!/usr/bin/python3 -I
+"""Fixed root broker; no caller-supplied executable, environment or root path."""
+import fcntl
+import os
+from pathlib import Path
+import re
+import sys
+from urllib.parse import urlsplit
+sys.path.insert(0, '/usr/local/lib/portable')
+from compartments import BASE, ROLES, OFFLINE, CompartmentError, gate, prepare, protected, roles, root_admin_configured, start, stop, supervise
+
+
+def main():
+    if os.geteuid() != 0:
+        return 1
+    arguments = sys.argv[1:]
+    if len(arguments) == 3 and arguments[0] == '--worker':
+        if os.environ.get('SUDO_USER') or arguments[1] not in ROLES or not re.fullmatch('[a-f0-9]{32}', arguments[2]):
+            return 1
+        supervise(arguments[1], arguments[2])
+        return 0
+    if len(arguments) < 2 or arguments[0] not in ('launch', 'prepare', 'stop'):
+        return 1
+    if os.environ.get('SUDO_USER') != 'Petal' or os.environ.get('SUDO_UID') != '1000':
+        return 1
+    action, app, *extra = arguments
+    if app not in ('tor', 'transmission', 'pan', 'amule', 'sabnzbd') and app not in OFFLINE:
+        return 1
+    if len(extra) > 32 or any(len(x) > 8192 or any(c in x for c in ('\n', '\r', '\x00')) for x in extra):
+        return 1
+    if action != 'launch' and extra:
+        return 1
+    if app == 'tor':
+        for value in extra:
+            parsed = urlsplit(value)
+            if parsed.scheme not in ('http', 'https') or not parsed.hostname or parsed.username or parsed.password:
+                return 1
+    elif extra and app not in OFFLINE:
+        if app == 'sabnzbd' or any(not (x.startswith('/') or x.startswith('file://')
+               or (app == 'transmission' and x.startswith('magnet:'))
+               or (app == 'amule' and x.startswith('ed2k://'))) for x in extra):
+            return 1
+    if not root_admin_configured():
+        raise CompartmentError('Set the private administrator credential first.')
+    roles(); protected(BASE)
+    lock = os.open(BASE / 'broker.lock', os.O_RDWR | os.O_CREAT | os.O_NOFOLLOW, 0o600)
+    with os.fdopen(lock, 'r+b') as lease:
+        fcntl.flock(lease, fcntl.LOCK_EX)
+        if action == 'stop':
+            if app == 'tor':
+                stop('browser');stop('tor')
+            elif app == 'sabnzbd':
+                stop('sab-viewer');stop('sabnzbd')
+            else:
+                stop(app)
+            return 0
+        gate('browser' if app == 'tor' else app)
+        if app == 'tor':
+            start('tor')
+            if action == 'launch':
+                start('browser', extra)
+        elif app == 'sabnzbd':
+            start('sabnzbd')
+            if action == 'launch':
+                start('sab-viewer')
+        elif action == 'launch':
+            start(app, extra)
+        else:
+            prepare(app)
+    return 0
+
+
+if __name__ == '__main__':
+    try:
+        raise SystemExit(main())
+    except Exception:
+        print('The compartment could not start. Check Private, current VPN/clock, administrator setup and application confinement.', file=sys.stderr)
+        raise SystemExit(1)

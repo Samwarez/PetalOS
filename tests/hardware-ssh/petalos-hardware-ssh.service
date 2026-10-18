@@ -1,0 +1,13 @@
+[Unit]
+Description=PetalOS optional isolated Ethernet test management
+After=live-config.service NetworkManager.service
+ConditionKernelCommandLine=petalos_hardware_ssh=1
+ConditionPathExists=/run/petalos-hardware-ssh/ssh_host_ed25519_key
+
+[Service]
+ExecStart=/usr/bin/python3 -I /usr/local/lib/petalos-hardware-ssh/management.py
+TimeoutStopSec=20
+KillMode=mixed
+
+[Install]
+WantedBy=multi-user.target

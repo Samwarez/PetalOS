@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=PetalOS Guide
+Comment=Read the local PetalOS guide
+Exec=/usr/bin/geany /usr/share/doc/petalos/welcome.txt
+Icon=help-about
+Terminal=false
+Categories=System;Documentation;

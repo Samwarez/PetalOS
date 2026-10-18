@@ -1,0 +1,24 @@
+#!/bin/sh
+set -eu
+[ "$#" -eq 0 ] && [ "$(id -u)" -eq 1000 ] || exit 1
+for command in /usr/bin/startxfce4 /usr/bin/labwc /usr/local/libexec/portable-deny-xwayland; do
+    [ -x "$command" ] || exit 1
+done
+# Keep the distro's GTK/panel defaults and optional encrypted overrides.
+# The compositor configuration is a separate, public test-session default.
+unset DISPLAY XAUTHORITY
+export GDK_BACKEND=wayland
+export QT_QPA_PLATFORM=wayland
+export MOZ_ENABLE_WAYLAND=1
+export SDL_VIDEODRIVER=wayland
+export XDG_SESSION_TYPE=wayland
+export WLR_XWAYLAND=/usr/local/libexec/portable-deny-xwayland
+# QEMU's current virtio-vga test device has no accelerated GL renderer.
+# Leave physical hardware free to use wlroots' normal renderer selection.
+if [ "$(cat /sys/class/dmi/id/sys_vendor 2>/dev/null || true)" = QEMU ]; then
+    export WLR_RENDERER=pixman
+    export LIBGL_ALWAYS_SOFTWARE=1
+fi
+exec /usr/bin/startxfce4 --wayland /usr/bin/labwc \
+    --config /usr/share/portable/wayland/labwc-rc.xml \
+    --session /usr/local/libexec/portable-wayland-session-client

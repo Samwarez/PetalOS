@@ -1,0 +1,108 @@
+#!/bin/bash
+set -euo pipefail
+umask 077
+
+[[ $EUID -eq 0 ]] || {
+    echo "Run through sudo."
+    exit 1
+}
+
+# Serialize connect/disconnect, including verification and rollback.
+exec 9>/run/portable-vpn.lock
+flock -w 20 9 || { echo "Another VPN action is still running." >&2; exit 1; }
+
+cleanup() {
+    local failed=0
+    rm -f /run/portable-vpn-checks.json
+    systemctl stop chrony.service >/dev/null 2>&1 || failed=1
+    if ip link show wg0 >/dev/null 2>&1; then
+        # Retain configuration if teardown fails, so disconnect can retry.
+        wg-quick down wg0 >/dev/null 2>&1 || failed=1
+    fi
+    if ip link show wg0 >/dev/null 2>&1; then
+        echo "VPN cleanup incomplete. Retry Disconnect before connecting." >&2
+        return 1
+    fi
+    rm -f /etc/wireguard/wg0.conf
+    /usr/local/sbin/portable-vpn-profile reset || failed=1
+    rm -f /run/portable-vpn/profile.json /run/portable-vpn/resolv.conf
+    return "$failed"
+}
+
+rollback() {
+    local result=$?
+    trap - EXIT INT TERM
+    if (( result != 0 )); then
+        cleanup || true
+        echo "VPN connection failed. Firewall remains enabled." >&2
+    fi
+    exit "$result"
+}
+
+case "${1:-}" in
+    connect|switch)
+        nft list table inet portable_vpn >/dev/null || {
+            echo "Required firewall is missing. Refusing to connect."
+            exit 1
+        }
+
+        /usr/bin/python3 -I -c 'import sys;sys.path.insert(0,"/usr/local/lib/portable");from system_state import require;require()' >/dev/null 2>&1 || {
+            echo "Encrypted SYSTEM settings are unavailable."
+            exit 1
+        }
+
+        if [[ $1 == switch ]]; then
+            [[ $# -eq 2 ]] || { echo "Select a profile to switch to." >&2; exit 1; }
+            cleanup || exit 1
+        elif ip link show wg0 >/dev/null 2>&1; then
+            echo "wg0 already exists. Disconnect before reconnecting."
+            exit 1
+        fi
+
+        trap rollback EXIT
+        trap 'exit 130' INT
+        trap 'exit 143' TERM
+        rm -f /run/portable-vpn-checks.json
+        systemctl stop chrony.service
+        install -d -m 700 /etc/wireguard
+
+        [[ $# -le 2 ]] || { echo "Too many VPN arguments." >&2; exit 1; }
+        if [[ $# -eq 2 ]]; then
+            /usr/local/sbin/portable-vpn-profile prepare "$2"
+        else
+            /usr/local/sbin/portable-vpn-profile prepare
+        fi
+
+        wg-quick up wg0 >/dev/null 2>&1
+
+        # DNS comes from the validated profile and remains blocked off-tunnel.
+        rm -f /etc/resolv.conf
+        cp /run/portable-vpn/resolv.conf /etc/resolv.conf
+        chmod 644 /etc/resolv.conf
+
+        /usr/local/sbin/portable-check-vpn
+        systemctl restart chrony.service
+        echo "Waiting up to one minute for clock synchronization..."
+        if chronyc waitsync 60 0.5 0 1; then
+            echo "Clock synchronized. You can start Tor."
+        else
+            echo "Clock has not synchronized yet. Keep Tor closed."
+            echo "Check: chronyc tracking"
+            echo "Check: chronyc sources -v"
+        fi
+
+        echo "Testing public IPv4, IPv6, VPN DNS and current tunnel readiness..."
+        /usr/local/sbin/portable-test-vpn-connection || exit 20
+        /usr/local/sbin/portable-vpn-profile commit
+        trap - EXIT INT TERM
+        echo "VPN connection verified through wg0."
+        ;;
+    disconnect)
+        cleanup || exit 1
+        echo "VPN disconnected. Firewall remains active."
+        ;;
+    *)
+        echo "Usage: portable-vpn connect [profile]|switch profile|disconnect"
+        exit 1
+        ;;
+esac

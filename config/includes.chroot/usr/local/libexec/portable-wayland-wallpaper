@@ -1,0 +1,215 @@
+#!/usr/bin/python3
+"""Native wallpaper fallback for trixie's XFCE/Labwc workspace integration.
+
+Run only in the trusted desktop session. User wallpaper paths stay in the
+guest; never log them. Existing XFCE settings remain the override mechanism.
+"""
+import ctypes as c
+import fcntl
+import hashlib
+import os
+from pathlib import Path
+import re
+import select
+import signal
+import stat
+import subprocess
+import tempfile
+import time
+
+DEFAULT = '/usr/share/backgrounds/xfce/xfce-blue.jpg'
+STYLES = {1: 'center', 2: 'tile', 3: 'stretch', 4: 'fit', 5: 'fill', 6: 'fill'}
+
+
+def query(prop):
+    result = subprocess.run(
+        ['xfconf-query', '-c', 'xfce4-desktop', '-p', prop],
+        capture_output=True, timeout=3, text=True)
+    return result.stdout.strip() if result.returncode == 0 else ''
+
+
+def color(prefix, number):
+    values = query(prefix + '/rgba' + str(number)).splitlines()[-4:]
+    try:
+        rgba = [float(value) for value in values]
+        if len(rgba) != 4 or not all(0 <= value <= 1 for value in rgba):
+            raise ValueError()
+        return tuple(round(value * 255) for value in rgba[:3])
+    except ValueError:
+        return (32, 32, 32)
+
+
+def gradient(name, first, second, vertical):
+    """Generate only a bounded, disposable color field in trusted session RAM."""
+    folder = Path('/run/user/1000/petalos-background-colors')
+    folder.mkdir(mode=0o700, exist_ok=True)
+    info = folder.lstat()
+    if not stat.S_ISDIR(info.st_mode) or info.st_uid != 1000 or info.st_mode & 0o077:
+        raise RuntimeError('Unsafe background color directory')
+    key = hashlib.sha256(repr((first, second, vertical)).encode()).hexdigest()[:16]
+    target = folder / (name + '-' + key + '.ppm')
+    if not target.exists():
+        fd, temporary = tempfile.mkstemp(dir=folder)
+        try:
+            with os.fdopen(fd, 'wb') as output:
+                output.write(b'P6\n256 256\n255\n')
+                for y in range(256):
+                    row = bytearray()
+                    for x in range(256):
+                        t = (y if vertical else x) / 255
+                        row.extend(round(a + (b - a) * t) for a, b in zip(first, second))
+                    output.write(row)
+            os.replace(temporary, target)
+        finally:
+            Path(temporary).unlink(missing_ok=True)
+    for old in folder.glob(name + '-*.ppm'):
+        if old != target:
+            old.unlink()
+    return str(target)
+
+
+def outputs():
+    gtk = c.CDLL('libgtk-3.so.0')
+    gtk.gtk_init_check.restype = c.c_int
+    if not gtk.gtk_init_check(None, None):
+        raise RuntimeError('Native desktop unavailable')
+    for _ in range(64):
+        if not gtk.gtk_events_pending():
+            break
+        gtk.gtk_main_iteration_do(False)
+    xfw = c.CDLL('libxfce4windowing-0.so.0')
+
+    class Node(c.Structure):
+        pass
+    Node._fields_ = [('data', c.c_void_p), ('next', c.POINTER(Node)),
+                    ('prev', c.POINTER(Node))]
+    xfw.xfw_screen_get_default.restype = c.c_void_p
+    xfw.xfw_screen_get_monitors.restype = c.POINTER(Node)
+    xfw.xfw_screen_get_monitors.argtypes = [c.c_void_p]
+    xfw.xfw_monitor_get_connector.restype = c.c_char_p
+    xfw.xfw_monitor_get_connector.argtypes = [c.c_void_p]
+    xfw.xfw_monitor_get_gdk_monitor.restype = c.c_void_p
+    xfw.xfw_monitor_get_gdk_monitor.argtypes = [c.c_void_p]
+    gdk = c.CDLL('libgdk-3.so.0')
+    gdk.gdk_monitor_get_model.restype = c.c_char_p
+    gdk.gdk_monitor_get_model.argtypes = [c.c_void_p]
+    node = xfw.xfw_screen_get_monitors(xfw.xfw_screen_get_default())
+    names = {}
+    while node and len(names) < 16:
+        name = xfw.xfw_monitor_get_connector(node.contents.data).decode()
+        if re.fullmatch(r'[A-Za-z0-9_.-]{1,128}', name):
+            monitor = xfw.xfw_monitor_get_gdk_monitor(node.contents.data)
+            model = gdk.gdk_monitor_get_model(monitor) if monitor else None
+            # XFCE Desktop Settings keys monitors by GDK model, not connector.
+            model = model.decode().replace(' ', '').replace('\t', '') if model else name
+            names[name] = model if model and '/' not in model and len(model) <= 256 else name
+        node = node.contents.next
+    return names
+
+
+def command(names):
+    # Trixie's Labwc exposes a single fallback workspace to XFCE.
+    workspace = query('/backdrop/single-workspace-number')
+    workspace = workspace if workspace.isdecimal() else '0'
+    argv = ['/usr/bin/swaybg']
+    for name in names:
+        model = names[name]
+        prefix = f'/backdrop/screen0/monitor{model}/workspace{workspace}'
+        image = query(prefix + '/last-image')
+        if not image and model != name:
+            prefix = f'/backdrop/screen0/monitor{name}/workspace{workspace}'
+            image = query(prefix + '/last-image')
+        if not image.startswith('/') or len(image) > 4096 or not Path(image).is_file():
+            image = DEFAULT
+        style = query(prefix + '/image-style')
+        first, second = color(prefix, 1), color(prefix, 2)
+        background = '#' + ''.join(f'{value:02x}' for value in first)
+        argv += ['-o', name, '-c', background]
+        if style == '0':
+            color_style = query(prefix + '/color-style')
+            if color_style in ('1', '2'):
+                image = gradient(name, first, second, color_style == '2')
+                argv += ['-i', image, '-m', 'stretch']
+            else:
+                argv += ['-m', 'solid_color']
+        else:
+            mode = STYLES.get(int(style) if style.isdecimal() else 5, 'fill')
+            argv += ['-i', image, '-m', mode]
+    return argv
+
+
+def main():
+    if os.getuid() != 1000 or os.environ.get('XDG_SESSION_TYPE') != 'wayland':
+        return
+    os.environ.pop('DISPLAY', None)
+    lock = os.open('/run/user/1000/portable-wayland-wallpaper', os.O_RDWR | os.O_CREAT | os.O_NOFOLLOW, 0o600)
+    info = os.fstat(lock)
+    if info.st_uid != 1000 or not stat.S_ISREG(info.st_mode) or info.st_mode & 0o077:
+        os.close(lock)
+        return
+    try:
+        fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except BlockingIOError:
+        os.close(lock)
+        return
+    names = outputs()
+    if not names:
+        return
+    # Start after xfdesktop's background surface so its missing-workspace
+    # black fallback does not cover this renderer. Icons remain above it.
+    time.sleep(2)
+    watcher = subprocess.Popen(['xfconf-query', '-c', 'xfce4-desktop', '-m'],
+                               stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
+    renderer = None
+    previous = None
+    desktop = None
+    dirty = True
+    def stop(*_):
+        raise KeyboardInterrupt()
+    signal.signal(signal.SIGTERM, stop)
+    try:
+        while True:
+            current_desktop = subprocess.run(['pgrep', '-u', '1000', '-x', 'xfdesktop'],
+                                             capture_output=True, timeout=3).stdout
+            current_names = outputs()
+            desktop_changed = current_desktop != desktop
+            if desktop_changed:
+                # Allow a restarted xfdesktop to map its background first.
+                time.sleep(1)
+            if current_names != names or desktop_changed:
+                dirty = True
+            names, desktop = current_names, current_desktop
+            argv = command(names) if dirty else previous
+            dirty = False
+            if argv != previous or desktop_changed or renderer is None or renderer.poll() is not None:
+                if renderer is not None and renderer.poll() is None:
+                    renderer.terminate()
+                    renderer.wait(timeout=3)
+                renderer = (subprocess.Popen(argv, stdout=subprocess.DEVNULL,
+                                             stderr=subprocess.DEVNULL)
+                            if names else None)
+                previous = argv
+            if not select.select([watcher.stdout], [], [], 2)[0]:
+                if watcher.poll() is not None:
+                    return
+                continue
+            if not os.read(watcher.stdout.fileno(), 4096):
+                return
+            dirty = True
+            time.sleep(.2)
+    finally:
+        for process in (renderer, watcher):
+            if process is not None and process.poll() is None:
+                process.terminate()
+                try:
+                    process.wait(timeout=3)
+                except subprocess.TimeoutExpired:
+                    process.kill()
+                    process.wait()
+
+
+if __name__ == '__main__':
+    try:
+        main()
+    except (KeyboardInterrupt, OSError, RuntimeError, subprocess.SubprocessError):
+        pass

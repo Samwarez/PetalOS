@@ -1,0 +1,7 @@
+Welcome to PetalOS.
+
+The live system and browser session run in RAM. Private holds selectively
+persisted files. Connect the VPN and wait for clock synchronization before
+starting network applications.
+
+Local help: /usr/share/doc/petalos/welcome.txt

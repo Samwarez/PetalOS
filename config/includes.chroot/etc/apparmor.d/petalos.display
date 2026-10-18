@@ -1,0 +1,31 @@
+#include <tunables/global>
+profile petalos_display {
+  #include <abstractions/base>
+  #include <abstractions/X>
+  #include <abstractions/fonts>
+  /usr/** mr,
+  /usr/bin/Xephyr ix,
+  /usr/bin/{dash,xkbcomp} ix,
+  /{,usr/}lib/** mr,
+  /lib64/** mr,
+  /etc/{,**} r,
+  /sys/{,**} r,
+  /dev/shm/{,**} rwkl,
+  /dev/null rw,
+  /dev/zero rw,
+  /dev/random r,
+  /dev/urandom r,
+  /dev/udmabuf rw,
+  owner /home/Petal/.Xauthority r,
+  owner /run/portable-compartments/*/Xauthority.parent r,
+  /tmp/.X11-unix/{,X[0-9]*} rw,
+  owner /tmp/.X[0-9]*-lock rwkl,
+  owner /tmp/.tX[0-9]*-lock rwkl,
+  owner /tmp/server-[0-9]*.xkm rw,
+  /proc/{,**} r,
+  network unix,
+  deny network inet,
+  deny network inet6,
+  deny /mnt/private/{,**} rwkl,
+  signal (receive) peer=unconfined,
+}

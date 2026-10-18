@@ -1,0 +1,14 @@
+{
+  "fixture": "tests/sab-bridge-guest.py",
+  "exit": 0,
+  "elapsed_seconds": 1.06,
+  "stderr": "",
+  "result": {
+    "actual_sab_http_response": true,
+    "actual_sab_role_accepted": true,
+    "fixture_owner_identified": true,
+    "no_request_bytes_before_identity_check": true,
+    "substituted_server_rejected": true,
+    "wrong_role_rejected": true
+  }
+}

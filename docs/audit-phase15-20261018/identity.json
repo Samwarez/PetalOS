@@ -1,0 +1,89 @@
+{
+  "started_utc": "2026-10-18T15:24:17.272538+00:00",
+  "git_revision": null,
+  "source_manifest_sha256": "c4bd6cecb7e09fe73019cb629dba694651df4518e26b5f5eec9c8da9a5d448ad",
+  "release": "20261017-215844-546957",
+  "backups_verified": [
+    {
+      "file": "snapshots/before-audit-build-1792283313372448369.tar.gz",
+      "valid": true
+    },
+    {
+      "file": "snapshots/code-before-account-confinement-20261012-193258.tar.gz",
+      "valid": true
+    },
+    {
+      "file": "snapshots/code-before-apparmor-20261012-194911.tar.gz",
+      "valid": true
+    },
+    {
+      "file": "snapshots/code-before-apparmor-loader-20261014-180808-790644.tar.gz",
+      "valid": true
+    },
+    {
+      "file": "snapshots/code-before-authorized-card-install-20261014-205441-151814.tar.gz",
+      "valid": true
+    },
+    {
+      "file": "snapshots/code-before-branding-20261012-202831.tar.gz",
+      "valid": true
+    },
+    {
+      "file": "snapshots/code-before-combined-build-20261014-173039-680347.tar.gz",
+      "valid": true
+    },
+    {
+      "file": "snapshots/code-before-compartments-20261012-223226.tar.gz",
+      "valid": true
+    },
+    {
+      "file": "snapshots/code-before-deep-security-20261012-213346.tar.gz",
+      "valid": true
+    },
+    {
+      "file": "snapshots/code-before-hardening-20261012-163325.tar.gz",
+      "valid": true
+    },
+    {
+      "file": "snapshots/code-before-hardware-diagnostics-20261014-200701-119701.tar.gz",
+      "valid": true
+    },
+    {
+      "file": "snapshots/code-before-hardware-layer-20261014-202848-961061.tar.gz",
+      "valid": true
+    },
+    {
+      "file": "snapshots/code-before-notification-policy-20261014-181533-775527.tar.gz",
+      "valid": true
+    },
+    {
+      "file": "snapshots/code-before-qemu-ssh-20261012-153715.tar.gz",
+      "valid": true
+    },
+    {
+      "file": "snapshots/code-before-ram-private-folders-20261014-184823-495211.tar.gz",
+      "valid": true
+    },
+    {
+      "file": "snapshots/code-before-rc-build-20261014-192804-796796.tar.gz",
+      "valid": true
+    },
+    {
+      "file": "snapshots/code-before-rc-preferences-20261014-191744-255025.tar.gz",
+      "valid": true
+    },
+    {
+      "file": "snapshots/code-before-tor-readcheck-20261012-201830.tar.gz",
+      "valid": true
+    },
+    {
+      "file": "snapshots/code-before-vpn-20261011-162645.tar.gz",
+      "valid": true
+    },
+    {
+      "file": "snapshots/code-before-wayland-20261013-165138-585832.tar.gz",
+      "valid": true
+    }
+  ],
+  "source_file_count": 413
+}

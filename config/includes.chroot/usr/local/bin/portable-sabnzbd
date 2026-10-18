@@ -1,0 +1,76 @@
+#!/bin/bash
+set -euo pipefail
+umask 007
+if ! /usr/bin/python3 -I -c 'import sys;sys.path.insert(0,"/usr/local/lib/portable");from compartments import inside;sys.exit(0 if inside("sabnzbd") else 1)'; then
+    exec /usr/bin/sudo -n -- /usr/local/sbin/portable-compartment prepare sabnzbd
+fi
+
+fail() {
+    echo "$1" >&2
+    read -r -p "Press Enter to close." || true
+    exit 1
+}
+
+state=$(/usr/local/bin/portable-download-prepare sabnzbd) ||
+    fail "SABnzbd was not started."
+
+homefs=$(findmnt -n -o FSTYPE --target "$HOME")
+case "$homefs" in
+    overlay|tmpfs) ;;
+    *) fail "This launcher requires the RAM-based live system." ;;
+esac
+
+downloads="$PORTABLE_STATE_ROOT/Downloads/sabnzbd"
+cache="$HOME/.cache/portable-sabnzbd"
+
+mkdir -p "$state/admin" \
+    "$downloads/incomplete" "$downloads/complete" \
+    "$cache/logs" "$cache/tmp"
+
+# Hold this lock until SABnzbd exits.
+exec 9>"$state/launcher.lock"
+flock -n 9 || fail "SABnzbd is already running."
+
+python3 - "$state" "$downloads" "$cache" <<'PY'
+import sys
+from pathlib import Path
+from configobj import ConfigObj
+
+state, downloads, cache = map(Path, sys.argv[1:])
+filename = state / "sabnzbd.ini"
+first_run = not filename.exists()
+
+config = ConfigObj(str(filename), encoding="utf-8")
+if "misc" not in config:
+    config["misc"] = {}
+misc = config["misc"]
+
+# Enforce these defaults on every launch.
+misc.update({
+    "host": "127.0.0.1",
+    "port": "8080",
+    "fixed_ports": "1",
+    "auto_browser": "0",
+    "check_new_rel": "0",
+    "enable_https_verification": "1",
+    "admin_dir": str(state / "admin"),
+    "log_dir": str(cache / "logs"),
+})
+
+if first_run:
+    misc.update({
+        "download_dir": str(downloads / "incomplete"),
+        "complete_dir": str(downloads / "complete"),
+        "cache_limit": "64M",
+    })
+
+config.write()
+PY
+
+export TMPDIR="$cache/tmp"
+
+exec /usr/local/libexec/portable-sab-backend \
+    --config-file "$state/sabnzbd.ini" \
+    --server 127.0.0.1:8080 \
+    --browser 0 \
+    "$@"

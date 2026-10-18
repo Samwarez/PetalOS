@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Save App Preferences
+Comment=Close apps first; save approved preferences and aMule server addresses to SYSTEM
+Exec=/usr/local/bin/portable-desktop save-app-preferences
+Icon=document-save
+Terminal=false
+Categories=Utility;

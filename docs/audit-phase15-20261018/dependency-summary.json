@@ -1,0 +1,94 @@
+{
+  "linux": {
+    "installed_versions": [
+      "6.12.113-1"
+    ],
+    "candidate_count": 757,
+    "urgencies": {
+      "low": 1,
+      "not yet assigned": 697,
+      "unimportant": 59
+    }
+  },
+  "libxml2": {
+    "installed_versions": [
+      "2.12.7+dfsg+really2.9.14-2.1+deb13u3"
+    ],
+    "candidate_count": 12,
+    "urgencies": {
+      "not yet assigned": 11,
+      "unimportant": 1
+    }
+  },
+  "poppler": {
+    "installed_versions": [
+      "25.03.0-5+deb13u4"
+    ],
+    "candidate_count": 16,
+    "urgencies": {
+      "low": 2,
+      "not yet assigned": 8,
+      "unimportant": 6
+    }
+  },
+  "systemd": {
+    "installed_versions": [
+      "257.13-1~deb13u1"
+    ],
+    "candidate_count": 7,
+    "urgencies": {
+      "not yet assigned": 3,
+      "unimportant": 4
+    }
+  },
+  "glibc": {
+    "installed_versions": [
+      "2.41-12+deb13u4"
+    ],
+    "candidate_count": 21,
+    "urgencies": {
+      "not yet assigned": 14,
+      "unimportant": 7
+    }
+  },
+  "cups": {
+    "installed_versions": [
+      "2.4.10-3+deb13u2"
+    ],
+    "candidate_count": 27,
+    "urgencies": {
+      "not yet assigned": 26,
+      "unimportant": 1
+    }
+  },
+  "policykit-1": {
+    "installed_versions": [
+      "126-2"
+    ],
+    "candidate_count": 2,
+    "urgencies": {
+      "not yet assigned": 1,
+      "unimportant": 1
+    }
+  },
+  "ffmpeg": {
+    "installed_versions": [
+      "7:7.1.5-0+deb13u1"
+    ],
+    "candidate_count": 39,
+    "urgencies": {
+      "not yet assigned": 37,
+      "unimportant": 2
+    }
+  },
+  "curl": {
+    "installed_versions": [
+      "8.14.1-2+deb13u7"
+    ],
+    "candidate_count": 39,
+    "urgencies": {
+      "not yet assigned": 32,
+      "unimportant": 7
+    }
+  }
+}

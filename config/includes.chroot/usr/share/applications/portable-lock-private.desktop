@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Lock Private and Desktop
+Comment=Close encrypted storage and lock the desktop immediately
+Exec=/usr/local/bin/portable-lock
+Icon=system-lock-screen
+Terminal=false
+Categories=Utility;

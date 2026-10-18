@@ -1,0 +1,13 @@
+#!/bin/sh
+set -eu
+
+# This downstream patch is reviewed against the trixie Parole package. A package
+# update must trigger review/rebuild rather than silently retain an older player.
+test "$(dpkg-query -W -f='${Version}' parole)" = '4.18.2-1'
+cd /usr/local/share/portable/native-parole
+sha256sum -c parole.sha256
+test -x /usr/bin/parole.portable-real
+test -r /usr/lib/x86_64-linux-gnu/gstreamer-1.0/libgstgtk.so
+install -o root -g root -m 0755 parole /usr/bin/parole.portable-real
+# The installed diverted executable is the only copy needed in the image.
+rm parole

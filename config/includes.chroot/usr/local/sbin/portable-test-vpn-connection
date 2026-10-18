@@ -1,0 +1,18 @@
+#!/usr/bin/python3 -I
+"""Internal post-connect tests; invoked under portable-vpn's exclusive lock."""
+import os
+import sys
+
+sys.path.insert(0, '/usr/local/lib/portable')
+from vpn_connection_checks import collect, publish
+
+if os.geteuid() != 0 or len(sys.argv) != 1:
+    raise SystemExit(1)
+try:
+    report = collect()
+    if any(report['checks'][name]['status'] != 'passed' for name in ('tunnel', 'ipv4', 'dns')):
+        raise RuntimeError()
+    publish(report)
+except Exception:
+    print('Automatic VPN checks failed; no configuration details logged.', file=sys.stderr)
+    raise SystemExit(1)

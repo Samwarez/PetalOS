@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Check VPN Exit IP
+Exec=/usr/local/bin/portable-desktop exit-ip
+Icon=network-vpn
+Terminal=false
+Categories=Network;

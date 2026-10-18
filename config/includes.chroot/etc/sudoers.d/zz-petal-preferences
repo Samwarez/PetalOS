@@ -1,0 +1,2 @@
+# Fixed, argument-free whitelist exporter; no general root command access.
+Petal ALL=(root) NOPASSWD: NOSETENV: /usr/local/sbin/portable-save-app-preferences ""

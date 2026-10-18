@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<labwc_config>
+  <theme>
+    <name>Default</name>
+    <font place="ActiveWindow" name="Sans" size="10"/>
+    <font place="InactiveWindow" name="Sans" size="10"/>
+  </theme>
+  <keyboard>
+    <default/>
+    <keybind key="A-Tab"><action name="NextWindow"/></keybind>
+    <keybind key="A-F4"><action name="Close"/></keybind>
+    <keybind key="A-F10"><action name="ToggleMaximize"/></keybind>
+    <keybind key="C-A-l"><action name="Execute" command="/usr/local/bin/portable-lock"/></keybind>
+    <keybind key="C-A-d"><action name="Execute" command="/usr/local/bin/portable-download-mode"/></keybind>
+    <keybind key="XF86MonBrightnessUp"><action name="Execute" command="/usr/local/bin/portable-brightness up"/></keybind>
+    <keybind key="XF86MonBrightnessDown"><action name="Execute" command="/usr/local/bin/portable-brightness down"/></keybind>
+    <keybind key="XF86AudioRaiseVolume"><action name="Execute" command="/usr/local/bin/portable-volume up"/></keybind>
+    <keybind key="XF86AudioLowerVolume"><action name="Execute" command="/usr/local/bin/portable-volume down"/></keybind>
+    <keybind key="XF86AudioMute"><action name="Execute" command="/usr/local/bin/portable-volume mute"/></keybind>
+  </keyboard>
+  <mouse><default/></mouse>
+</labwc_config>

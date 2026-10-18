@@ -1,0 +1,223 @@
+#!/bin/bash
+# Runs only inside a disposable, diskless QEMU guest. No external NIC exists.
+set -euo pipefail
+umask 077
+export PATH=/usr/sbin:/usr/bin:/sbin:/bin
+exec >/dev/ttyS0 2>&1
+failures=0
+finish() {
+    local result=$?
+    trap - EXIT
+    if (( result != 0 )); then
+        echo 'FAIL: guest test setup or execution'; failures=$((failures+1))
+    fi
+    echo "LIVE_TEST_FAILURES=$failures"
+    systemctl poweroff --no-block
+}
+trap finish EXIT
+check() {
+    local expected=$1 label=$2 result
+    shift 2
+    echo "LIVE_TEST_STEP=$label"
+    if timeout "${PETALOS_CHECK_TIMEOUT:-45}" bash -c '"$@"' _ "$@" >/run/petalos-test-result 2>&1; then result=0; else result=$?; fi
+    if [[ $expected == pass && $result == 0 || $expected == fail && $result != 0 && $result != 124 && $result != 137 ]]; then
+        echo "PASS: $label"
+    else
+        echo "FAIL: $label (exit $result)"; failures=$((failures+1))
+    fi
+}
+echo 'LIVE_TEST_BEGIN'
+# Report command names and kernel wait locations only, never command arguments.
+(
+    for ((i=0;i<10;i++)); do
+        sleep 25
+        ps -eo comm,wchan | awk '$1 ~ /^(systemctl|chronyd|wg-quick|ip|curl|nft|bash)$/ {print "LIVE_TEST_PROCESS=" $0}'
+    done
+) &
+systemctl is-active --quiet nftables.service
+# All generated credentials live in guest RAM; never emit them.
+mkdir -p /run/petalos-test /usr/local/lib/petalos-tests/bin
+nft -j list table inet portable_vpn >/run/petalos-test/firewall-before.json
+wg genkey >/run/petalos-test/client.key
+wg genkey >/run/petalos-test/server.key
+wg pubkey </run/petalos-test/client.key >/run/petalos-test/client.pub
+wg pubkey </run/petalos-test/server.key >/run/petalos-test/server.pub
+
+# A RAM-backed, disposable encrypted mapping satisfies the production mount guard.
+truncate -s 32M /run/petalos-test/data.img
+loop=$(/usr/sbin/losetup --find --show /run/petalos-test/data.img)
+head -c 64 /dev/urandom >/run/petalos-test/data.key
+cryptsetup open --type plain --key-file /run/petalos-test/data.key "$loop" portable_data
+mkfs.ext4 -q /dev/mapper/portable_data
+mkdir -p /mnt/private
+mount -o nodev,nosuid,noexec /dev/mapper/portable_data /mnt/private
+mkdir -p /mnt/private/Network
+{
+    echo '[Interface]'
+    printf 'PrivateKey = '; cat /run/petalos-test/client.key
+    echo 'Address = 10.77.0.2/32, fd77::2/128'
+    echo 'DNS = 10.77.0.1'
+    echo '[Peer]'
+    printf 'PublicKey = '; cat /run/petalos-test/server.pub
+    echo 'AllowedIPs = 0.0.0.0/0, ::/0'
+    echo 'Endpoint = 152.89.162.4:9929'
+} >/mnt/private/Network/wg0.conf
+mkdir -p /mnt/private/Network/Profiles
+cp /mnt/private/Network/wg0.conf /mnt/private/Network/Profiles/first.conf
+wg genkey >/run/petalos-test/server2.key
+wg pubkey </run/petalos-test/server2.key >/run/petalos-test/server2.pub
+{
+    echo '[Interface]'
+    printf 'PrivateKey = '; cat /run/petalos-test/client.key
+    echo 'Address = 10.78.0.2/32, fd78::2/128'
+    echo 'DNS = 10.78.0.1'
+    echo '[Peer]'
+    printf 'PublicKey = '; cat /run/petalos-test/server2.pub
+    echo 'AllowedIPs = 0.0.0.0/0, ::/0'
+    echo 'Endpoint = 152.89.162.6:9930'
+} >/mnt/private/Network/Profiles/second.conf
+sed 's/0.0.0.0\/0/10.0.0.0\/8/' /mnt/private/Network/Profiles/second.conf >/mnt/private/Network/Profiles/invalid.conf
+
+ip netns add provider
+ip link add test-uplink type veth peer name provider-link
+ip link set provider-link netns provider
+ip link set test-uplink address 02:00:00:00:00:02
+ip netns exec provider ip link set provider-link address 02:00:00:00:00:01
+ip addr add 192.0.2.2/24 dev test-uplink
+ip -6 addr add 2001:db8:1::2/64 dev test-uplink nodad
+ip link set test-uplink up
+ip route add default via 192.0.2.1 dev test-uplink
+ip -6 route add default via 2001:db8:1::1 dev test-uplink
+ip netns exec provider ip link set lo up
+ip netns exec provider ip addr add 192.0.2.1/24 dev provider-link
+ip netns exec provider ip -6 addr add 2001:db8:1::1/64 dev provider-link nodad
+ip netns exec provider ip addr add 152.89.162.4/32 dev provider-link
+ip netns exec provider ip addr add 152.89.162.6/32 dev provider-link
+ip netns exec provider ip link set provider-link up
+# Static fixture neighbours give the direct IPv6 probe a real physical path
+# without adding NDP allowances to the production firewall.
+ip -6 neigh replace 2001:db8:1::1 lladdr 02:00:00:00:00:01 dev test-uplink nud permanent
+ip netns exec provider ip -6 neigh replace 2001:db8:1::2 lladdr 02:00:00:00:00:02 dev provider-link nud permanent
+ip netns exec provider ip link add wg-server type wireguard
+ip netns exec provider wg set wg-server private-key /run/petalos-test/server.key \
+    listen-port 9929 peer "$(cat /run/petalos-test/client.pub)" \
+    allowed-ips 10.77.0.2/32,fd77::2/128
+ip netns exec provider ip addr add 10.77.0.1/24 dev wg-server
+ip netns exec provider ip addr add fd77::1/64 dev wg-server
+ip netns exec provider ip link set wg-server up
+ip netns exec provider ip link add wg-server2 type wireguard
+ip netns exec provider wg set wg-server2 private-key /run/petalos-test/server2.key \
+    listen-port 9930 peer "$(cat /run/petalos-test/client.pub)" \
+    allowed-ips 10.78.0.2/32,fd78::2/128
+ip netns exec provider ip addr add 10.78.0.1/24 dev wg-server2
+ip netns exec provider ip addr add fd78::1/64 dev wg-server2
+ip netns exec provider ip link set wg-server2 up
+ip netns exec provider ip addr add 198.51.100.10/32 dev lo
+ip netns exec provider ip addr add 2001:db8::10/128 dev lo
+echo '198.51.100.10 api.ipify.org' >>/etc/hosts
+echo '2001:db8::10 api.ipify.org' >>/etc/hosts
+openssl req -x509 -newkey rsa:2048 -nodes -days 1 \
+    -subj /CN=api.ipify.org -addext subjectAltName=DNS:api.ipify.org \
+    -keyout /run/petalos-test/tls.key -out /run/petalos-test/tls.pem \
+    >/dev/null 2>&1
+export SSL_CERT_FILE=/run/petalos-test/tls.pem
+ip netns exec provider openssl s_server -quiet -www -accept 443 \
+    -key /run/petalos-test/tls.key -cert /run/petalos-test/tls.pem \
+    >/dev/null 2>&1 &
+sleep 1
+# Clock synchronization is outside this network test; report it unavailable.
+cat >/usr/local/lib/petalos-tests/bin/chronyc <<'CLOCK'
+#!/bin/sh
+if [ "$1" = waitsync ]; then exit 1; fi
+exec /usr/bin/chronyc "$@"
+CLOCK
+chmod 700 /usr/local/lib/petalos-tests/bin/chronyc
+export PATH=/usr/local/lib/petalos-tests/bin:$PATH
+[[ $(command -v chronyc) == /usr/local/lib/petalos-tests/bin/chronyc ]]
+direct() {
+    curl --silent --fail --noproxy '*' --interface test-uplink -4 \
+        --connect-timeout 1 --max-time 2 https://api.ipify.org >/dev/null
+}
+export -f direct
+direct6() {
+    curl --silent --fail --noproxy '*' --interface test-uplink -6 --connect-timeout 1 --max-time 2 https://api.ipify.org >/dev/null
+}
+export -f direct6
+guard=/usr/local/sbin/portable-check-vpn
+vpn=/usr/local/sbin/portable-vpn
+if [[ ${PETALOS_APP_TEST:-0} == 1 ]]; then
+    check pass 'app fixture VPN connection' "$vpn" connect
+    source /usr/local/lib/petalos-tests/apps-live-guest
+    check pass 'app fixture VPN disconnect' "$vpn" disconnect
+    exit 0
+fi
+check fail 'direct HTTPS denied before VPN' direct
+check fail 'direct IPv6 HTTPS denied before VPN' direct6
+ip link set test-uplink down
+check fail 'connect without uplink fails' "$vpn" connect
+check pass 'failed connect removes interface and runtime profile' \
+    bash -c '! ip link show wg0 >/dev/null 2>&1 && [[ ! -f /etc/wireguard/wg0.conf ]]'
+ip link set test-uplink up
+# Link down removes the original main-table default route.
+ip route replace default via 192.0.2.1 dev test-uplink
+ip -6 addr replace 2001:db8:1::2/64 dev test-uplink nodad
+ip -6 neigh replace 2001:db8:1::1 lladdr 02:00:00:00:00:01 dev test-uplink nud permanent
+ip -6 route replace default via 2001:db8:1::1 dev test-uplink
+check pass 'real WireGuard connect and HTTPS verification' "$vpn" connect
+check pass 'guard accepts reachable real tunnel' "$guard"
+check pass 'IPv6 HTTPS works through first simulated VPN' \
+    curl --silent --fail --noproxy '*' --interface wg0 -6 --connect-timeout 3 --max-time 8 https://api.ipify.org
+check fail 'direct IPv6 HTTPS denied while connected' direct6
+check pass 'real WireGuard handshake observed' \
+    bash -c '[[ $(wg show wg0 latest-handshakes | awk "{print \$2}") -gt 0 ]]'
+check fail 'direct HTTPS denied while connected' direct
+check fail 'repeat connect refuses existing interface' "$vpn" connect
+check pass 'repeat connect leaves usable tunnel' "$guard"
+# Block transport on the simulated provider; never loosen client firewall.
+ip netns exec provider nft add table inet test_block
+ip netns exec provider nft 'add chain inet test_block input { type filter hook input priority -10; policy accept; }'
+ip netns exec provider nft add rule inet test_block input udp dport 9929 drop
+check fail 'guard rejects blocked transport' "$guard"
+check fail 'direct HTTPS denied with blocked transport' direct
+check pass 'disconnect while transport is blocked' "$vpn" disconnect
+check fail 'connect with blocked transport rolls back' "$vpn" connect
+check pass 'blocked connect removes interface and runtime profile' \
+    bash -c '! ip link show wg0 >/dev/null 2>&1 && [[ ! -f /etc/wireguard/wg0.conf ]]'
+check fail 'direct HTTPS denied after failed blocked connect' direct
+ip netns exec provider nft delete table inet test_block
+check pass 'reconnect after transport restoration' "$vpn" connect
+check pass 'guard recovers after transport restoration' "$guard"
+ip -4 route del default dev wg0 table 51820
+check fail 'guard rejects missing VPN route' "$guard"
+check fail 'direct HTTPS denied with missing VPN route' direct
+ip -4 route add default dev wg0 table 51820
+check pass 'guard recovers after route restoration' "$guard"
+check pass 'switch to first named profile' "$vpn" switch first
+check pass 'switch to second endpoint and authenticated peer' "$vpn" switch second
+check pass 'guard accepts second profile' "$guard"
+check pass 'IPv6 HTTPS works through second simulated VPN' \
+    curl --silent --fail --noproxy '*' --interface wg0 -6 --connect-timeout 3 --max-time 8 https://api.ipify.org
+check pass 'second profile endpoint and DNS are applied' \
+    bash -c '[[ $(wg show wg0 endpoints | awk "{print \$2}") == 152.89.162.6:9930 ]] && grep -Fx "nameserver 10.78.0.1" /etc/resolv.conf && [[ $(cat /mnt/private/Network/selected-profile) == second ]]'
+check fail 'direct HTTPS denied after profile switch' direct
+check pass 'old endpoint allowance removed on switch' \
+    bash -c '! nft get element inet portable_vpn endpoints4 "{ 152.89.162.4 . 9929 }" >/dev/null 2>&1 && nft get element inet portable_vpn endpoints4 "{ 152.89.162.6 . 9930 }" >/dev/null'
+check fail 'invalid profile switch fails closed' "$vpn" switch invalid
+check pass 'failed switch removes interface and endpoint allowances' \
+    bash -c '! ip link show wg0 >/dev/null 2>&1 && ! nft get element inet portable_vpn endpoints4 "{ 152.89.162.6 . 9930 }" >/dev/null 2>&1'
+check fail 'direct HTTPS denied after invalid switch' direct
+check fail 'direct IPv6 HTTPS denied after invalid switch' direct6
+check pass 'failed switch retains last verified encrypted selection' \
+    bash -c '[[ $(cat /mnt/private/Network/selected-profile) == second ]]'
+check pass 'connect uses saved selection after failed switch' "$vpn" connect
+check pass 'saved selection reconnect is verified' "$guard"
+check pass 'disconnect removes real tunnel' "$vpn" disconnect
+check fail 'direct HTTPS denied after disconnect' direct
+check fail 'direct IPv6 HTTPS denied after disconnect' direct6
+check pass 'repeat disconnect succeeds' "$vpn" disconnect
+check pass 'firewall remains active' systemctl is-active --quiet nftables.service
+check pass 'IPv4 forwarding retains drop policy' \
+    bash -c 'rules=$(nft list chain inet portable_vpn forward); [[ $rules =~ policy[[:space:]]+drop ]]'
+nft -j list table inet portable_vpn >/run/petalos-test/firewall-after.json
+check pass 'kill switch rules match their initial contents' \
+    cmp -s /run/petalos-test/firewall-before.json /run/petalos-test/firewall-after.json

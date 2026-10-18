@@ -1,0 +1,5 @@
+#!/bin/sh
+set -eu
+systemctl disable chrony.service
+ln -sf /usr/share/zoneinfo/Etc/UTC /etc/localtime
+echo Etc/UTC > /etc/timezone

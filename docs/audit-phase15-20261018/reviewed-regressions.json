@@ -1,0 +1,56 @@
+[
+  {
+    "test": "check-app-preferences.py",
+    "exit": 0,
+    "stdout": "PASS: whitelist, history exclusion, clean server list, malformed-input rejection and safe file I/O\n",
+    "stderr": ""
+  },
+  {
+    "test": "check-desktop-settings.py",
+    "exit": 0,
+    "stdout": "PASS selective desktop settings roundtrip\nPASS absolute, traversal, unrelated, symlink and device entries rejected\nPASS legacy migration drops file-chooser and unrelated app state\nAll selective desktop settings checks passed.\n",
+    "stderr": ""
+  },
+  {
+    "test": "check-vpn-profiles.py",
+    "exit": 0,
+    "stdout": "PASS: profile round trip, provider DNS order and fixed runtime routing mark\nPASS: IPv4/IPv6 endpoint transactions and empty disconnected allowances\nPASS: rejects hostname endpoint\nPASS: rejects invalid port\nPASS: rejects missing full tunnel\nPASS: rejects extra route\nPASS: rejects hook\nPASS: rejects routing override\nPASS: rejects duplicate key\nPASS: rejects extra peer\nPASS: rejects bad key\nPASS: rejects DNS injection\nPASS: rejects multicast DNS\nPASS: rejects endpoint injection\nPASS: rejects loopback endpoint\nPASS: rejects oversized profile\nPASS: profile names cannot traverse paths or collide with legacy fallback\nPASS: encrypted selection, restrictive permissions, symlink rejection and legacy fallback\n",
+    "stderr": ""
+  },
+  {
+    "test": "check-vpn-connect-flow.py",
+    "exit": 0,
+    "stdout": "PASS connect runs automatic checks after clock attempt; disconnect clears report and is repeatable\nPASS required post-connect failure rolls back, removes stale success and preserves saved selection\nPASS invalid profile cannot retain an earlier success report\n",
+    "stderr": ""
+  },
+  {
+    "test": "check-vpn-connection.py",
+    "exit": 0,
+    "stdout": "PASS bounded tunnel-bound probes, IPv6/clock warnings, required failures, private IP rejection and DNS mismatch\nPASS required failures reject publication; IPv6 and clock warnings preserve IPv4\nPASS report rejects changed interface, future timestamp, writable file and symlink\nPASS connection summary distinguishes optional IPv6 failure\n",
+    "stderr": ""
+  },
+  {
+    "test": "check-sleep-storage-hook.py",
+    "exit": 0,
+    "stdout": "PASS: suspend pre-hook locks; closure failure/timeout fails closed; resume never unlocks Private; disk sleep disabled.\n",
+    "stderr": ""
+  },
+  {
+    "test": "check-lock-display-wake.py",
+    "exit": 0,
+    "stdout": "PASS: storage closes before lock-ready handshake; display wake is delegated exclusively to the locker unlock hook.\n",
+    "stderr": ""
+  },
+  {
+    "test": "check-private-unlock-retry.py",
+    "exit": 0,
+    "stdout": "PASS: passphrase rejection distinguished from permission/device/memory/busy errors\nPASS: rejected entry retries, repeated rejection retries, cancel stops, storage errors do not retry\n",
+    "stderr": ""
+  },
+  {
+    "test": "check-sab-navigation.py",
+    "exit": 0,
+    "stdout": "PASS: SAB navigation allows local view\nPASS: SAB navigation allows local view\nPASS: SAB navigation allows local view\nPASS: SAB navigation rejects other target\nPASS: SAB navigation rejects other target\nPASS: SAB navigation rejects other target\nPASS: SAB navigation rejects other target\nPASS: SAB navigation rejects other target\nPASS: SAB navigation rejects other target\nPASS: SAB navigation rejects other target\nPASS: SAB rejects popups and permission requests\n",
+    "stderr": ""
+  }
+]

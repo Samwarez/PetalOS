@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=PetalOS Guide
+Exec=/usr/bin/geany /usr/share/doc/petalos/welcome.txt
+Hidden=true
+NoDisplay=true

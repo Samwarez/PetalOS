@@ -1,0 +1,9 @@
+{
+  "fixture": "tests/phase15-20261018/gui-editor-start.py",
+  "exit": 0,
+  "elapsed_seconds": 2.33,
+  "stderr": "",
+  "result": {
+    "native_editor_ready": true
+  }
+}

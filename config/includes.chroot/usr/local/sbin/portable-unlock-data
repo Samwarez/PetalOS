@@ -1,0 +1,49 @@
+#!/usr/bin/python3 -I
+"""Boot and graphical unlock share the fixed encrypted-storage backend."""
+import os
+import subprocess
+import sys
+
+
+def main():
+    assert os.geteuid() == 0 and os.environ.get('SUDO_USER') == 'Petal'
+    assert sys.argv[1:] in ([], ['--desktop'], ['--boot'])
+    sys.path.insert(0, '/usr/local/lib/portable')
+    from private_storage import boot_unlock, unlock, PassphraseRejected
+    try:
+        if sys.argv[1:] == ['--boot']:
+            boot_unlock()
+            return 0
+        from desktop_session import environment
+        retry = False
+        while True:
+            prompt = subprocess.run(['/usr/bin/setpriv', '--reuid=1000', '--regid=1000', '--clear-groups',
+                                     '/usr/local/bin/portable-dialog',
+                                     '--data-password-retry' if retry else '--data-password'],
+                                    env=environment(), stdin=subprocess.DEVNULL, stdout=subprocess.PIPE,
+                                    stderr=subprocess.DEVNULL, timeout=120)
+            if prompt.returncode:
+                prompt.stdout = b''
+                return 1
+            try:
+                if not 0 < len(prompt.stdout) <= 512:
+                    raise RuntimeError('Invalid passphrase input.')
+                if not unlock(prompt.stdout, raise_errors=True):
+                    raise RuntimeError('Unlock failed.')
+                # Repair only the two user-content category parents after a
+                # verified unlock; never traverse or modify existing children.
+                from compartments import private_content_parent
+                for category in ('Documents', 'Downloads'):
+                    private_content_parent(category)
+                return 0
+            except PassphraseRejected:
+                retry = True
+            finally:
+                prompt.stdout = b''
+    except Exception:
+        print('Encrypted storage was not unlocked. Check the storage device or try again.', file=sys.stderr)
+        return 1
+
+
+if __name__ == '__main__':
+    raise SystemExit(main())

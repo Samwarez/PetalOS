@@ -1,0 +1,11 @@
+{
+  "fixture": "tests/phase15-20261018/boot-proof-restore.py",
+  "exit": 0,
+  "elapsed_seconds": 2.31,
+  "stderr": "",
+  "result": {
+    "unsigned_initrd_code_executed": false,
+    "SecureBoot_enabled": true,
+    "original_initrd_restored": true
+  }
+}

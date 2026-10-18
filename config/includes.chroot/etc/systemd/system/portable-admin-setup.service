@@ -1,0 +1,14 @@
+[Unit]
+Description=Provision private PetalOS administrator credential
+After=live-config.service display-manager.service
+Wants=display-manager.service
+ConditionPathExists=/dev/mapper/portable_system
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/portable-admin-setup
+TimeoutStartSec=0
+UMask=0077
+
+[Install]
+WantedBy=graphical.target

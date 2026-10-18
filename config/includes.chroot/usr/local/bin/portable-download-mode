@@ -1,0 +1,16 @@
+#!/usr/bin/python3 -I
+"""Explicit, RAM-only exception to idle storage locking; manual lock still works."""
+import json
+import os
+import subprocess
+import sys
+assert os.getuid() == 1000 and not sys.argv[1:]
+try:
+    result = subprocess.run(['/usr/bin/sudo', '-n', '--', '/usr/local/sbin/portable-storage', 'download-toggle'],
+                            capture_output=True, text=True, timeout=5, check=True)
+    enabled = json.loads(result.stdout)['download_mode']
+    message = ('Download mode ON: idle locking is disabled and Private stays open. Manual lock still works.'
+               if enabled else 'Download mode OFF: ten-minute idle locking will close encrypted storage.')
+except Exception:
+    message = 'Download mode could not be changed.'
+subprocess.run(['/usr/local/bin/portable-message', '--notify', 'info', message], timeout=10)

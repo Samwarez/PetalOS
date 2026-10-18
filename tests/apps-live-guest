@@ -1,0 +1,132 @@
+#!/bin/bash
+# Sourced only inside the diskless fixture; all keys/data are disposable RAM.
+useradd -m -s /bin/bash petalprobe
+probe_uid=$(id -u petalprobe)
+probe_runtime=/run/user/$probe_uid
+chown petalprobe:petalprobe /mnt/private
+chmod 700 /mnt/private
+mkdir -p /dev/disk/by-label
+[[ ! -e /dev/disk/by-label/PORTABLE_DATA ]]
+[[ $(cat "/sys/class/block/${loop##*/}/loop/backing_file") == /run/petalos-test/data.img ]]
+ln -s "$loop" /dev/disk/by-label/PORTABLE_DATA
+printf 'petalprobe ALL=(root) NOPASSWD: /usr/local/sbin/portable-check-vpn, /usr/local/sbin/portable-unlock-data\n' >/etc/sudoers.d/petalos-app-test
+chmod 440 /etc/sudoers.d/petalos-app-test
+# Only this fixture trusts its generated HTTPS certificate.
+cp /run/petalos-test/tls.pem /usr/local/share/ca-certificates/petalos-test.crt
+update-ca-certificates >/dev/null 2>&1
+loginctl enable-linger petalprobe >/dev/null
+systemctl start user@$probe_uid.service
+for attempt in {1..30}; do
+    [[ ! -S $probe_runtime/bus ]] || break
+    sleep 1
+done
+cli() {
+    runuser -u petalprobe -- env XDG_RUNTIME_DIR="$probe_runtime" \
+        DBUS_SESSION_BUS_ADDRESS="unix:path=$probe_runtime/bus" "$@" </dev/null
+}
+export probe_runtime
+export -f cli
+check pass 'desktop user runtime bus is available' test -S "$probe_runtime/bus"
+check pass 'SAB backend and administration bridge become ready' cli /usr/local/bin/portable-sab-manager prepare
+check pass 'SAB binds only local IPv4' bash -c 'listeners=$(ss -H -ltn "sport = :8080"); [[ $listeners == *127.0.0.1:8080* && $listeners != *0.0.0.0:8080* && $listeners != *"[::]:8080"* ]]'
+check pass 'offline namespace reaches SAB only through its Unix bridge' \
+    cli env PORTABLE_SAB_ADMIN=1 /usr/local/bin/portable-offline /usr/bin/curl \
+    --silent --fail --output /dev/null --noproxy '*' --max-time 5 \
+    --unix-socket "$probe_runtime/portable-sab-admin/control.sock" http://127.0.0.1:8080/
+
+cat >/usr/local/lib/petalos-tests/offline-check.py <<'PY'
+import os
+from pathlib import Path
+import socket
+assert not Path('/run/dbus/system_bus_socket').exists()
+assert os.environ['DBUS_SESSION_BUS_ADDRESS'].endswith('/offline-no-bus')
+capabilities = next(line for line in Path('/proc/self/status').read_text().splitlines() if line.startswith('CapEff:'))
+assert int(capabilities.split()[1], 16) == 0
+try:
+    with socket.socket() as client:
+        client.settimeout(2)
+        client.connect(('198.51.100.10', 443))
+except OSError:
+    pass
+else:
+    raise AssertionError('offline network was reachable')
+for path in (Path.home() / 'offline-sentinel', Path('/mnt/private/offline-sentinel')):
+    path.write_text('disposable test')
+try:
+    Path('/etc/offline-write').write_text('disposable test')
+except OSError:
+    pass
+else:
+    raise AssertionError('root was writable')
+assert Path('/mnt/private/offline-sentinel').read_text() == 'disposable test'
+PY
+chmod 644 /usr/local/lib/petalos-tests/offline-check.py
+check pass 'offline namespace blocks network and buses, drops capabilities, permits Home and Private writes' \
+    cli /usr/local/bin/portable-offline /usr/bin/python3 /usr/local/lib/petalos-tests/offline-check.py
+check pass 'SAB state encrypted and logs in RAM with manual updates' cli /usr/bin/python3 -c '
+from pathlib import Path
+from configobj import ConfigObj
+p=Path("/mnt/private/AppState/sabnzbd/sabnzbd.ini")
+assert p.stat().st_mode & 0o777 == 0o600
+c=ConfigObj(str(p));m=c["misc"]
+assert str(m["check_new_rel"])=="0" and str(m["auto_browser"])=="0"
+assert m["log_dir"].startswith(str(Path.home()/".cache/"))
+m["cache_limit"]="48M";c.write()
+'
+PETALOS_CHECK_TIMEOUT=70 check pass 'SAB stops cleanly' cli /usr/local/bin/portable-sab-manager stop
+check pass 'SAB first stop completed without service timeout' bash -c '[[ $(cli systemctl --user show -p Result --value portable-sabnzbd.service) == success ]]'
+check pass 'SAB restart retains encrypted settings' cli /usr/local/bin/portable-sab-manager prepare
+check pass 'SAB user override survives restart' cli /usr/bin/python3 -c '
+from configobj import ConfigObj
+assert ConfigObj("/mnt/private/AppState/sabnzbd/sabnzbd.ini")["misc"]["cache_limit"]=="48M"
+'
+PETALOS_CHECK_TIMEOUT=70 check pass 'final SAB stop closes backend and bridge' cli /usr/local/bin/portable-sab-manager stop
+check pass 'SAB final stop completed without service timeout' bash -c '[[ $(cli systemctl --user show -p Result --value portable-sabnzbd.service) == success ]]'
+check pass 'SAB services inactive after stop' bash -c 'cli systemctl --user is-active --quiet portable-sabnzbd.service; a=$?; cli systemctl --user is-active --quiet portable-sab-admin-bridge.service; b=$?; [[ $a != 0 && $b != 0 ]]'
+check pass 'selective desktop settings can be saved' cli /bin/bash -c '
+mkdir -p "$HOME/.config/gtk-3.0"
+echo disposable-test >"$HOME/.config/gtk-3.0/settings.ini"
+echo should-not-persist >"$HOME/unrelated-file"
+/usr/local/bin/portable-save-settings
+'
+check pass 'settings archive excludes unrelated home files' cli /usr/bin/python3 -c '
+import tarfile
+with tarfile.open("/mnt/private/PortableSettings/desktop-settings.tar") as t:
+ names=t.getnames()
+ assert ".config/gtk-3.0/settings.ini" in names and "unrelated-file" not in names
+'
+check pass 'selective settings restore succeeds' cli /bin/bash -c '
+echo changed >"$HOME/.config/gtk-3.0/settings.ini"
+/usr/local/bin/portable-restore-settings
+[[ $(cat "$HOME/.config/gtk-3.0/settings.ini") == disposable-test ]]
+'
+
+# Real LUKS recovery uses only the fixture's RAM file and a test dialog shim.
+[[ $(cat "/sys/class/block/${loop##*/}/loop/backing_file") == /run/petalos-test/data.img ]]
+umount /mnt/private
+cryptsetup close portable_data
+python3 - "$probe_runtime" <<'PY'
+from pathlib import Path
+import secrets
+import sys
+root=Path(sys.argv[1])
+for name in ('recovery.pass','wrong.pass'):
+    (root/name).write_bytes(secrets.token_urlsafe(32).encode())
+PY
+chown petalprobe:petalprobe "$probe_runtime/recovery.pass" "$probe_runtime/wrong.pass"
+chmod 600 "$probe_runtime/recovery.pass" "$probe_runtime/wrong.pass"
+cryptsetup luksFormat --batch-mode --type luks2 --pbkdf pbkdf2 \
+    --key-file "$probe_runtime/recovery.pass" "$loop" >/dev/null 2>&1
+printf '#!/bin/sh\nexit 1\n' >/usr/local/bin/portable-dialog
+chmod 755 /usr/local/bin/portable-dialog
+check fail 'cancelled graphical recovery refuses unlock' env SUDO_USER=petalprobe /usr/local/sbin/portable-unlock-passphrase
+check pass 'cancelled recovery leaves mapper closed' bash -c '[[ ! -e /dev/mapper/portable_data ]]'
+printf '#!/bin/sh\nexec /usr/bin/cat %s/wrong.pass\n' "$probe_runtime" >/usr/local/bin/portable-dialog
+check fail 'wrong graphical recovery password refuses unlock' env SUDO_USER=petalprobe /usr/local/sbin/portable-unlock-passphrase
+check pass 'wrong recovery password leaves mapper closed' bash -c '[[ ! -e /dev/mapper/portable_data ]]'
+printf '#!/bin/sh\nexec /usr/bin/cat %s/recovery.pass\n' "$probe_runtime" >/usr/local/bin/portable-dialog
+check pass 'accepted graphical recovery opens real disposable LUKS' env SUDO_USER=petalprobe /usr/local/sbin/portable-unlock-passphrase
+mkfs.ext4 -q /dev/mapper/portable_data
+cryptsetup close portable_data
+check pass 'desktop unlock mounts recovered Private volume' env SUDO_USER=petalprobe /usr/local/sbin/portable-unlock-data --desktop
+check pass 'recovered Private has expected mapper and private owner' bash -c '[[ $(findmnt -n -o SOURCE --mountpoint /mnt/private) == /dev/mapper/portable_data ]] && [[ $(stat -c %u /mnt/private) == $(id -u petalprobe) ]]'

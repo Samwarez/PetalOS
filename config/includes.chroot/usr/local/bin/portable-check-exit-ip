@@ -1,0 +1,78 @@
+#!/usr/bin/python3
+import ipaddress
+import json
+import os
+from pathlib import Path
+import subprocess
+import sys
+import tempfile
+import time
+
+message = "/usr/local/bin/portable-message"
+if sys.argv[1:] not in ([], ['--ipv6']):
+    raise SystemExit('Usage: portable-check-exit-ip [--ipv6]')
+family = 6 if sys.argv[1:] else 4
+endpoint = 'https://api6.ipify.org' if family == 6 else 'https://api.ipify.org'
+
+def report(level, text):
+    print(text)
+    subprocess.run([message, "--notify", level, text], check=False)
+
+runtime = Path(f"/run/user/{os.getuid()}")
+check = subprocess.run(
+    ["/usr/bin/findmnt", "-n", "-o", "FSTYPE", "--target", str(runtime)],
+    capture_output=True, text=True
+)
+if check.returncode != 0 or check.stdout.strip() != "tmpfs":
+    raise SystemExit("Exit IP checks require a RAM-based runtime directory.")
+
+directory = runtime / "portable-status"
+directory.mkdir(mode=0o700, exist_ok=True)
+os.chmod(directory, 0o700)
+destination = directory / ('exit-ipv6.json' if family == 6 else 'exit-ip.json')
+
+# Remove the previous result before attempting a new check.
+destination.unlink(missing_ok=True)
+
+guard = subprocess.run(
+    ["/usr/bin/sudo", "-n", "/usr/local/sbin/portable-check-network-ready"],
+    stdout=subprocess.DEVNULL
+)
+if guard.returncode != 0:
+    report("error", "Exit IP check refused: VPN checks did not pass.")
+    raise SystemExit(1)
+
+report("info", f"Checking the public IPv{family} address through the VPN.")
+
+try:
+    response = subprocess.run(
+        ["/usr/bin/curl", "--disable", "--silent", "--show-error", "--fail",
+         "--noproxy", "*", "--interface", "wg0", f'-{family}',
+         "--connect-timeout", "5", "--max-time", "12",
+         endpoint],
+        capture_output=True, text=True, timeout=15, check=True
+    )
+    parsed = (ipaddress.IPv6Address if family == 6 else ipaddress.IPv4Address)(response.stdout.strip())
+    if not parsed.is_global:
+        raise ValueError("Response is not a public IP address")
+    address = str(parsed)
+except (OSError, ValueError, subprocess.SubprocessError):
+    report("error", f"VPN IPv{family} exit check failed. No current result is available.")
+    raise SystemExit(1)
+
+record = {
+    "address": address,
+    "interface": "wg0",
+    "checked_at": int(time.time()),
+}
+
+fd, temporary = tempfile.mkstemp(prefix=".exit-ip-", dir=directory)
+try:
+    with os.fdopen(fd, "w") as output:
+        json.dump(record, output)
+    os.replace(temporary, destination)
+finally:
+    if os.path.exists(temporary):
+        os.unlink(temporary)
+
+report("success", f"Public IPv{family} observed through wg0: {address}")

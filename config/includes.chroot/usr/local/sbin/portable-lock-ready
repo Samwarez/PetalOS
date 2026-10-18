@@ -1,0 +1,13 @@
+#!/usr/bin/python3 -I
+"""Fixed availability check; never output the protected credential."""
+import os
+import sys
+
+try:
+    assert os.geteuid() == 0 and not sys.argv[1:]
+    assert os.environ.get('SUDO_UID') == '1000' and os.environ.get('SUDO_USER') == 'Petal'
+    sys.path.insert(0, '/usr/local/lib/portable')
+    from private_storage import identity, backend
+    backend().device(identity(), 'data')
+except Exception:
+    raise SystemExit(1)

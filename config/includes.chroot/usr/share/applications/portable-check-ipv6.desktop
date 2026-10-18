@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Check VPN IPv6
+Exec=/usr/local/bin/portable-desktop exit-ipv6
+Icon=network-vpn
+Terminal=false
+Categories=Network;

@@ -1,0 +1,12 @@
+{
+  "fixture": "tests/phase15-20261018/lock-start.py",
+  "exit": 0,
+  "elapsed_seconds": 17.3,
+  "stderr": "",
+  "result": {
+    "idle_inhibited_with_download_mode": true,
+    "idle_controller_returns_inhibited": true,
+    "actual_idle_event_closes_Private": true,
+    "graphical_locker_running": true
+  }
+}

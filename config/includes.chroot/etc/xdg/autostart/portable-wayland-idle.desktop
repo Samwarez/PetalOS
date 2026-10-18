@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=PetalOS Wayland Session Lock
+Exec=/usr/local/libexec/portable-wayland-idle
+TryExec=/usr/bin/swayidle
+OnlyShowIn=XFCE;
+Terminal=false
+NoDisplay=true

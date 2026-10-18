@@ -1,0 +1,16 @@
+task-xfce-desktop
+network-manager
+network-manager-gnome
+mousepad
+ristretto
+cryptsetup
+cryptsetup-initramfs
+torbrowser-launcher
+ca-certificates
+labwc
+qtwayland5
+wayland-utils
+swaybg
+swayidle
+gtklock
+wlr-randr

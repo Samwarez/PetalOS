@@ -1,0 +1,12 @@
+{
+  "fixture": "tests/phase15-20261018/transmission-download.py",
+  "exit": 0,
+  "elapsed_seconds": 8.64,
+  "stderr": "",
+  "result": {
+    "actual_download_complete": true,
+    "expected_bytes": 1198,
+    "expected_sha256": "a0c66a1fe046f008b6db9584d05347dd8ded2b78250851b61d3861c213ac361e",
+    "started": true
+  }
+}

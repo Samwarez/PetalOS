@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Toggle Download Mode
+Comment=Keep Private open during idle downloads; manual lock still works
+Exec=/usr/local/bin/portable-download-mode
+Icon=folder-download
+Terminal=false
+Categories=Utility;

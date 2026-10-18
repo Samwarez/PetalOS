@@ -1,0 +1,13 @@
+{
+  "fixture": "tests/phase15-20261018/full-storage.py",
+  "exit": 0,
+  "elapsed_seconds": 1.93,
+  "stderr": "",
+  "result": {
+    "full_store_update_reports_failure": false,
+    "original_database_unchanged": false,
+    "original_database_readable": false,
+    "retry_after_freeing_space_succeeds": false,
+    "retried_change_persisted": false
+  }
+}

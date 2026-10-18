@@ -1,0 +1,14 @@
+{
+  "fixture": "tests/phase15-20261018/interrupted-connect.py",
+  "exit": 0,
+  "elapsed_seconds": 12.74,
+  "stderr": "",
+  "result": {
+    "tunnel_created_before_interruption": true,
+    "interrupted_operation_failed": true,
+    "mapping_cleaned": true,
+    "runtime_key_file_cleaned": true,
+    "gate_denied": true,
+    "reconnect_without_reboot": true
+  }
+}

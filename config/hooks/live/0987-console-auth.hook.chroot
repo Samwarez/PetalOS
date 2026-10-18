@@ -1,0 +1,12 @@
+#!/bin/sh
+set -eu
+# The documented public desktop password is not an authorization to enter an
+# already-unlocked Private session through another virtual console. Root uses
+# the separately configured private administrator credential (locked otherwise).
+guard='auth requisite pam_succeed_if.so quiet user = root'
+if ! /usr/bin/grep -Fxq "$guard" /etc/pam.d/login; then
+    temporary=$(mktemp /etc/pam.d/.petalos-login.XXXXXX)
+    { printf '%s\n' "$guard"; cat /etc/pam.d/login; } > "$temporary"
+    chmod 644 "$temporary"
+    mv "$temporary" /etc/pam.d/login
+fi

@@ -1,0 +1,4 @@
+# The public desktop login password must not unlock the private session.
+# expose_authtok supplies a bounded password pipe, never a command argument.
+auth required pam_exec.so quiet expose_authtok /usr/bin/sudo -n -- /usr/local/sbin/portable-lock-auth
+account required pam_permit.so

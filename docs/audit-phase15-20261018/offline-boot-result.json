@@ -1,0 +1,17 @@
+{
+  "fixture": "tests/phase15-20261018/offline-boot.py",
+  "exit": 0,
+  "elapsed_seconds": 3.15,
+  "stderr": "",
+  "result": {
+    "SYSTEM_state_ready_without_network": true,
+    "Private_closed_without_network": true,
+    "no_WireGuard_at_startup": true,
+    "no_swap": true,
+    "all_underlay_carriers_down": true,
+    "desktop_compositor_ready": true,
+    "network_app_launch_denied": true,
+    "offline_editor_launches": true,
+    "runtime_WireGuard_key_absent": true
+  }
+}

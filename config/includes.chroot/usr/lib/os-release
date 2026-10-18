@@ -1,0 +1,8 @@
+PRETTY_NAME="PetalOS RC 1"
+NAME="PetalOS"
+VERSION="RC 1"
+VERSION_ID=rc1
+BUILD_ID=rc1
+ID=petalos
+ID_LIKE=debian
+VERSION_CODENAME=trixie

@@ -1,0 +1,10 @@
+#include <tunables/global>
+profile petalos_playback {
+  #include <abstractions/petalos-compartment-common>
+  /home/petal-*/{,**} rwkl,
+  /run/portable-playback.fifo rw,
+  /run/pulse.pa r,
+  deny network inet,
+  deny network inet6,
+  deny /mnt/private/{,**} rwkl,
+}

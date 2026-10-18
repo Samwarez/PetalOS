@@ -1,0 +1,14 @@
+#!/bin/sh
+set -eu
+for name in x-www-browser gnome-www-browser; do
+    update-alternatives --install /usr/bin/"$name" "$name" /usr/local/bin/portable-web-browser 1000
+    update-alternatives --set "$name" /usr/local/bin/portable-web-browser
+done
+# No native mail client is provided; remove the vendor mail-key launcher.
+python3 - <<'PYMAIL'
+from pathlib import Path
+p = Path('/etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml')
+if p.exists():
+    p.write_text(''.join(line for line in p.read_text().splitlines(True) if 'exo-open --launch MailReader' not in line))
+PYMAIL
+update-desktop-database /usr/share/applications

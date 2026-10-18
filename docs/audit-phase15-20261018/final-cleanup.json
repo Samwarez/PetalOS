@@ -1,0 +1,7 @@
+{
+  "audit_VM_powered_off": true,
+  "QMP_and_serial_sockets_removed": true,
+  "image_not_in_use": true,
+  "restored_boot_initrd_readback_sha256": "2625d4f7a1c7ec10a0ec156e10c62df7874e595beacde15354dfc496cbd90247",
+  "matches_original_release": true
+}

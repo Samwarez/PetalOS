@@ -1,0 +1,3 @@
+# Exact no-argument, read-only gate; no general administrator authorization.
+Petal ALL=(root) NOPASSWD: NOSETENV: /usr/local/sbin/portable-check-tor-ready ""
+Petal ALL=(root) NOPASSWD: NOSETENV: /usr/local/sbin/portable-check-network-ready ""

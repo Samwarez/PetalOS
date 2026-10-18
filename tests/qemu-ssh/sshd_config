@@ -1,0 +1,26 @@
+Port 22
+ListenAddress 127.0.0.1
+HostKey /run/petalos-qemu-ssh/ssh_host_ed25519_key
+AuthorizedKeysFile /etc/petalos-qemu-ssh/authorized_keys
+PermitRootLogin no
+AllowUsers Petal user
+PubkeyAuthentication yes
+AuthenticationMethods publickey
+PasswordAuthentication no
+KbdInteractiveAuthentication no
+GSSAPIAuthentication no
+HostbasedAuthentication no
+Compression no
+PermitTTY no
+MaxAuthTries 3
+LoginGraceTime 20
+UsePAM yes
+AllowAgentForwarding no
+AllowTcpForwarding no
+X11Forwarding no
+PermitTunnel no
+PermitUserEnvironment no
+DisableForwarding yes
+PrintMotd no
+LogLevel ERROR
+Subsystem sftp internal-sftp

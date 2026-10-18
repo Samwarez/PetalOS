@@ -1,0 +1,14 @@
+[Desktop Entry]
+Type=Application
+Name=Tor Browser (RAM session)
+Comment=Run Tor Browser from RAM using the saved installation archive
+Exec=/usr/local/bin/portable-desktop tor %U
+Icon=/usr/share/icons/hicolor/128x128/apps/portable-tor.png
+Terminal=false
+Categories=Network;WebBrowser;
+MimeType=x-scheme-handler/http;x-scheme-handler/https;
+Actions=InstallArchive;
+
+[Desktop Action InstallArchive]
+Name=Install Tor Archive
+Exec=/usr/local/bin/portable-tor-install

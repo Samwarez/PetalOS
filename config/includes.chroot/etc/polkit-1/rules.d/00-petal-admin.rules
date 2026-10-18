@@ -1,0 +1,32 @@
+// Permit only these desktop controls to the active local desktop. Remote
+// sessions and application-role accounts retain the administrator boundary.
+// Return before later vendor rules for the live account; no retained grant.
+polkit.addAdminRule(function(action, subject) {
+    return ["unix-user:root"];
+});
+polkit.addRule(function(action, subject) {
+    var desktopControls = [
+        "org.xfce.power.backlight-helper",
+        "org.x.xf86-video-intel.backlight-helper",
+        "org.blueman.rfkill.setstate",
+        "org.freedesktop.NetworkManager.wifi.scan",
+        "org.freedesktop.NetworkManager.network-control",
+        "org.freedesktop.NetworkManager.settings.modify.own",
+        "org.freedesktop.NetworkManager.enable-disable-wifi",
+        "org.freedesktop.login1.suspend",
+        "org.freedesktop.login1.suspend-multiple-sessions",
+        "org.freedesktop.login1.inhibit-delay-sleep",
+        "org.freedesktop.login1.inhibit-handle-lid-switch",
+        "org.freedesktop.login1.power-off",
+        "org.freedesktop.login1.power-off-multiple-sessions",
+        "org.freedesktop.login1.reboot",
+        "org.freedesktop.login1.reboot-multiple-sessions"
+    ];
+    if (subject.user === "Petal" && subject.local === true &&
+            subject.active === true && desktopControls.indexOf(action.id) !== -1) {
+        return polkit.Result.YES;
+    }
+    if (subject.user === "Petal" || subject.user.indexOf("petal-") === 0) {
+        return polkit.Result.AUTH_ADMIN;
+    }
+});

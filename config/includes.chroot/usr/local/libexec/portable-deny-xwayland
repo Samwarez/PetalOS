@@ -1,0 +1,3 @@
+#!/bin/sh
+# Strict native-Wayland test sessions must never start an X11 compatibility server.
+exit 1

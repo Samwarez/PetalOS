@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Disconnect VPN
+Exec=/usr/local/bin/portable-vpn-profiles disconnect
+Icon=network-vpn
+Terminal=false
+Categories=Network;

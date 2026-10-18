@@ -1,0 +1,18 @@
+#!/bin/bash
+set -euo pipefail
+for pair in transmission-gtk:transmission pan:pan amule:amule sabnzbdplus:sabnzbd; do
+    name=${pair%%:*}
+    app=${pair#*:}
+    original="/usr/bin/$name"
+    real="$original.portable-real"
+    destination=$(dpkg-divert --truename "$original")
+    if [[ $destination == "$original" ]]; then
+        [[ -x $original ]]
+        dpkg-divert --local --add --rename --divert "$real" "$original"
+    elif [[ $destination != "$real" ]]; then
+        echo "Unexpected network application diversion: $name" >&2
+        exit 1
+    fi
+    printf '#!/bin/sh\nexec /usr/local/bin/portable-%s "$@"\n' "$app" > "$original"
+    chmod 755 "$original"
+done

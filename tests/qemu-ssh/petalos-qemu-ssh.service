@@ -1,0 +1,13 @@
+[Unit]
+Description=PetalOS test VM loopback SSH server
+After=live-config.service
+ConditionPathExists=/run/petalos-qemu-ssh/ssh_host_ed25519_key
+
+[Service]
+ExecStartPre=/usr/sbin/sshd -t -f /etc/petalos-qemu-ssh/sshd_config
+ExecStart=/usr/sbin/sshd -D -e -f /etc/petalos-qemu-ssh/sshd_config
+Restart=on-failure
+RestartSec=2
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,231 @@
+#!/usr/bin/python3
+"""Encrypted profile management with graphical sudo authentication/errors."""
+from pathlib import Path
+import os
+import re
+import subprocess
+import sys
+import threading
+
+sys.path.insert(0, '/usr/local/lib/portable')
+from vpn_profiles import NETWORK, ProfileError, atomic_write, checked_name, parse, read_profile, safe_directory, serialize
+from vpn_connection_checks import current_report, summary
+
+
+def main():
+    if sys.argv[1:] == ['--askpass']:
+        # Use the shared administrator prompt, including Caps Lock indication
+        # and sudo's exact newline/cancellation protocol.
+        os.execv('/usr/local/bin/portable-dialog',
+                 ['/usr/local/bin/portable-dialog', '--sudo-password'])
+    import gi
+    gi.require_version('Gtk', '3.0')
+    from gi.repository import Gtk, GLib
+    os.umask(0o077)
+
+    def message(text, error=False, parent=None):
+        dialog = Gtk.MessageDialog(transient_for=parent, modal=True,
+            message_type=Gtk.MessageType.ERROR if error else Gtk.MessageType.INFO,
+            buttons=Gtk.ButtonsType.OK, text=text)
+        dialog.run()
+        dialog.destroy()
+
+    if os.geteuid() == 0:
+        message('Open the VPN manager as the desktop user.', True)
+        return 1
+    if sys.argv[1:] not in ([], ['disconnect']):
+        message('Invalid VPN manager action.', True)
+        return 1
+    from system_state import ready
+    if not ready():
+        message('Encrypted SYSTEM settings are unavailable. Reboot and unlock SYSTEM.', True)
+        return 1
+    directory = NETWORK / 'Profiles'
+    try:
+        safe_directory(directory)
+        directory.mkdir(mode=0o700, parents=True, exist_ok=True)
+        os.chmod(directory, 0o700)
+    except Exception:
+        message('Could not open the encrypted profile folder. Check storage and file permissions.', True)
+        return 1
+
+    migration_warning = False
+    # Preserve the legacy file; an invalid legacy profile must not prevent Add.
+    legacy = NETWORK / 'wg0.conf'
+    original = directory / 'original.conf'
+    if legacy.is_file() and not original.exists() and not original.is_symlink():
+        try:
+            atomic_write(original, serialize(read_profile(legacy)))
+        except Exception:
+            migration_warning = True
+
+    window = Gtk.Window(title='VPN Profiles')
+    window.set_default_size(440, 220)
+    box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
+    box.set_border_width(18)
+    window.add(box)
+    box.add(Gtk.Label(label='Profiles are stored in System Settings/Network/Profiles.\nSwitching keeps the firewall active.', wrap=True))
+    picker = Gtk.ComboBoxText()
+    box.add(picker)
+    buttons = Gtk.Box(spacing=8)
+    box.add(buttons)
+    add = Gtk.Button(label='Add Profile')
+    connect = Gtk.Button(label='Connect / Switch')
+    disconnect = Gtk.Button(label='Disconnect')
+    for button in (add, connect, disconnect):
+        buttons.add(button)
+    initial = ('The legacy configuration could not be migrated. Add a validated profile.'
+               if migration_warning else 'Choose a profile to connect.')
+    if not migration_warning:
+        previous = current_report()
+        if previous:
+            initial = summary(previous)
+    status = Gtk.Label(label=initial)
+    status.set_line_wrap(True)
+    box.add(status)
+    spinner = Gtk.Spinner()
+    box.add(spinner)
+    busy = False
+
+    def refresh(preferred=None):
+        picker.remove_all()
+        names = []
+        for path in sorted(directory.glob('*.conf')):
+            if path.is_symlink() or not path.is_file():
+                continue
+            try:
+                checked_name(path.stem)
+            except ProfileError:
+                continue
+            names.append(path.stem)
+            picker.append(path.stem, path.stem)
+        marker = NETWORK / 'selected-profile'
+        if preferred is None and marker.is_file() and not marker.is_symlink() and marker.stat().st_size <= 65:
+            preferred = marker.read_text().strip()
+        if preferred in names:
+            picker.set_active_id(preferred)
+        elif names:
+            picker.set_active(0)
+
+    def import_profile(_button):
+        chooser = Gtk.FileChooserDialog(title='Choose a WireGuard configuration', transient_for=window,
+            action=Gtk.FileChooserAction.OPEN)
+        chooser.add_buttons('Cancel', Gtk.ResponseType.CANCEL, 'Open', Gtk.ResponseType.OK)
+        response = chooser.run()
+        filename = chooser.get_filename()
+        chooser.destroy()
+        if response != Gtk.ResponseType.OK or not filename:
+            return
+        try:
+            source = Path(filename)
+            # The import source may have loose permissions; the encrypted copy is 600.
+            profile = read_profile(source, protected=False)
+            dialog = Gtk.Dialog(title='Name the profile', transient_for=window, modal=True)
+            dialog.add_buttons('Cancel', Gtk.ResponseType.CANCEL, 'Add', Gtk.ResponseType.OK)
+            entry = Gtk.Entry()
+            entry.set_text(re.sub(r'[^A-Za-z0-9_-]', '-', source.stem)[:64])
+            dialog.get_content_area().add(entry)
+            dialog.show_all()
+            response = dialog.run()
+            name = entry.get_text()
+            dialog.destroy()
+            if response != Gtk.ResponseType.OK:
+                return
+            checked_name(name)
+            target = directory / f'{name}.conf'
+            if target.exists() or target.is_symlink():
+                raise ProfileError('That profile name already exists. Choose a different name.')
+            # Exclusive creation prevents overwriting a profile in another window.
+            fd = os.open(target, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o600)
+            with os.fdopen(fd, 'w') as output:
+                output.write(serialize(profile))
+                output.flush()
+                os.fsync(output.fileno())
+            fd = os.open(directory, os.O_RDONLY | os.O_DIRECTORY)
+            try:
+                os.fsync(fd)
+            finally:
+                os.close(fd)
+            refresh(name)
+            status.set_text('Profile added. Select Connect / Switch to use it.')
+        except ProfileError as error:
+            message(str(error), True, window)
+        except Exception:
+            message('Could not import the profile. No configuration contents were logged.', True, window)
+
+    def perform(action):
+        nonlocal busy
+        if busy:
+            return
+        name = picker.get_active_id()
+        if action == 'switch':
+            try:
+                if not name:
+                    raise ProfileError('Add or choose a profile first.')
+                read_profile(directory / f'{checked_name(name)}.conf')
+            except ProfileError as error:
+                message(str(error), True, window)
+                return
+            except Exception:
+                message('The selected profile cannot be read safely.', True, window)
+                return
+        busy = True
+        buttons.set_sensitive(False)
+        picker.set_sensitive(False)
+        spinner.start()
+        status.set_text('Disconnecting VPN…' if action == 'disconnect' else 'Connecting VPN, synchronizing the clock and testing the connection…')
+        command = ['/usr/bin/sudo', '-A', '--', '/usr/local/sbin/portable-vpn', action]
+        if action == 'switch':
+            command.append(name)
+
+        def finished(success, report, tests_failed):
+            nonlocal busy
+            busy = False
+            spinner.stop()
+            buttons.set_sensitive(True)
+            picker.set_sensitive(True)
+            if tests_failed:
+                text = 'Automatic VPN tests failed. The connection was rejected and the firewall remains active. Retry Disconnect before reconnecting.'
+            elif not success:
+                text = 'VPN action failed or authorization was cancelled. The firewall remains active. Check your profile and network connection before retrying.'
+            elif action == 'disconnect':
+                text = 'VPN disconnected. The firewall remains active.'
+            else:
+                text = summary(report)
+            status.set_text(text)
+            if not success:
+                message(text, True, window)
+            return False
+
+        def worker():
+            environment = {**os.environ, 'SUDO_ASKPASS': '/usr/local/bin/portable-vpn-askpass'}
+            success = False
+            report = None
+            tests_failed = False
+            try:
+                result = subprocess.run(command, env=environment, stdin=subprocess.DEVNULL,
+                                        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                success = result.returncode == 0
+                tests_failed = result.returncode == 20
+                if success and action == 'switch':
+                    report = current_report()
+            except Exception:
+                pass
+            GLib.idle_add(finished, success, report, tests_failed)
+        threading.Thread(target=worker, daemon=True).start()
+
+    add.connect('clicked', import_profile)
+    connect.connect('clicked', lambda _: perform('switch'))
+    disconnect.connect('clicked', lambda _: perform('disconnect'))
+    window.connect('delete-event', lambda *_: busy)
+    window.connect('destroy', Gtk.main_quit)
+    refresh()
+    window.show_all()
+    if sys.argv[1:] == ['disconnect']:
+        GLib.idle_add(lambda: (perform('disconnect'), False)[1])
+    Gtk.main()
+    return 0
+
+
+if __name__ == '__main__':
+    sys.exit(main())

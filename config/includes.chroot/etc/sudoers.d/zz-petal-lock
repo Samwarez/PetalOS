@@ -1,0 +1,5 @@
+# Fixed password verifier only; no arguments or caller-supplied root command.
+Petal ALL=(root) NOPASSWD: NOSETENV: /usr/local/sbin/portable-lock-auth ""
+Petal ALL=(root) NOPASSWD: NOSETENV: /usr/local/sbin/portable-lock-ready ""
+Petal ALL=(root) NOPASSWD: NOSETENV: /usr/local/sbin/portable-storage lock, /usr/local/sbin/portable-storage idle-lock, /usr/local/sbin/portable-storage download-toggle, /usr/local/sbin/portable-storage status
+Petal ALL=(root) NOPASSWD: NOSETENV: /usr/local/sbin/portable-unlock-data --desktop

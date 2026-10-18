@@ -1,0 +1,127 @@
+#!/usr/bin/python3
+"""Graphical progress and errors for fixed desktop actions, without raw logs."""
+from pathlib import Path
+import os
+import subprocess
+import sys
+import threading
+from urllib.parse import urlsplit
+
+ACTIONS = {
+    'printing-start': ('Starting printing', ['/usr/bin/sudo', '-A', '--', '/usr/local/sbin/portable-printing', 'start']),
+    'printing-stop': ('Stopping printing', ['/usr/bin/sudo', '-A', '--', '/usr/local/sbin/portable-printing', 'stop']),
+    'save-app-preferences': ('Saving approved app preferences', ['/usr/bin/sudo', '-n', '--', '/usr/local/sbin/portable-save-app-preferences']),
+    'private': ('Opening Private Storage', ['/usr/bin/sudo', '-A', '--', '/usr/local/sbin/portable-unlock-data', '--desktop']),
+    'tor': ('Loading Tor Browser into RAM', ['/usr/bin/sudo', '-n', '--', '/usr/local/sbin/portable-compartment', 'launch', 'tor']),
+    'exit-ip': ('Checking VPN exit IP', ['/usr/local/bin/portable-check-exit-ip']),
+    'exit-ipv6': ('Checking VPN IPv6', ['/usr/local/bin/portable-check-exit-ip', '--ipv6']),
+    'save-settings': ('Saving desktop settings', ['/usr/local/bin/portable-save-settings']),
+    'sab-open': ('Starting SABnzbd', ['/usr/bin/sudo', '-n', '--', '/usr/local/sbin/portable-compartment', 'launch', 'sabnzbd']),
+    'sab-stop': ('Stopping SABnzbd', ['/usr/bin/sudo', '-n', '--', '/usr/local/sbin/portable-compartment', 'stop', 'sabnzbd']),
+    'transmission': ('Preparing Transmission', ['/usr/bin/sudo', '-n', '--', '/usr/local/sbin/portable-compartment', 'launch', 'transmission']),
+    'pan': ('Preparing Pan', ['/usr/bin/sudo', '-n', '--', '/usr/local/sbin/portable-compartment', 'launch', 'pan']),
+    'amule': ('Preparing aMule', ['/usr/bin/sudo', '-n', '--', '/usr/local/sbin/portable-compartment', 'launch', 'amule']),
+}
+ERRORS = {
+    'printing-start': 'Printing could not be started, or administrator authorization was cancelled.',
+    'printing-stop': 'Printing could not be stopped, or administrator authorization was cancelled.',
+    'save-app-preferences': 'Preferences were not saved. Close Transmission, Pan, aMule, Geany, KeePassXC and Quod Libet first, then retry. Keep Private unlocked if they used it; SYSTEM settings must be available.',
+    'private': 'Private Storage could not be unlocked, or authorization was cancelled.',
+    'tor': 'Tor was not started. Connect VPN and synchronize the clock. Check that a signed Tor archive is installed in SYSTEM settings.',
+    'exit-ip': 'Exit IP check failed. Connect VPN and check its current status before retrying.',
+    'exit-ipv6': 'VPN IPv6 check failed. IPv4 may still work. Verify the selected provider profile supports IPv6 before retrying.',
+    'save-settings': 'Settings were not saved. Check encrypted SYSTEM storage and the supported desktop settings.',
+    'sab-open': 'SABnzbd did not become ready. Connect VPN before retrying. Private is optional.',
+    'sab-stop': 'SABnzbd could not be stopped. Check its current service status.',
+    'transmission': 'Transmission was not started. Connect VPN before retrying. Private is optional.',
+    'pan': 'Pan was not started. Connect VPN and check its RAM cache links. Private is optional.',
+    'amule': 'aMule was not started. Connect VPN and close any existing aMule instance before retrying. Private is optional.',
+}
+
+
+def main():
+    import gi
+    gi.require_version('Gtk', '3.0')
+    from gi.repository import Gtk, GLib
+    if len(sys.argv) < 2 or sys.argv[1] not in ACTIONS or os.geteuid() == 0:
+        return 1
+    action = sys.argv[1]
+    extra = sys.argv[2:]
+    if extra and action not in ('transmission', 'pan', 'amule', 'tor'):
+        return 1
+    # File-association arguments cannot override encrypted state paths via flags.
+    def valid_argument(value):
+        if action == 'tor':
+            try:
+                parsed = urlsplit(value)
+                return (parsed.scheme in ('http', 'https') and bool(parsed.hostname)
+                        and not any(c in value for c in ('\n', '\r', '\x00')))
+            except ValueError:
+                return False
+        return (Path(value).is_absolute() or value.startswith('file://') or
+                (action == 'transmission' and value.startswith('magnet:')))
+    if any(not valid_argument(value) for value in extra):
+        return 1
+    title, command = ACTIONS[action]
+    environment = {**os.environ, 'SUDO_ASKPASS': '/usr/local/bin/portable-askpass'}
+    window = Gtk.Window(title=title)
+    box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
+    box.set_border_width(20)
+    box.add(Gtk.Label(label=title + '…'))
+    spinner = Gtk.Spinner()
+    box.add(spinner)
+    window.add(box)
+    window.connect('delete-event', lambda *_: True)
+    window.connect('destroy', Gtk.main_quit)
+    outcome = 1
+
+    def launch(command, **kwargs):
+        return subprocess.Popen(command, stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL,
+                         stderr=subprocess.DEVNULL, **kwargs)
+
+    def completed(success):
+        nonlocal outcome
+        spinner.stop()
+        if success:
+            try:
+                if action == 'private':
+                    link = Path.home() / 'Private'
+                    if not link.exists() and not link.is_symlink():
+                        link.symlink_to('/mnt/private')
+                    launch(['/usr/bin/thunar', '/mnt/private'])
+                elif action in ('save-settings', 'sab-stop', 'printing-start', 'printing-stop'):
+                    dialog = Gtk.MessageDialog(transient_for=window, modal=True,
+                        message_type=Gtk.MessageType.INFO, buttons=Gtk.ButtonsType.OK,
+                        text={'save-settings': 'Desktop settings saved.', 'sab-stop': 'SABnzbd stopped.',
+                              'printing-start': 'Local printing is on for this session.',
+                              'printing-stop': 'Printing is off.'}[action])
+                    dialog.run()
+                    dialog.destroy()
+                outcome = 0
+            except Exception:
+                success = False
+        if not success:
+            dialog = Gtk.MessageDialog(transient_for=window, modal=True,
+                message_type=Gtk.MessageType.ERROR, buttons=Gtk.ButtonsType.OK, text=ERRORS[action])
+            dialog.run()
+            dialog.destroy()
+        window.destroy()
+        return False
+
+    def worker():
+        success = False
+        try:
+            success = subprocess.run([*command, *extra], env=environment, stdin=subprocess.DEVNULL,
+                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode == 0
+        except Exception:
+            pass
+        GLib.idle_add(completed, success)
+    window.show_all()
+    spinner.start()
+    threading.Thread(target=worker, daemon=True).start()
+    Gtk.main()
+    return outcome
+
+
+if __name__ == '__main__':
+    sys.exit(main())

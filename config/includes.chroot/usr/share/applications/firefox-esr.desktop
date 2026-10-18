@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Local HTML Viewer (offline)
+Comment=View local HTML in a RAM session without network access
+Exec=/usr/local/bin/portable-offline /usr/lib/firefox-esr/firefox-esr --no-remote %U
+Icon=firefox-esr
+Terminal=false
+Categories=Utility;Viewer;
+MimeType=text/html;application/xhtml+xml;

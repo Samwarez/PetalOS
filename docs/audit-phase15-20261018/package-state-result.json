@@ -1,0 +1,23 @@
+{
+  "fixture": "tests/phase15-20261018/package-state.py",
+  "exit": 0,
+  "elapsed_seconds": 9.09,
+  "stderr": "",
+  "result": {
+    "signed_apt_refresh": true,
+    "available_package_upgrades": [],
+    "kernel_built_using": "linux (= 6.12.113-1)",
+    "installed_count": 1605,
+    "sources": "Package files:\n 100 /var/lib/dpkg/status\n     release a=now\n 500 http://deb.debian.org/debian trixie-updates/main amd64 Packages\n     release v=13-updates,o=Debian,a=stable-updates,n=trixie-updates,l=Debian,c=main,b=amd64\n     origin deb.debian.org\n 500 http://security.debian.org trixie-security/non-free-firmware amd64 Packages\n     release v=13,o=Debian,a=stable-security,n=trixie-security,l=Debian-Security,c=non-free-firmware,b=amd64\n     origin security.debian.org\n 500 http://security.debian.org trixie-security/contrib amd64 Packages\n     release v=13,o=Debian,a=stable-security,n=trixie-security,l=Debian-Security,c=contrib,b=amd64\n     origin security.debian.org\n 500 http://security.debian.org trixie-security/main amd64 Packages\n     release v=13,o=Debian,a=stable-security,n=trixie-security,l=Debian-Security,c=main,b=amd64\n     origin security.debian.org\n 500 http://deb.debian.org/debian trixie/non-free-firmware amd64 Packages\n     release v=13.7,o=Debian,a=stable,n=trixie,l=Debian,c=non-free-firmware,b=amd64\n     origin deb.debian.org\n 500 http://deb.debian.org/debian trixie/non-free amd64 Packages\n     release v=13.7,o=Debian,a=stable,n=trixie,l=Debian,c=non-free,b=amd64\n     origin deb.debian.org\n 500 http://deb.debian.org/debian trixie/contrib amd64 Packages\n     release v=13.7,o=Debian,a=stable,n=trixie,l=Debian,c=contrib,b=amd64\n     origin deb.debian.org\n 500 http://deb.debian.org/debian trixie/main amd64 Packages\n     release v=13.7,o=Debian,a=stable,n=trixie,l=Debian,c=main,b=amd64\n     origin deb.debian.org\nPinned packages:\n",
+    "parole": {
+      "binary_matches_provenance": true,
+      "binary_sha256": "45fb392d2acd1ce21ed4c0fc22e0afa1afe21d30a9b6fcf0385c10c8c7bcf544"
+    },
+    "conky": {
+      "binary_matches_provenance": true,
+      "binary_sha256": "193a9f592a1fffc5e11824b746ce1c3c4c37ea86cdf84d237cfa1bdd00a4c76c"
+    },
+    "amule_sha256": "c96577736b3c0bb818ada0dcbed200269a29a38c806748d28de8ef92ef07fa4a",
+    "amule_matches_debian_md5": true
+  }
+}

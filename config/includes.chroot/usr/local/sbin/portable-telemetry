@@ -1,0 +1,33 @@
+#!/usr/bin/python3
+"""Root-produced bounded UI telemetry; never an application launch guard."""
+from pathlib import Path
+import json
+import os
+import subprocess
+import tempfile
+import time
+
+def query(args):
+    try:
+        result=subprocess.run(args,capture_output=True,text=True,timeout=2)
+        return result.stdout if result.returncode==0 else ''
+    except (OSError,subprocess.TimeoutExpired):return ''
+
+if os.geteuid()!=0:raise SystemExit(1)
+latest=0
+for line in query(['/usr/bin/wg','show','wg0','latest-handshakes']).splitlines():
+    fields=line.split()
+    if len(fields)==2 and fields[1].isdigit():latest=max(latest,int(fields[1]))
+tracking=query(['/usr/bin/chronyc','tracking'])
+record={'checked_at':int(time.time()),'latest_handshake':latest,
+        'clock_synced':any(line.startswith('Leap status') and line.split(':',1)[-1].strip()=='Normal' for line in tracking.splitlines())}
+directory=Path('/run/portable-telemetry')
+directory.mkdir(mode=0o755,exist_ok=True)
+if directory.is_symlink() or directory.stat().st_uid!=0 or directory.stat().st_mode&0o022:raise SystemExit(1)
+fd,name=tempfile.mkstemp(prefix='.status-',dir=directory)
+temporary=Path(name)
+try:
+    with os.fdopen(fd,'w') as output:json.dump(record,output)
+    temporary.chmod(0o644)
+    os.replace(temporary,directory/'status.json')
+finally:temporary.unlink(missing_ok=True)

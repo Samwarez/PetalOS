@@ -1,0 +1,16 @@
+{
+  "policies": {
+    "DisableAppUpdate": true,
+    "DisableTelemetry": true,
+    "DisableFirefoxStudies": true,
+    "DisablePocket": true,
+    "DontCheckDefaultBrowser": true,
+    "Preferences": {
+      "browser.shell.checkDefaultBrowser": {"Value": false, "Status": "locked"},
+      "network.prefetch-next": {"Value": false, "Status": "locked"},
+      "network.dns.disablePrefetch": {"Value": true, "Status": "locked"},
+      "network.captive-portal-service.enabled": {"Value": false, "Status": "locked"},
+      "network.connectivity-service.enabled": {"Value": false, "Status": "locked"}
+    }
+  }
+}

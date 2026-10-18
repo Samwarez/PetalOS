@@ -1,0 +1,12 @@
+{
+  "fixture": "tests/phase15-20261018/persistence-stage.py",
+  "exit": 0,
+  "elapsed_seconds": 6.89,
+  "stderr": "",
+  "result": {
+    "app_preference_records_saved": 5,
+    "transmission_numeric_preference_saved": true,
+    "desktop_setting_set_and_exported": true,
+    "RAM_and_Private_canaries_written": true
+  }
+}

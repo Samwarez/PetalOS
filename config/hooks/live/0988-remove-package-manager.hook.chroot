@@ -1,0 +1,10 @@
+#!/bin/sh
+set -eu
+# task-xfce-desktop recommends Synaptic. Supported apps are installed at build
+# time with their confinement wrappers; retain APT and shared auth helpers.
+# Do not autoremove: pkexec is needed by PetalOS desktop authorization.
+DEBIAN_FRONTEND=noninteractive apt-get --yes purge synaptic
+if dpkg-query -W -f='${Status}' synaptic 2>/dev/null | grep -q 'install ok installed'; then
+    echo 'Synaptic unexpectedly remains installed' >&2
+    exit 1
+fi

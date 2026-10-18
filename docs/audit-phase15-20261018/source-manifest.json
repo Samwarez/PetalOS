@@ -1,0 +1,2067 @@
+{
+  "AGENTS.md": {
+    "mode": "0o644",
+    "sha256": "cbf3233ecb00fd754e2bf352547f5c911361f500aafec8b3254a171d0c73af2a",
+    "symlink": null
+  },
+  "PETALOS-HANDOFF.md": {
+    "mode": "0o644",
+    "sha256": "adcb1654efb26a223c75dc0e2819a7ba2434daf73f9e7974bb1f4b080401c0aa",
+    "symlink": null
+  },
+  "config/binary": {
+    "mode": "0o664",
+    "sha256": "eaae6b220cdd575e99115b9dd5a00e05f34cfcc598c9f7f0bde2219def30ae90",
+    "symlink": null
+  },
+  "config/bootstrap": {
+    "mode": "0o664",
+    "sha256": "a75bc19b1484cc2213abdf209a336bfe25106654872d057efeceb46e2649e05d",
+    "symlink": null
+  },
+  "config/chroot": {
+    "mode": "0o664",
+    "sha256": "cb6e2dd1c4fd0d08812e4925124a523594981afbc78fb329841f254c95b3ccc1",
+    "symlink": null
+  },
+  "config/common": {
+    "mode": "0o664",
+    "sha256": "2ca0d0fc93c347fa282be6a0d7261a20b5c18a37e7731b8c0ff822b9b22872ad",
+    "symlink": null
+  },
+  "config/hooks/live/0010-disable-kexec-tools.hook.chroot": {
+    "mode": "0o755",
+    "sha256": "fee8b3be4d7beb02e672baafb2d45dcb5019fcbf8f2d4418a789f21f012d88d0",
+    "symlink": "/usr/share/live/build/hooks/live/0010-disable-kexec-tools.hook.chroot"
+  },
+  "config/hooks/live/0050-disable-sysvinit-tmpfs.hook.chroot": {
+    "mode": "0o755",
+    "sha256": "e464e8ef2a17486f0d030d2e4b49fd7808ddd837b715829b3708dc23b542c910",
+    "symlink": "/usr/share/live/build/hooks/live/0050-disable-sysvinit-tmpfs.hook.chroot"
+  },
+  "config/hooks/live/0900-enable-firewall.hook.chroot": {
+    "mode": "0o755",
+    "sha256": "d93a11c32bbfaba23d319d8674795e21077f0eb0a5071308ca51080213b86dab",
+    "symlink": null
+  },
+  "config/hooks/live/0910-configure-clock.hook.chroot": {
+    "mode": "0o755",
+    "sha256": "78acc88b35341fe1f688b294768f137d0b3068f7163c489e9934d595dd5d5853",
+    "symlink": null
+  },
+  "config/hooks/live/0920-offline-apps.hook.chroot": {
+    "mode": "0o755",
+    "sha256": "d36a56b6f31b788ad4f207ca756714d0e572138b560dc35b3183a2513cc91ba4",
+    "symlink": null
+  },
+  "config/hooks/live/0921-native-parole.hook.chroot": {
+    "mode": "0o755",
+    "sha256": "f115a6fd2e5d186cb4bd002d2cf20038d8544e170b3d48817c5addfb49b163f0",
+    "symlink": null
+  },
+  "config/hooks/live/0922-alsa-rule-compat.hook.chroot": {
+    "mode": "0o755",
+    "sha256": "e657eb96ef0d9f4145bf560e53bc8c9fdf62581d11e639965b4c658ca194a6b3",
+    "symlink": null
+  },
+  "config/hooks/live/0923-native-conky.hook.chroot": {
+    "mode": "0o755",
+    "sha256": "51f9f3d710f513de0cdc1b4209ce254f82e21f57f8a1feb41f661262c4a6a080",
+    "symlink": null
+  },
+  "config/hooks/live/0930-disable-auto-updates.hook.chroot": {
+    "mode": "0o755",
+    "sha256": "384d91a20176ca2c41c647b312e559bc284c58630dfe34d2f18604ba821767b7",
+    "symlink": null
+  },
+  "config/hooks/live/0940-disable-download-services.hook.chroot": {
+    "mode": "0o755",
+    "sha256": "29c78c69268b0a3ca70223f443e3c133c71b9757b5cd9c4a560d842316d5c0db",
+    "symlink": null
+  },
+  "config/hooks/live/0950-disable-background-network.hook.chroot": {
+    "mode": "0o755",
+    "sha256": "3cd92c20f2420648511255a1185d77b5ea4866e097d7301a8e0ad645a948fd02",
+    "symlink": null
+  },
+  "config/hooks/live/0960-telemetry.hook.chroot": {
+    "mode": "0o755",
+    "sha256": "3f55f004f1b52414c0bef435cd7c8754fb4321aeea056564108b491715af76c0",
+    "symlink": null
+  },
+  "config/hooks/live/0970-apparmor.hook.chroot": {
+    "mode": "0o755",
+    "sha256": "f09becad46f7b8b252125da223e26b21c7a5f11af6486fa002be57c2a41a9e81",
+    "symlink": null
+  },
+  "config/hooks/live/0980-web-defaults.hook.chroot": {
+    "mode": "0o755",
+    "sha256": "b943aa22037d8bc24e950e756082e60c1959d81321beb39adf6cb8e5745cb5ff",
+    "symlink": null
+  },
+  "config/hooks/live/0985-admin-setup.hook.chroot": {
+    "mode": "0o755",
+    "sha256": "9435f1a9a9835e67e88c74c4e2ae802e806cceb002a59efa1136f6b06aca1cc0",
+    "symlink": null
+  },
+  "config/hooks/live/0987-console-auth.hook.chroot": {
+    "mode": "0o755",
+    "sha256": "181b700116dc9adc9884a53fe41c814518109bc6825bf40065f76a2bda0540dd",
+    "symlink": null
+  },
+  "config/hooks/live/0988-remove-package-manager.hook.chroot": {
+    "mode": "0o755",
+    "sha256": "32ab505db051a6e34bba148a47c72dda0cc18efe0b629ba734be7f3589343fa3",
+    "symlink": null
+  },
+  "config/hooks/live/0990-brand-boot.hook.binary": {
+    "mode": "0o755",
+    "sha256": "970ac9939767b481e59e8db966a1615e9229c37caba88bf4446847073acc6406",
+    "symlink": null
+  },
+  "config/hooks/live/0991-network-compartments.hook.chroot": {
+    "mode": "0o755",
+    "sha256": "e9431a1000ba13dbead35b26122a3934492d7af9bf275d5f1585fa91a1e97cde",
+    "symlink": null
+  },
+  "config/hooks/live/0992-sudo-policy-integrity.hook.chroot": {
+    "mode": "0o755",
+    "sha256": "d5c72426d2adbc34076fd16426c165b71c97cb250b7ccc5fe6f6447c0031f4d0",
+    "symlink": null
+  },
+  "config/hooks/normal/1000-create-mtab-symlink.hook.chroot": {
+    "mode": "0o755",
+    "sha256": "c61b7443477c033b7a1674d4cb5f107ae3aba9cf96522fe19c712e2813c574dd",
+    "symlink": "/usr/share/live/build/hooks/normal/1000-create-mtab-symlink.hook.chroot"
+  },
+  "config/hooks/normal/1010-enable-cryptsetup.hook.chroot": {
+    "mode": "0o755",
+    "sha256": "97c6adbc9340fc61ca9f7d73ad7f0421a2040a9d97465234300616e125df97c2",
+    "symlink": "/usr/share/live/build/hooks/normal/1010-enable-cryptsetup.hook.chroot"
+  },
+  "config/hooks/normal/1020-create-locales-files.hook.chroot": {
+    "mode": "0o755",
+    "sha256": "c1d39733b743f4862fb60b6d46e2686f5696420508fd6dd8f38ea7a4240c6b9d",
+    "symlink": "/usr/share/live/build/hooks/normal/1020-create-locales-files.hook.chroot"
+  },
+  "config/hooks/normal/5000-update-apt-file-cache.hook.chroot": {
+    "mode": "0o755",
+    "sha256": "a5fd0c201660ace5e42b0349924e08d4acc3eb5641b718bdb1a2255a63137070",
+    "symlink": "/usr/share/live/build/hooks/normal/5000-update-apt-file-cache.hook.chroot"
+  },
+  "config/hooks/normal/5010-update-apt-xapian-index.hook.chroot": {
+    "mode": "0o755",
+    "sha256": "c22027c25636e893b7237d1f18169e207488f7de22649269a8b8873424899639",
+    "symlink": "/usr/share/live/build/hooks/normal/5010-update-apt-xapian-index.hook.chroot"
+  },
+  "config/hooks/normal/5020-update-glx-alternative.hook.chroot": {
+    "mode": "0o755",
+    "sha256": "8d30b7abab450403d2b563e84280229b181144b587b07d84bcd5a4330990bcd8",
+    "symlink": "/usr/share/live/build/hooks/normal/5020-update-glx-alternative.hook.chroot"
+  },
+  "config/hooks/normal/5030-update-plocate-database.hook.chroot": {
+    "mode": "0o755",
+    "sha256": "6d49216d8567cfdb5efbdae5d7a51a4956c82f34b9dadbd9e35ffe93d103c3d1",
+    "symlink": "/usr/share/live/build/hooks/normal/5030-update-plocate-database.hook.chroot"
+  },
+  "config/hooks/normal/5040-update-nvidia-alternative.hook.chroot": {
+    "mode": "0o755",
+    "sha256": "5a8a51a4f0422327911320ce5d2ba2cb19308cde411e2d6b36d2badaf5ec3782",
+    "symlink": "/usr/share/live/build/hooks/normal/5040-update-nvidia-alternative.hook.chroot"
+  },
+  "config/hooks/normal/5050-dracut.hook.chroot": {
+    "mode": "0o755",
+    "sha256": "d93bbc1d07e4adc0117d3257cba4bcf5c0ea75e651e3a5d192859e8c39b5b61f",
+    "symlink": "/usr/share/live/build/hooks/normal/5050-dracut.hook.chroot"
+  },
+  "config/hooks/normal/8000-remove-adjtime-configuration.hook.chroot": {
+    "mode": "0o755",
+    "sha256": "28459f07aeee024c3b27319d825107dde4a924fa421ad94b21cdbbd6ddcf0236",
+    "symlink": "/usr/share/live/build/hooks/normal/8000-remove-adjtime-configuration.hook.chroot"
+  },
+  "config/hooks/normal/8010-remove-backup-files.hook.chroot": {
+    "mode": "0o755",
+    "sha256": "ff9b0b3acc6da035d244f6b3f4207defa10efec86faa6cb177921e02c11bde15",
+    "symlink": "/usr/share/live/build/hooks/normal/8010-remove-backup-files.hook.chroot"
+  },
+  "config/hooks/normal/8020-remove-dbus-machine-id.hook.chroot": {
+    "mode": "0o755",
+    "sha256": "3628dde00fb7aea9be4ed36afccf03928ca89a873b8822bbfebcbf5c0f0cd5ed",
+    "symlink": "/usr/share/live/build/hooks/normal/8020-remove-dbus-machine-id.hook.chroot"
+  },
+  "config/hooks/normal/8030-truncate-log-files.hook.chroot": {
+    "mode": "0o755",
+    "sha256": "034e22076e493384ba588c79eef577222775218b601d33c356424c5ce444b63d",
+    "symlink": "/usr/share/live/build/hooks/normal/8030-truncate-log-files.hook.chroot"
+  },
+  "config/hooks/normal/8040-remove-mdadm-configuration.hook.chroot": {
+    "mode": "0o755",
+    "sha256": "e8ed438565ecd1bbb5ce057ad60ab8cbefe4be5058e93fc74126a07ae1da601d",
+    "symlink": "/usr/share/live/build/hooks/normal/8040-remove-mdadm-configuration.hook.chroot"
+  },
+  "config/hooks/normal/8050-remove-openssh-server-host-keys.hook.chroot": {
+    "mode": "0o755",
+    "sha256": "dafcf58b1e78e545dcc0dd257fb024d8468650fe70b693ec3e63d6d23f56499e",
+    "symlink": "/usr/share/live/build/hooks/normal/8050-remove-openssh-server-host-keys.hook.chroot"
+  },
+  "config/hooks/normal/8060-remove-systemd-machine-id.hook.chroot": {
+    "mode": "0o755",
+    "sha256": "ca5f55bb939986ba0130a3516e3d0e4dc882cf0a8e1faa99a522d89d21bc208d",
+    "symlink": "/usr/share/live/build/hooks/normal/8060-remove-systemd-machine-id.hook.chroot"
+  },
+  "config/hooks/normal/8070-remove-temporary-files.hook.chroot": {
+    "mode": "0o755",
+    "sha256": "bc1f1a27053f428fd61417069ba7368090a80121d412acc9e21b2587b7d37571",
+    "symlink": "/usr/share/live/build/hooks/normal/8070-remove-temporary-files.hook.chroot"
+  },
+  "config/hooks/normal/8080-reproducible-glibc.hook.chroot": {
+    "mode": "0o755",
+    "sha256": "1c8724bfad32cde5426a7af487aecff4cf6778b54837df4424fa0a237aa4b888",
+    "symlink": "/usr/share/live/build/hooks/normal/8080-reproducible-glibc.hook.chroot"
+  },
+  "config/hooks/normal/8090-remove-ssl-cert-snakeoil.hook.chroot": {
+    "mode": "0o755",
+    "sha256": "1c5a6f27be4386aa144a80f9fbd8efc92219de7c0822ce5faed713f6a563ccc8",
+    "symlink": "/usr/share/live/build/hooks/normal/8090-remove-ssl-cert-snakeoil.hook.chroot"
+  },
+  "config/hooks/normal/8100-remove-udev-persistent-cd-rules.hook.chroot": {
+    "mode": "0o755",
+    "sha256": "ca525ec0887ba3f89f17efd8c1a64457dc077e8127938f0a1cac85b305b00e48",
+    "symlink": "/usr/share/live/build/hooks/normal/8100-remove-udev-persistent-cd-rules.hook.chroot"
+  },
+  "config/hooks/normal/8110-remove-udev-persistent-net-rules.hook.chroot": {
+    "mode": "0o755",
+    "sha256": "b135ecd88708d705c9e48a211b53a805795d406820888c93236d1ac66436ed0b",
+    "symlink": "/usr/share/live/build/hooks/normal/8110-remove-udev-persistent-net-rules.hook.chroot"
+  },
+  "config/hooks/normal/9000-remove-gnome-icon-cache.hook.chroot": {
+    "mode": "0o755",
+    "sha256": "c6770f96ff70861dfb1fd716205108c24029a876b8124819755866d22bdfb8d8",
+    "symlink": "/usr/share/live/build/hooks/normal/9000-remove-gnome-icon-cache.hook.chroot"
+  },
+  "config/hooks/normal/9010-remove-python-pyc.hook.chroot": {
+    "mode": "0o755",
+    "sha256": "dbad666c84484afe5d1c2e55aca0be0db281f6a1b957665488a0580997effb7a",
+    "symlink": "/usr/share/live/build/hooks/normal/9010-remove-python-pyc.hook.chroot"
+  },
+  "config/hooks/normal/9020-remove-man-cache.hook.chroot": {
+    "mode": "0o755",
+    "sha256": "19b09d42c75108c5cf14f6a5b524da89d96f34c970104314cb7eef755d9ae043",
+    "symlink": "/usr/share/live/build/hooks/normal/9020-remove-man-cache.hook.chroot"
+  },
+  "config/includes.chroot/etc/NetworkManager/conf.d/90-portable-dns.conf": {
+    "mode": "0o644",
+    "sha256": "8e86e41623110ef77993f5617fa79551ed4759bcccecf304b46937e86a56bc9a",
+    "symlink": null
+  },
+  "config/includes.chroot/etc/NetworkManager/conf.d/95-portable-privacy.conf": {
+    "mode": "0o644",
+    "sha256": "79ce9d0ff1d8b72744c2f3b39ff41c59a6013d9da5bee79f02e8b37319ed43d5",
+    "symlink": null
+  },
+  "config/includes.chroot/etc/X11/Xsession.d/45portable-settings": {
+    "mode": "0o644",
+    "sha256": "28578db41b04d17fd8f09eec43cba4cb2d76f108b3f456243fee37af3ff4698b",
+    "symlink": null
+  },
+  "config/includes.chroot/etc/apparmor.d/abstractions/petalos-compartment-common": {
+    "mode": "0o664",
+    "sha256": "a7ad04c8d43ab42c629364d2262942aaf1b4ef74f25160a8fc1943d90a7ec589",
+    "symlink": null
+  },
+  "config/includes.chroot/etc/apparmor.d/abstractions/petalos-offline-common": {
+    "mode": "0o644",
+    "sha256": "344997a860fbb7e8b4b1690d12dbb28708f2c783538da6e21bca8eda44ec0de3",
+    "symlink": null
+  },
+  "config/includes.chroot/etc/apparmor.d/petalos.browser": {
+    "mode": "0o664",
+    "sha256": "1ebaa9f3e6d1b88fd1675183ff5cbbfd22c91defea43b6afe163343f44b39b2e",
+    "symlink": null
+  },
+  "config/includes.chroot/etc/apparmor.d/petalos.display": {
+    "mode": "0o664",
+    "sha256": "ecdec05bedcd8f7d625a5f2370f2168af8623983cef98f5d6656375a76adef1e",
+    "symlink": null
+  },
+  "config/includes.chroot/etc/apparmor.d/petalos.downloads": {
+    "mode": "0o664",
+    "sha256": "5769ba6f95e3a23a82bbcad43fe05133097310c70f777ca7713a42a69e5d2f2d",
+    "symlink": null
+  },
+  "config/includes.chroot/etc/apparmor.d/petalos.isolated-tor": {
+    "mode": "0o664",
+    "sha256": "8f646c8a3e2ff7c4a325c594659b3f19a57f9ee099849ad1f7ba5da40e559457",
+    "symlink": null
+  },
+  "config/includes.chroot/etc/apparmor.d/petalos.offline": {
+    "mode": "0o644",
+    "sha256": "24d12ca4eb9835c2fc59012bf298b3c7f6644b900a2f3cc6d3f4fc7c2ae2c2da",
+    "symlink": null
+  },
+  "config/includes.chroot/etc/apparmor.d/petalos.offline-atril": {
+    "mode": "0o664",
+    "sha256": "72694c9a4e961d8bccd312805f49776a95a172b25d38a565fe3515403e84a9f9",
+    "symlink": null
+  },
+  "config/includes.chroot/etc/apparmor.d/petalos.offline-geany": {
+    "mode": "0o664",
+    "sha256": "66fbba61f1fedc062c56048db7cdce251f39cc9b290c2499138d208ee5da5ffb",
+    "symlink": null
+  },
+  "config/includes.chroot/etc/apparmor.d/petalos.offline-gthumb": {
+    "mode": "0o664",
+    "sha256": "53f8b7bd0905a2a21aa3c77ca24367ed2c0f9a9c5cf4867d158dc7da82cdf3d3",
+    "symlink": null
+  },
+  "config/includes.chroot/etc/apparmor.d/petalos.offline-html": {
+    "mode": "0o664",
+    "sha256": "fffc4fcb92782a9129175550c9d1bf56da1d6e37c2d1e82dc5ce2909e54adb49",
+    "symlink": null
+  },
+  "config/includes.chroot/etc/apparmor.d/petalos.offline-keepassxc": {
+    "mode": "0o664",
+    "sha256": "6260455633707f5c0a9c330699a1db1413c684e9684737f9418cbbd8f9be480c",
+    "symlink": null
+  },
+  "config/includes.chroot/etc/apparmor.d/petalos.offline-lazpaint": {
+    "mode": "0o664",
+    "sha256": "5a05a180c0e7281f816748ec829c6f68bd1a4684be2ef68d62cbb8866474031e",
+    "symlink": null
+  },
+  "config/includes.chroot/etc/apparmor.d/petalos.offline-libreoffice": {
+    "mode": "0o664",
+    "sha256": "fb71f52c511aa44adfe3f14fe65e4221c8f04f1e34c4ba69c74f67a8d05d2baa",
+    "symlink": null
+  },
+  "config/includes.chroot/etc/apparmor.d/petalos.offline-mousepad": {
+    "mode": "0o664",
+    "sha256": "31afdebfb7eefdec76ee7c82ade98448656da6d9e92932895f981ba0915cab03",
+    "symlink": null
+  },
+  "config/includes.chroot/etc/apparmor.d/petalos.offline-parole": {
+    "mode": "0o664",
+    "sha256": "907f38bf6cbd05da2563311aa90cf66f06c8774d699ffb9e36f496d44f3bd1ed",
+    "symlink": null
+  },
+  "config/includes.chroot/etc/apparmor.d/petalos.offline-quodlibet": {
+    "mode": "0o664",
+    "sha256": "a9eb493f3d0e36fc2f342a9b31f982c1b619252dd3e56af80e074cb7c2e94481",
+    "symlink": null
+  },
+  "config/includes.chroot/etc/apparmor.d/petalos.offline-ristretto": {
+    "mode": "0o664",
+    "sha256": "520e26e27ed60387659b13e7480565c1e9c37b587f3eab20749bbfb3b1219b0f",
+    "symlink": null
+  },
+  "config/includes.chroot/etc/apparmor.d/petalos.offline-vim": {
+    "mode": "0o664",
+    "sha256": "631bcc3ae7a7774ed1bef93863dea0d5cb5b74ba4f4645be20236622a5c22d73",
+    "symlink": null
+  },
+  "config/includes.chroot/etc/apparmor.d/petalos.playback": {
+    "mode": "0o664",
+    "sha256": "337c977557297f38a5298b5b1beda3cf87f5d053e0af00cc2e20adab2b089588",
+    "symlink": null
+  },
+  "config/includes.chroot/etc/apparmor.d/petalos.torbrowser.Browser.firefox": {
+    "mode": "0o644",
+    "sha256": "e8ab12af2634d8f5efb0f9617bb0f2b606472d8894fca933b10894259052d040",
+    "symlink": null
+  },
+  "config/includes.chroot/etc/apparmor.d/petalos.torbrowser.Tor.tor": {
+    "mode": "0o644",
+    "sha256": "b8c56203167363bc905302a977b1813a6d81015d80d842788ff48b423e0d23f6",
+    "symlink": null
+  },
+  "config/includes.chroot/etc/apparmor.d/petalos.wayland-probe": {
+    "mode": "0o664",
+    "sha256": "9e36d9cf8b243460b96c47128ce5ff34c0dc0bfae0c950c00f7b902505bf2315",
+    "symlink": null
+  },
+  "config/includes.chroot/etc/apparmor.d/petalos.window-manager": {
+    "mode": "0o664",
+    "sha256": "25416099f638b760f874bb301ddcb31a34a02dfca14fb8945f0c0e1030072e32",
+    "symlink": null
+  },
+  "config/includes.chroot/etc/bluetooth/main.conf": {
+    "mode": "0o644",
+    "sha256": "2e2d9831f052ae89800b7a533033ba1f9ed9da637437d0d51999a258d2afefc9",
+    "symlink": null
+  },
+  "config/includes.chroot/etc/chrony/chrony.conf": {
+    "mode": "0o644",
+    "sha256": "6c984ee4842369bc69261622c8b1fe706d28f213b919125890aab5fe43bcf2d2",
+    "symlink": null
+  },
+  "config/includes.chroot/etc/conky/portable.conf": {
+    "mode": "0o644",
+    "sha256": "3af2eb16217c0ac2025f9a05979145c79da1718df5a1e043bdd5b02bcdce3c40",
+    "symlink": null
+  },
+  "config/includes.chroot/etc/hostname": {
+    "mode": "0o644",
+    "sha256": "d788c5ecd85028adc5dff810ec2a647795f3c5bf4788a02ff9618e66253ef6d4",
+    "symlink": null
+  },
+  "config/includes.chroot/etc/hosts": {
+    "mode": "0o644",
+    "sha256": "4eb66f35420c25d2e52d101ae22decf8cf91e621636dcc64da05f629c85065c2",
+    "symlink": null
+  },
+  "config/includes.chroot/etc/initramfs-tools/scripts/init-premount/portable-unlock": {
+    "mode": "0o755",
+    "sha256": "494d9159d59401352ddae86823a91f97936568e978d51fc3b2c4943166c720ad",
+    "symlink": null
+  },
+  "config/includes.chroot/etc/issue": {
+    "mode": "0o644",
+    "sha256": "d4821fd2dae9b17178a94f1ef15cc30895d7a057973d394ed3eb5efd266789e6",
+    "symlink": null
+  },
+  "config/includes.chroot/etc/issue.net": {
+    "mode": "0o644",
+    "sha256": "36b50a83df125fd416303e65afe8a00ac00f5b9851f040204320faeae9dba804",
+    "symlink": null
+  },
+  "config/includes.chroot/etc/lightdm/lightdm.conf.d/99-petalos-wayland.conf": {
+    "mode": "0o664",
+    "sha256": "181e000ab0a13c6657d5f77ad953c4be38611e8206b6f1e901667231bd5251f1",
+    "symlink": null
+  },
+  "config/includes.chroot/etc/live/config.conf.d/10-petal-account.conf": {
+    "mode": "0o644",
+    "sha256": "d8e4ea107d64440f5cadade19fd11f4aedd088e00927e208a35a464f1a0ed694",
+    "symlink": null
+  },
+  "config/includes.chroot/etc/lsb-release": {
+    "mode": "0o644",
+    "sha256": "0dce5bacd353cdf88c55fd5a3f4f89716dd3da5081258a98d0c424dbfede6ba2",
+    "symlink": null
+  },
+  "config/includes.chroot/etc/machine-info": {
+    "mode": "0o644",
+    "sha256": "4196ffb89d98b77ed41946ade98dc7635634f38b28612455b08b7b6269ff32b0",
+    "symlink": null
+  },
+  "config/includes.chroot/etc/modprobe.d/portable-no-beep.conf": {
+    "mode": "0o644",
+    "sha256": "7b2778b66b675f7c49a723844ce3d3b57561b1766ed507a112d7a827a718b11a",
+    "symlink": null
+  },
+  "config/includes.chroot/etc/motd": {
+    "mode": "0o644",
+    "sha256": "218568341804d9caa9d8a8350d953a1f4a714e8e67783f9ff1d3ba38485999d0",
+    "symlink": null
+  },
+  "config/includes.chroot/etc/nftables.conf": {
+    "mode": "0o644",
+    "sha256": "ae12b279df6c8d4a3669c1a31ae7d907681fec5dad31f2f31c2a2ac88187a242",
+    "symlink": null
+  },
+  "config/includes.chroot/etc/os-release": {
+    "mode": "0o644",
+    "sha256": "c1096ac28e88c3fa37a4855a23ab0a5f7ac620c9b74784b27796d12dc43aa182",
+    "symlink": null
+  },
+  "config/includes.chroot/etc/pam.d/gtklock": {
+    "mode": "0o664",
+    "sha256": "c1152582e871ba7c0553731d79d3e703f294242667a1ff03529de6293d0b4922",
+    "symlink": null
+  },
+  "config/includes.chroot/etc/polkit-1/rules.d/00-petal-admin.rules": {
+    "mode": "0o644",
+    "sha256": "c07f9163ad75f8ff1b133a1cbf0c06d10c12886a1d34218e6132e63beeef22f9",
+    "symlink": null
+  },
+  "config/includes.chroot/etc/security/limits.d/95-portable-no-core.conf": {
+    "mode": "0o644",
+    "sha256": "49cb2dc18dd7c57bd2eb81b0d3e38dc3a2cca691aeff14c7b5719e5b037a2031",
+    "symlink": null
+  },
+  "config/includes.chroot/etc/skel/.config/gtk-3.0/bookmarks": {
+    "mode": "0o644",
+    "sha256": "8d888589dd810ee9fafc0e284c386cfc8f7117f6539ec3b37a9af2d936575db5",
+    "symlink": null
+  },
+  "config/includes.chroot/etc/skel/.config/keepassxc/keepassxc.ini": {
+    "mode": "0o644",
+    "sha256": "9868d1eda4cb507ffe5311001a8270d553bc731d1da06759658e985e2eeddc1c",
+    "symlink": null
+  },
+  "config/includes.chroot/etc/skel/.config/vlc/vlcrc": {
+    "mode": "0o644",
+    "sha256": "719ba34a63080ceb6b41c8b1d81297a62fb18e8b9fa72c6e234b00988fbec891",
+    "symlink": null
+  },
+  "config/includes.chroot/etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/thunar-volman.xml": {
+    "mode": "0o644",
+    "sha256": "4b4aaab616f87494e7991ea2704de6f307d4096ffa481eb202fe68a2370e1c1e",
+    "symlink": null
+  },
+  "config/includes.chroot/etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml": {
+    "mode": "0o644",
+    "sha256": "fdb35ba6d3b15676ef289ddcabeccb5bfdf0a6a1bfd543ee8ad7dd61e84141ba",
+    "symlink": null
+  },
+  "config/includes.chroot/etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-power-manager.xml": {
+    "mode": "0o664",
+    "sha256": "8020441ef582977afdd4a3dc0c3c28722db0f171e6506c261c4500304e0b7326",
+    "symlink": null
+  },
+  "config/includes.chroot/etc/sudoers.d/zz-petal-compartments": {
+    "mode": "0o440",
+    "sha256": "84a37f9934b13b38c93f3faa7d0092d115efcc7e6860f88c5340fcb5fba20c4c",
+    "symlink": null
+  },
+  "config/includes.chroot/etc/sudoers.d/zz-petal-lock": {
+    "mode": "0o440",
+    "sha256": "f5e5e845a7128daf789aa39f1aae41d58370bf3882144dad152709d3bbee1856",
+    "symlink": null
+  },
+  "config/includes.chroot/etc/sudoers.d/zz-petal-preferences": {
+    "mode": "0o440",
+    "sha256": "80dfa1b291ce743566eec1410eb36ae98360a4b1dbaeaea6e4301c6395c55577",
+    "symlink": null
+  },
+  "config/includes.chroot/etc/sudoers.d/zz-petal-readchecks": {
+    "mode": "0o440",
+    "sha256": "a14a901b344ee11e7d21f67aa4775124b4b079dacff1c8b10dbc20eac3afbedf",
+    "symlink": null
+  },
+  "config/includes.chroot/etc/sysctl.d/95-portable-hardening.conf": {
+    "mode": "0o644",
+    "sha256": "7fa6cf80248bdc5723a54d34a61e0f02c7f5adc0ba842669bd1f80c16411f196",
+    "symlink": null
+  },
+  "config/includes.chroot/etc/systemd/journald.conf.d/zz-portable-ram.conf": {
+    "mode": "0o644",
+    "sha256": "bb31df98461fd00990409bad10a3fdbb8855cd18a68c444e33fb52120a9cf3e1",
+    "symlink": null
+  },
+  "config/includes.chroot/etc/systemd/sleep.conf.d/20-petalos.conf": {
+    "mode": "0o664",
+    "sha256": "c67ba9e13549182500bbe1255ce9088fa38f10dcac2a5a8c71e8debdd5f0c047",
+    "symlink": null
+  },
+  "config/includes.chroot/etc/systemd/system.conf.d/95-portable-no-core.conf": {
+    "mode": "0o644",
+    "sha256": "6ef1f024b21539b587bc9329c0339202e6132c82aaebab5892d50283b1e6002f",
+    "symlink": null
+  },
+  "config/includes.chroot/etc/systemd/system/NetworkManager.service.d/10-portable-firewall.conf": {
+    "mode": "0o644",
+    "sha256": "d48fd35e6294417d503b687631259e92e37669da082fd8aeca7ec40fd6ecef48",
+    "symlink": null
+  },
+  "config/includes.chroot/etc/systemd/system/chrony.service.d/10-portable-vpn.conf": {
+    "mode": "0o644",
+    "sha256": "ad14a058193ecd42987a00fe006d4651bdaff4948219b232221d01ab20229387",
+    "symlink": null
+  },
+  "config/includes.chroot/etc/systemd/system/nftables.service.d/10-keep-rules.conf": {
+    "mode": "0o644",
+    "sha256": "9a3ccc830c6af67d4afec88456465805a5fe057df7cfbeffea0cc653face6586",
+    "symlink": null
+  },
+  "config/includes.chroot/etc/systemd/system/portable-admin-setup.service": {
+    "mode": "0o664",
+    "sha256": "e181632affdffc7fe433c76789636c066f618fdec1d2cf82a85ad11d4a530c1f",
+    "symlink": null
+  },
+  "config/includes.chroot/etc/systemd/system/portable-apparmor.service": {
+    "mode": "0o644",
+    "sha256": "eb2ec74c28061145904762e57c92b7dc2d4399026a5f70d452c89ee0f391a121",
+    "symlink": null
+  },
+  "config/includes.chroot/etc/systemd/system/portable-telemetry.service": {
+    "mode": "0o644",
+    "sha256": "960dfd5d25b291c459c5a8f9a798aa2823cc46606a735023c9468b8bead7c303",
+    "symlink": null
+  },
+  "config/includes.chroot/etc/systemd/system/portable-telemetry.timer": {
+    "mode": "0o644",
+    "sha256": "e603482abea9b479a9abd3a488ad15abb55211bcfef8c1a67ceb77199335be4c",
+    "symlink": null
+  },
+  "config/includes.chroot/etc/systemd/user.conf.d/95-portable-no-core.conf": {
+    "mode": "0o644",
+    "sha256": "6ef1f024b21539b587bc9329c0339202e6132c82aaebab5892d50283b1e6002f",
+    "symlink": null
+  },
+  "config/includes.chroot/etc/systemd/user/portable-sab-admin-bridge.service": {
+    "mode": "0o644",
+    "sha256": "16627b0c0fa0e2a8f02616bdbf35de97e7ca6a4b24e0f8c761872bdfe6e81bde",
+    "symlink": null
+  },
+  "config/includes.chroot/etc/systemd/user/portable-sabnzbd.service": {
+    "mode": "0o644",
+    "sha256": "847a368abc17f1c6b8881d05231b4dabb4a12bb2753168277e4569b62465bc19",
+    "symlink": null
+  },
+  "config/includes.chroot/etc/udev/rules.d/99-portable-storage.rules": {
+    "mode": "0o644",
+    "sha256": "cd35340683aa31761419bd7f3cf39754abf0d5b099694bc9c8d22f3bd2218a5d",
+    "symlink": null
+  },
+  "config/includes.chroot/etc/xdg/autostart/portable-status.desktop": {
+    "mode": "0o644",
+    "sha256": "5957d75652164038e3c64b2bab306aefc46e55c16b9939977c42c07a34786292",
+    "symlink": null
+  },
+  "config/includes.chroot/etc/xdg/autostart/portable-wayland-idle.desktop": {
+    "mode": "0o664",
+    "sha256": "03035231aef1c4e2ab771f172f11f257d4cf267420a220c3e904a8055c019765",
+    "symlink": null
+  },
+  "config/includes.chroot/etc/xdg/autostart/portable-wayland-wallpaper.desktop": {
+    "mode": "0o664",
+    "sha256": "4a3d266866277a07519f10b3ff3cc406ff92e4fe36d6fee0a69f588a78d3ac98",
+    "symlink": null
+  },
+  "config/includes.chroot/etc/xdg/autostart/xiccd.desktop": {
+    "mode": "0o664",
+    "sha256": "7f0e3138a985be2db9817f1dbfe2a65f7cd7c59462639156d32b45cd0ca2d763",
+    "symlink": null
+  },
+  "config/includes.chroot/etc/xdg/mimeapps.list": {
+    "mode": "0o644",
+    "sha256": "27f39f38c5b48e5118047f0a6bc678e3b7be7d8156a59ac4d12154fa7d963833",
+    "symlink": null
+  },
+  "config/includes.chroot/etc/xdg/xfce4/helpers.rc": {
+    "mode": "0o644",
+    "sha256": "1a139adcc520d169270c0a2d8acfad8ebd20436590bd023aac5280200458e351",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/lib/live/config/0015-petal-account": {
+    "mode": "0o755",
+    "sha256": "bdb596efda2b462979c5d678e23c7679a808ae81b3a29da8b3dbecf71f174f56",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/lib/live/config/0017-petal-app-identities": {
+    "mode": "0o755",
+    "sha256": "f058ecf8b6e9a5d447062c55cc10ea7af3772f78779e4558caef8fee056e7d7c",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/lib/live/config/0055-petal-auth": {
+    "mode": "0o755",
+    "sha256": "c6635be692bef47fe18ca49f4d4940b58ab2ff3891a4934d6c4476394faac5f9",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/lib/live/config/0056-petal-private": {
+    "mode": "0o755",
+    "sha256": "609c139eeab90c8d61a60a1abc46ab5ed28b55c2e77f0d2ed295f384b1a0489f",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/lib/live/config/1085-petal-polkit": {
+    "mode": "0o755",
+    "sha256": "2db3bb40b5c0266f4a5d0c87904581411621b49e1effb14a2fc80fac19ff27ac",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/lib/os-release": {
+    "mode": "0o644",
+    "sha256": "c1096ac28e88c3fa37a4855a23ab0a5f7ac620c9b74784b27796d12dc43aa182",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/lib/systemd/system-sleep/portable-private-lock": {
+    "mode": "0o755",
+    "sha256": "9db63f201485efcbfcdfa605d185578c0aae3e013644e7cbc0e8e4aa9c6ed7e4",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/local/bin/portable-amule": {
+    "mode": "0o755",
+    "sha256": "f04e60ffb97a6c0ab1641d95e63af6265720ceef04b50cb420735e458e853f85",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/local/bin/portable-amule-player": {
+    "mode": "0o755",
+    "sha256": "e65d4cb2bda2a2cf07742374d1587f82c10ecf4e6dec6bd50fd1074a216792a4",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/local/bin/portable-askpass": {
+    "mode": "0o755",
+    "sha256": "85ba7d21bb85909c01a6a9bf71f506de46f65b0c2ae361053e76314aba798bfb",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/local/bin/portable-brightness": {
+    "mode": "0o755",
+    "sha256": "8c0e601d5e4785160f0d8061e3ad1e70b8a7bf02bf4678cd47850d8ce2c99b4a",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/local/bin/portable-check-exit-ip": {
+    "mode": "0o755",
+    "sha256": "23b5e6b165bc25e1f807f44865d3067ab34e345810b88ae4290cef0faf91aea7",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/local/bin/portable-desktop": {
+    "mode": "0o755",
+    "sha256": "50dcd24e6c1a986cad988c1aa807db2a8c974ea149fc11bfe7d3e2f7762a1328",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/local/bin/portable-dialog": {
+    "mode": "0o755",
+    "sha256": "e229d6be06161377fc7d197fc2a25a07b6f90f847af3b6208c2f283a34d041c4",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/local/bin/portable-download-mode": {
+    "mode": "0o755",
+    "sha256": "221cb40d08bf16e757cbf909b0da85ea59f7d38970065599094514aeca021e1e",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/local/bin/portable-download-prepare": {
+    "mode": "0o755",
+    "sha256": "3be1f76f1e0bb21bb79256bd4a044ff4d46f0176763805ed13325078590b813f",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/local/bin/portable-lock": {
+    "mode": "0o755",
+    "sha256": "58a020c4897d4f3a0657ceb7f52a7365c7f68cb7cff5536fb454f0f6363e275e",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/local/bin/portable-message": {
+    "mode": "0o755",
+    "sha256": "f6bb985b31c303873c33113249525f84c92f141c24389e334ea280a8a2765581",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/local/bin/portable-offline": {
+    "mode": "0o755",
+    "sha256": "2e69f2ce3fdf0b1660ee9b7768ed62cc807b7ca01da6ef9630cc689507b7c09e",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/local/bin/portable-pan": {
+    "mode": "0o755",
+    "sha256": "005f926342a3db459606788e2bb11f402b18b8da92777909817a05b4f520fd08",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/local/bin/portable-private": {
+    "mode": "0o755",
+    "sha256": "3d6a6023e8a15be590739dcd7ef8aead17889bf26c41cafa372456fdb2fdfbf1",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/local/bin/portable-restore-settings": {
+    "mode": "0o755",
+    "sha256": "af08c447c75dbd76fbbfa7f4c20657496ba6177fb66f0279bc2f8f425cdb6a78",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/local/bin/portable-sab-manager": {
+    "mode": "0o755",
+    "sha256": "a4d34cc0ada72174c375b1994dab5f57089651981f225b42ea1f821952999c21",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/local/bin/portable-sab-view": {
+    "mode": "0o755",
+    "sha256": "1ff268498815e4a0af4d738916b2085ac3e259ddde02eca55b5a95ce01893ea8",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/local/bin/portable-sabnzbd": {
+    "mode": "0o755",
+    "sha256": "930c001a3f8e8575c91045d85a540ef827da4036e9355d85015e2838fa1f82fd",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/local/bin/portable-save-settings": {
+    "mode": "0o755",
+    "sha256": "97d13ff8f5f5dc4de31456365700fa475008173476ffe3f3299be387c35d9f15",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/local/bin/portable-status": {
+    "mode": "0o755",
+    "sha256": "096c4f95917175ef0af04a2f708cbb4de9ff443426c1f435ae9680a7676fbc1e",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/local/bin/portable-status-format": {
+    "mode": "0o755",
+    "sha256": "5beff538a09cce4858f2ee6e386d6159090f3c20d8aaaec25bd8ff8f6f5c1336",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/local/bin/portable-tor": {
+    "mode": "0o755",
+    "sha256": "927d772b84c842ce04a2671d55e9ba702a12f93b587b00da8c9c89a2cefd5fd6",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/local/bin/portable-tor-install": {
+    "mode": "0o755",
+    "sha256": "9bf15f52edaa9699d3459613144d2d169b60c89ea42f26a772faeeb5b6d96a68",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/local/bin/portable-transmission": {
+    "mode": "0o755",
+    "sha256": "0ee221898d6e256e552a81ea99eae507a88649588c242c6512da97dcad6b4a9d",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/local/bin/portable-volume": {
+    "mode": "0o775",
+    "sha256": "8c3e538a22f6004a7ff6eb50bff8bf05b8648593cea90c436acce15acbb4efa2",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/local/bin/portable-vpn-askpass": {
+    "mode": "0o755",
+    "sha256": "6928f97c4d9e8465967ef7c53d4b8bd5af8c934f4ed4d6931f2511f4bad001be",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/local/bin/portable-vpn-menu": {
+    "mode": "0o755",
+    "sha256": "996aba7d94ac83fb0b0fd18b440ed82b3f04d0efc9bc509377b2b84472d96f47",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/local/bin/portable-vpn-profiles": {
+    "mode": "0o755",
+    "sha256": "8c32209732d515d45e36194b44f9cf361e47b0b217c0dfccb77e6f2c2e97296e",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/local/bin/portable-web-browser": {
+    "mode": "0o755",
+    "sha256": "398e575a0f3a96c41b926fd327181bb142288ed27a6371bf3805508069793c71",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/local/bin/portable-window-appearance": {
+    "mode": "0o755",
+    "sha256": "71685d56f7a744b304560308c23d57d6738b1d6f13f169ddcf2a71f10f917274",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/local/bin/portable-xfce-wayland": {
+    "mode": "0o755",
+    "sha256": "63935f79a524ff6dbeaa80de03bb1d50d926d23086ff05f5d391a4e9aac0ce0d",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/local/lib/portable/account_auth.py": {
+    "mode": "0o644",
+    "sha256": "3ef96edaa55e88b73293275093c40b1d5ec50775189bd5dbcd8ee2d0ab475551",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/local/lib/portable/app_preferences.py": {
+    "mode": "0o664",
+    "sha256": "eb49308879d7c006af326abebb3853bd07c916f376de23b2211e843c898cc158",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/local/lib/portable/compartments.py": {
+    "mode": "0o664",
+    "sha256": "2cea43681e979423b91b999309eb3a17dcca9bf1b7a651659c4a1d9218f55f2e",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/local/lib/portable/desktop_session.py": {
+    "mode": "0o664",
+    "sha256": "4e71b46805863fc38bf45b89d75f2ca9c0d33bcef9954ab9b6404b2241e454a7",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/local/lib/portable/desktop_settings.py": {
+    "mode": "0o664",
+    "sha256": "582da548c63a0b2f29c3376ea41d9c3e7281860af60d5d03b9c6c7878c642214",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/local/lib/portable/media_bridge.py": {
+    "mode": "0o664",
+    "sha256": "7916fe9ec765e39a9feb77485539b7465d7ab9ffbdc4022ede9a08c051e08e11",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/local/lib/portable/media_fd_exec.py": {
+    "mode": "0o664",
+    "sha256": "325db216988cb53ad5c4446585f5babdb130ad6bc181c12d879937c7c18d5efc",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/local/lib/portable/offline_files.py": {
+    "mode": "0o664",
+    "sha256": "fe6368f7e38393df4d7861c732c08bb7caf946de08343fa5a4b23f1fd673c56a",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/local/lib/portable/parole_runner.py": {
+    "mode": "0o664",
+    "sha256": "84537297aea88f5795137c498e4bae42452d4d64207429ea551bca928137640f",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/local/lib/portable/preferences_runner.py": {
+    "mode": "0o755",
+    "sha256": "b3a4caaebe9a4ae0424ae2c0d31596751d71a78db1591e76b4d214252b735dcf",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/local/lib/portable/private_storage.py": {
+    "mode": "0o664",
+    "sha256": "c3aa3f5c75c97ad01dd36208647460ed068cf2dfb116466272a75dc8dfb78ef8",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/local/lib/portable/sab_bridge.py": {
+    "mode": "0o664",
+    "sha256": "145fc9ba9734971fd3fec873a8bc054d7e7c3738bfed363acb3ba550ab1ed3a6",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/local/lib/portable/system_state.py": {
+    "mode": "0o664",
+    "sha256": "8026e87255a321a63ca33a62f5bc560e97d898dedae3e31927d7ca2d40bdd79e",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/local/lib/portable/tor_archives.py": {
+    "mode": "0o644",
+    "sha256": "5026134db2d43aca7aa57576323b8dc1feb3c79f9d8e81edfc255a486c41bd3a",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/local/lib/portable/tor_control.py": {
+    "mode": "0o664",
+    "sha256": "a1087e3970f2c256e421bfe10cc1b2e7cc9e060f84cf2adbd70b427a5d69abee",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/local/lib/portable/vpn_connection_checks.py": {
+    "mode": "0o664",
+    "sha256": "ce0c245e86fefb3bc92e8636f4f9b0bf8c7c5cf482a9cb9df9eca0091e59e1b7",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/local/lib/portable/vpn_profiles.py": {
+    "mode": "0o644",
+    "sha256": "745bf0515fed52f3b6d4f7677bb7ca5372328b745b2105ce14df312eada26b9f",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/local/lib/portable/wayland_context.py": {
+    "mode": "0o664",
+    "sha256": "aed352ed1a85a1f6d18f0ddf23bca7b2008dcba87043246fd0f0ed4c6a8d48b9",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/local/libexec/portable-deny-xwayland": {
+    "mode": "0o755",
+    "sha256": "84c11b5c1f2ab269ed41f61c3c051ea16f1fb4dbb9a0d077e2c2a2afb620e92d",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/local/libexec/portable-display-wake": {
+    "mode": "0o775",
+    "sha256": "64e53ec41b7d9658e67b5407d4aeac80b7d6bbfd841757a1a7fd20336663bc47",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/local/libexec/portable-sab-backend": {
+    "mode": "0o755",
+    "sha256": "c93bb26fe53d8ad9b247a36b6f9f754d12fe38ebb5363282a7c14bcbefe8fd27",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/local/libexec/portable-wayland-idle": {
+    "mode": "0o755",
+    "sha256": "9cdbf12c24a517cd8f74f7e72202d59ab2103298d2064428853fa73866d40343",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/local/libexec/portable-wayland-session-client": {
+    "mode": "0o755",
+    "sha256": "6c57387eb6e84bad369571c6b6d124ef1f9865185cb23e322d7bc2ca2e3d1f2d",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/local/libexec/portable-wayland-wallpaper": {
+    "mode": "0o755",
+    "sha256": "f97329faeef2f845860cbc82c3f12068996b6aaaea35500ea6b57660efbd35eb",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/local/sbin/portable-admin-setup": {
+    "mode": "0o755",
+    "sha256": "fb98c39ab7faeb4152fe71c09a5ca9e41274d1aab7dac7c8b00595f91fb13783",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/local/sbin/portable-check-network-ready": {
+    "mode": "0o755",
+    "sha256": "61b224f924d78bc9c217ef27e07945c27705a06ca77fbf72aaf240aeebd6003d",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/local/sbin/portable-check-tor-ready": {
+    "mode": "0o755",
+    "sha256": "ed4bbd264c62c190d09ff71b57799b2421708ad5a8e153aa5e4333594cbc68e7",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/local/sbin/portable-check-vpn": {
+    "mode": "0o755",
+    "sha256": "2a0fde7688220561d5da3bcb1c0e26e35aa0da10371c5a501339870f915b0087",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/local/sbin/portable-compartment": {
+    "mode": "0o755",
+    "sha256": "18245f4017abaf2e7dcf046cae4f9e622e723aa2a7bd540d04f8c920ac737f4e",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/local/sbin/portable-lock-auth": {
+    "mode": "0o755",
+    "sha256": "c87e1838cbac6b3bbf84b3201436b05343f1417b8ec15456c340b8e81f1e3a5c",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/local/sbin/portable-lock-ready": {
+    "mode": "0o755",
+    "sha256": "c6fdf7f19e94cfd01320cbd1a12e166906ac649bdb729be8d454ec091acce774",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/local/sbin/portable-printing": {
+    "mode": "0o755",
+    "sha256": "a7842dfb70863db4e83717c8d835373afa540dd360aca93e9035b28cf476ea1c",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/local/sbin/portable-save-app-preferences": {
+    "mode": "0o755",
+    "sha256": "b59d1c6a765adb2905b89ac6d77a44e0f82a6b3780b578039bbafcc7e154267d",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/local/sbin/portable-set-admin-password": {
+    "mode": "0o755",
+    "sha256": "0c4d4548b58f4b81e8414db2b4eb2f9ae6be3d219ea133e71df24e1a133fd3d1",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/local/sbin/portable-storage": {
+    "mode": "0o755",
+    "sha256": "6644d9cce6039899db6b94cf5c12c15a66aa8a78ddae929ed1fb07676b6df1a6",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/local/sbin/portable-telemetry": {
+    "mode": "0o755",
+    "sha256": "744d3198e215b04eea34ecf65f6b08a1bbee7e2228a21b31bb4941906d444e65",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/local/sbin/portable-test-vpn-connection": {
+    "mode": "0o755",
+    "sha256": "202a05ab0f69f041b250888cd76f0ac04f0ae6028695a84bbffafbf9b4600a86",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/local/sbin/portable-unlock-data": {
+    "mode": "0o755",
+    "sha256": "78bda59349f01ac6213a2af32be59854f02f1fff9887a9bb24e241649591d370",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/local/sbin/portable-unlock-passphrase": {
+    "mode": "0o755",
+    "sha256": "30c7eee6a537d1b8e77f14399ad328a3beb0e75a261c4f682aec4af16782d457",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/local/sbin/portable-vpn": {
+    "mode": "0o755",
+    "sha256": "ae93303fdb626dfb5f3ec32f01fa66e1071ff01d27669ff8ef6c4dd3c3ec76f2",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/local/sbin/portable-vpn-profile": {
+    "mode": "0o755",
+    "sha256": "a3e8260fd5037aba422c1207166f5bbc50345c50d62aa7d948716a0ed2234394",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/local/share/portable/compartment-dbus.conf": {
+    "mode": "0o664",
+    "sha256": "53a569f6d44774f7ec25ab5203088df5f4c5966de1fb34d3dacbcaa68e02d934",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/local/share/portable/gtklock.css": {
+    "mode": "0o664",
+    "sha256": "04f87b65ab99438959cea834195640a42255acb12aa5e29df0173a3d12ba318e",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/local/share/portable/gtklock.ini": {
+    "mode": "0o664",
+    "sha256": "9c322282c044d795a4d144c9767ef0734b9fa6dec6c48a6ce4f2b7a579b8e72e",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/local/share/portable/gtklock.ui": {
+    "mode": "0o664",
+    "sha256": "efd90a9328116d44b756c6739e8341be6f68772deca9829c0c3eef6d1632b9f8",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/local/share/portable/native-conky/conky": {
+    "mode": "0o755",
+    "sha256": "193a9f592a1fffc5e11824b746ce1c3c4c37ea86cdf84d237cfa1bdd00a4c76c",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/local/share/portable/native-conky/conky.sha256": {
+    "mode": "0o664",
+    "sha256": "c59ac5f5b0627501f8269ca806bf8b07c25337f38dd8ca5c23297717d2a97cb1",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/local/share/portable/native-conky/provenance.json": {
+    "mode": "0o664",
+    "sha256": "d09a2a88e428ad2a8aaac7fb9c46fd707905cc122db612dd4e7136a8d7ed1c1c",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/local/share/portable/native-parole/parole": {
+    "mode": "0o755",
+    "sha256": "45fb392d2acd1ce21ed4c0fc22e0afa1afe21d30a9b6fcf0385c10c8c7bcf544",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/local/share/portable/native-parole/parole.sha256": {
+    "mode": "0o664",
+    "sha256": "edf6bb799fd9f93fa3cba9c08bc54aacc9c610021d77d87a6e39efb7c3c19ec8",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/local/share/portable/native-parole/provenance.json": {
+    "mode": "0o664",
+    "sha256": "de7a6beb10fac05eac0d5adf858339d7d04a6912c56c924d0eafa60ba7974d62",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/local/share/portable/tor-browser-developers.keyring": {
+    "mode": "0o644",
+    "sha256": "c2ed2cb463bf384630f2c746448399ab944c3aeade4619f940f07372a57780d7",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/local/share/portable/transmission-defaults.json": {
+    "mode": "0o644",
+    "sha256": "d0fa1bfd27c370e45841df9d22297745cb8126ccf7c6552ba2952cde9a317539",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/share/applications/amule.desktop": {
+    "mode": "0o644",
+    "sha256": "77bc2f2ab3fa12729b2d88990f58875d26917571402a319a8d8a3ab2d95f8b49",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/share/applications/firefox-esr.desktop": {
+    "mode": "0o644",
+    "sha256": "5103d5ca1d94170f8467b0894448113448d44cc10d8cef60bd7098062086de6f",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/share/applications/pan.desktop": {
+    "mode": "0o644",
+    "sha256": "93565ed17c8e012674400e95bbae91da6224788e909d27110f88af3cba582b8e",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/share/applications/petalos-guide.desktop": {
+    "mode": "0o644",
+    "sha256": "f4eb29993810616c66fd2f191462811834cea00d77cc857f4b16017f6539fde9",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/share/applications/portable-brightness.desktop": {
+    "mode": "0o664",
+    "sha256": "8f0cdab414acdd233cfe268b41671dc83aa14871b689b07ec1361f61c36ddab3",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/share/applications/portable-check-exit-ip.desktop": {
+    "mode": "0o644",
+    "sha256": "2302eaa0b698f9d95b112790569fdc9add71122f2cda4fbe6c60a98536195e7e",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/share/applications/portable-check-ipv6.desktop": {
+    "mode": "0o644",
+    "sha256": "d8fe0ef19f02373c7708e2103a2e929cb4c3669abfdef389da01cba1233d4bcb",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/share/applications/portable-download-mode.desktop": {
+    "mode": "0o664",
+    "sha256": "932ccde17c1994b729671dcda0610af93bef7d321e68d834ec99f59736962e67",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/share/applications/portable-lock-private.desktop": {
+    "mode": "0o664",
+    "sha256": "671a2cdc2e9b28d9ef73aff99ba4359ea0c67e46afaf4c423554070cdf248d2c",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/share/applications/portable-printing-start.desktop": {
+    "mode": "0o664",
+    "sha256": "39ef287f04076bb3260940556706274cae68f5fffbdc58d34f33d48f3803ddd7",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/share/applications/portable-printing-stop.desktop": {
+    "mode": "0o664",
+    "sha256": "a0b085a2f9041c2853cd8c2f003b72d658765572f7e5935307b87aaf66cd9a1e",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/share/applications/portable-private.desktop": {
+    "mode": "0o644",
+    "sha256": "7719f0cb79cc74937c07d4548e05d71d64e2dfe6f579e465b58bd18ebc421fd2",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/share/applications/portable-sabnzbd-stop.desktop": {
+    "mode": "0o644",
+    "sha256": "baa607d4d8fc588efdd300f127c0726b31e3603d371eb2543b543686f43e13fc",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/share/applications/portable-sabnzbd.desktop": {
+    "mode": "0o644",
+    "sha256": "314b1486b11091528d94f7dae701cb2a2a1eadb858c147be9cae96da5ccdb47f",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/share/applications/portable-save-app-preferences.desktop": {
+    "mode": "0o664",
+    "sha256": "bdc044a05135a7406035c5d988d8b6a64425940313c520c3f0364082278a73d2",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/share/applications/portable-save-settings.desktop": {
+    "mode": "0o644",
+    "sha256": "e26438afb0505ab4a6c10a79d3e303d5800ad351044bcf690023678085e40eaa",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/share/applications/portable-tor-install.desktop": {
+    "mode": "0o644",
+    "sha256": "60170329a5b9825bcf3cc85f01f2e8c392b7f08857118a21b3b3f97b560f3198",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/share/applications/portable-tor.desktop": {
+    "mode": "0o644",
+    "sha256": "15ae1b0abde90d41d3651ea56f7c2c641eb3097e0f17c2c0404a90345d3540f9",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/share/applications/portable-vpn-connect.desktop": {
+    "mode": "0o644",
+    "sha256": "41d5f14de16c6b31fe614a949a1445480b697b0cadeedb7a4411f4671dae291d",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/share/applications/portable-vpn-disconnect.desktop": {
+    "mode": "0o644",
+    "sha256": "34978f97e7bedf18b99745a0dfb0daa1a6161ea3ec1789f1a7a37b0e504cc54c",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/share/applications/transmission-gtk.desktop": {
+    "mode": "0o644",
+    "sha256": "32aed8c4ce4f3b333b485dc8d45539f26f52248d4dca628778b3cad6e43b940b",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/share/applications/xfce-wm-settings.desktop": {
+    "mode": "0o664",
+    "sha256": "ba683b84a9803dd8b9fdfe790fb7c96cc04a07bd050e96ec8c59ebb47e0a54fd",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/share/applications/xfce-wmtweaks-settings.desktop": {
+    "mode": "0o664",
+    "sha256": "3d3428e57588a7135a72ac3cc2da97eaa89fd7ec98b6b7e3c7477ef9e775b674",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/share/applications/xfce4-mail-reader.desktop": {
+    "mode": "0o664",
+    "sha256": "6898da886102bade40556a2d22eac45c71760a31c9f33b3d4e32bb498d7784a3",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/share/backgrounds/petalos/petalos-lock.png": {
+    "mode": "0o644",
+    "sha256": "d82383884391b3da1c69a7982518eba7d79cf5c8bb79b71bed9a0806a3fbf49d",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/share/dbus-1/services/org.xfce.xfce4-notifyd.Notifications.service": {
+    "mode": "0o664",
+    "sha256": "721d078c73b763e0300b84a9cf9627bc2ee71d8bbab6dd82061f0bd2326cc743",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/share/dbus-1/services/org.xfce.xfce4-notifyd.Notifyd.service": {
+    "mode": "0o664",
+    "sha256": "b46834f831e393052de1db980a7d178e89b7e667e84341fc4623d0eb08797d81",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/share/desktop-base/debian-homepage.desktop": {
+    "mode": "0o644",
+    "sha256": "5cb544cc53dd0beedf428b8ea6eb846b5cacfaefc467c1a9cb43d3baa53cd508",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/share/desktop-base/debian-reference.desktop": {
+    "mode": "0o644",
+    "sha256": "5cb544cc53dd0beedf428b8ea6eb846b5cacfaefc467c1a9cb43d3baa53cd508",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/share/desktop-base/debian-security.desktop": {
+    "mode": "0o644",
+    "sha256": "5cb544cc53dd0beedf428b8ea6eb846b5cacfaefc467c1a9cb43d3baa53cd508",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/share/doc/petalos/release-notes.txt": {
+    "mode": "0o664",
+    "sha256": "9b9216e95e4e4d44cb9a978422a55e7187677efa945e46bfd18447087929423a",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/share/doc/petalos/torbrowser-policy-copyright": {
+    "mode": "0o644",
+    "sha256": "dd3fa0b3f47bb9b1679c80522332b662e06fb94d94ea8db84da5485b07c8195d",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/share/doc/petalos/welcome.txt": {
+    "mode": "0o644",
+    "sha256": "fa758d842fa8ef2738535bc37db091831ed1710a29ac841b0bda7c8680e2118f",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/share/firefox-esr/distribution/policies.json": {
+    "mode": "0o664",
+    "sha256": "b456a65fdb2f05ca6fb9dd8e2f6e4d7447ee5f6a3854fb037de2d2565d5f96ac",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/share/icons/hicolor/128x128/apps/portable-tor.png": {
+    "mode": "0o644",
+    "sha256": "33f9c256c82c2c5797cf8835c50ca9b5715922969cbe8f89dd757217d18c8826",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/share/portable/wayland/labwc-rc.xml": {
+    "mode": "0o664",
+    "sha256": "84bcadc086519a37a4d26670527edc78d219246710e1a54fad6caf721ac20c77",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/share/wayland-sessions/petalos-wayland.desktop": {
+    "mode": "0o664",
+    "sha256": "b2225698839caab5074e94043e3112482e8249b7f7ebad068ffffe7a70a8fd2a",
+    "symlink": null
+  },
+  "config/includes.chroot/usr/share/xfce4/helpers/portable-tor.desktop": {
+    "mode": "0o644",
+    "sha256": "9521884d3a721a5710ad0b0f62d3631cf193a299842b6a50be7a5a92da022220",
+    "symlink": null
+  },
+  "config/package-lists/bluetooth.list.chroot": {
+    "mode": "0o664",
+    "sha256": "1a7ae706fddfb4c2527c396090a93f989ac1edbf5b44cceab7e424fda0ec872d",
+    "symlink": null
+  },
+  "config/package-lists/desktop.list.chroot": {
+    "mode": "0o664",
+    "sha256": "6b6026391792687d1b75635e5cc4830d71441423ddafa6e77559b12ccb587acb",
+    "symlink": null
+  },
+  "config/package-lists/live.list.chroot": {
+    "mode": "0o664",
+    "sha256": "9abc0066d87cea492441a99e09850a075322734e5dba7ac92bdf44fe330dcbe2",
+    "symlink": null
+  },
+  "config/package-lists/local-management.list.chroot": {
+    "mode": "0o664",
+    "sha256": "10178cad5957689693a9f80672a5bc89c461179d22b1518df1527f9aa32a67bf",
+    "symlink": null
+  },
+  "config/package-lists/network-tests.list.chroot": {
+    "mode": "0o664",
+    "sha256": "684c88dfd7e5a117b6dc4670171c1d76572391be5aca8ba0dc411e4456c11dc9",
+    "symlink": null
+  },
+  "config/package-lists/portable-apparmor.list.chroot": {
+    "mode": "0o664",
+    "sha256": "1219ba5d71a18245e2a02f9661ffb39029be8c13ca13db5258958751d359dac3",
+    "symlink": null
+  },
+  "config/package-lists/portable-apps.list.chroot": {
+    "mode": "0o664",
+    "sha256": "c4cb2eeaae74fd1650d1c699ef96a3d85ba47f60508dec306aa22d0422687b17",
+    "symlink": null
+  },
+  "config/package-lists/portable-tools.list.chroot": {
+    "mode": "0o664",
+    "sha256": "0f6b836bedea8cbf171fe1cc33b8375a375a24eebb7704e2bba80e8bcd65f969",
+    "symlink": null
+  },
+  "config/package-lists/time-sync.list.chroot": {
+    "mode": "0o664",
+    "sha256": "a177dfc0a616db62b5cbbf3bc24bffdb9be765ed6b760f22b0288f790be3c7cd",
+    "symlink": null
+  },
+  "config/package-lists/vpn.list.chroot": {
+    "mode": "0o664",
+    "sha256": "5fbd6e945cf7ddbbf8ba1fa4c89c52ad95fa57e8f0b300a2f0d45e912f26e914",
+    "symlink": null
+  },
+  "config/source": {
+    "mode": "0o664",
+    "sha256": "b26d96ae9450d13e2df09e7729ee36c9d3f431b7c7c64d2066e6a13b8f2f0ff4",
+    "symlink": null
+  },
+  "local/amule-kad/README.md": {
+    "mode": "0o664",
+    "sha256": "e3aceba08cd086f0f3b902b9bce239e3046f0def17741ce6ac359a34ca802f23",
+    "symlink": null
+  },
+  "local/amule-kad/build.py": {
+    "mode": "0o664",
+    "sha256": "fa38b88028c817d10fc6a88f752131d1a13e8fd8df770e785997ddc02a11668f",
+    "symlink": null
+  },
+  "local/amule-kad/connect-options.patch": {
+    "mode": "0o664",
+    "sha256": "a22daccc213be5f196c8e9bb520acabdfaf05f1e842d3f514f851c17ce9d5510",
+    "symlink": null
+  },
+  "local/amule-kad/layout.py": {
+    "mode": "0o664",
+    "sha256": "4536a9ae06de58aed1bc21122583dcd5f75e21e347bce09cf973074f2920fa45",
+    "symlink": null
+  },
+  "local/conky-native/README.md": {
+    "mode": "0o664",
+    "sha256": "59aafe943c80be484f28bbd9fb6bad41b8c4acbd767759a9396f9dcd56410478",
+    "symlink": null
+  },
+  "local/conky-native/build.py": {
+    "mode": "0o755",
+    "sha256": "b79c8b2c3b3f77ba1192f703bbe6deca8c0d3e2d37535c66f5c1b16505649956",
+    "symlink": null
+  },
+  "local/conky-native/click-through.patch": {
+    "mode": "0o664",
+    "sha256": "ea36515b22f38bc141595a99571cd74949973bd31746a75afc8c5906e8f0dae1",
+    "symlink": null
+  },
+  "local/parole-native/README.md": {
+    "mode": "0o664",
+    "sha256": "6ae8e8d992c8dc49ee293d47d2d0e8e93e3554888ec30eb28a89902deba34b99",
+    "symlink": null
+  },
+  "local/parole-native/build.py": {
+    "mode": "0o755",
+    "sha256": "7f75f56043d8f93922961d4baa61b8e5abb8e501ed81af83e2683e8959848ed8",
+    "symlink": null
+  },
+  "local/parole-native/native-gtk.patch": {
+    "mode": "0o664",
+    "sha256": "045126fd2b2c4cfacce8128bd0e44d7bc19ef0b9bc9c4de6e328f69cb5e96257",
+    "symlink": null
+  },
+  "tests/amule-kad-state-guest.py": {
+    "mode": "0o664",
+    "sha256": "2a09cb379e62538e670a8a33396a4732cb437a1101d5fc3a13ff797492005166",
+    "symlink": null
+  },
+  "tests/amule-kad-trial-guest.py": {
+    "mode": "0o664",
+    "sha256": "f7babc92a949a4d3ef4b2f71921bcaf172306985a61929a6e17b5b863fc87c57",
+    "symlink": null
+  },
+  "tests/apparmor-guest.py": {
+    "mode": "0o664",
+    "sha256": "9aa12c55be9242296cd58d516a4e2edb4bc7a41aa782c7854d2fc0df0668c330",
+    "symlink": null
+  },
+  "tests/apparmor-sab-probe.py": {
+    "mode": "0o664",
+    "sha256": "2da7769d3cd68a07934db6273ffd85b8e26e5f9fc9daf80a634d5376f0ea492e",
+    "symlink": null
+  },
+  "tests/apps-live-guest": {
+    "mode": "0o664",
+    "sha256": "e64ba08b7c489eb0f6849a7c926baab9d38712e754eec90766cada99ae35d62c",
+    "symlink": null
+  },
+  "tests/audit-boot-timing-guest.py": {
+    "mode": "0o664",
+    "sha256": "d9eca886718fe751b757f68b603ce8b7b1245cd9ea01d3f224501db3318352d4",
+    "symlink": null
+  },
+  "tests/audit-connect-guest.py": {
+    "mode": "0o664",
+    "sha256": "e2d13b0fb84b0ba8cf8d615c94c8c29826bf9faafd1d86350586c39e786af8d6",
+    "symlink": null
+  },
+  "tests/audit-credentials-guest.py": {
+    "mode": "0o664",
+    "sha256": "cdafb1dd999e41cc6f11cae799c1d1dc9767491f84f93ac44f95fe4b36050d9f",
+    "symlink": null
+  },
+  "tests/audit-poweroff-guest.py": {
+    "mode": "0o664",
+    "sha256": "154643b0dccc8d13ec3648d4fce23e3fbc267f81ec633817c3ad0a36ee94f5cc",
+    "symlink": null
+  },
+  "tests/audit-runtime-metadata-guest.py": {
+    "mode": "0o664",
+    "sha256": "3316f3122b66780382b16d56ae1e50545578c5be357afdd6f3a7e44b00632c72",
+    "symlink": null
+  },
+  "tests/audit-screen-lock-guest.py": {
+    "mode": "0o664",
+    "sha256": "731c8859d1105871a96207e73e46b5171134ab33a7f089e458037c5cf87b717b",
+    "symlink": null
+  },
+  "tests/audit-screenshot.py": {
+    "mode": "0o664",
+    "sha256": "71a9f804b072e0ddd97cafbedc51de6fb499fa09a47ef13df00c1295b7903af4",
+    "symlink": null
+  },
+  "tests/audit-smoke-guest.py": {
+    "mode": "0o664",
+    "sha256": "8d2b7741daade37e93d02af19743e8492bfd2275bdff7f00d01f1c616c4facfb",
+    "symlink": null
+  },
+  "tests/audit-vm.py": {
+    "mode": "0o664",
+    "sha256": "9b63dd35d91b9038f673656457511c78cab148d33cb2c424d0d1af9a28d87105",
+    "symlink": null
+  },
+  "tests/build-hardware-ssh-module.py": {
+    "mode": "0o664",
+    "sha256": "c2a503a555539d915e290446cb9b715d404cdd34fe55eead23ccc30371fbe4e9",
+    "symlink": null
+  },
+  "tests/build-ssh-module.py": {
+    "mode": "0o664",
+    "sha256": "fb30450997e64d205b4c25aaa403c90b73b14c60bfb1eb00f9c9fcb5791cd7b4",
+    "symlink": null
+  },
+  "tests/cache-wayland-test-packages.py": {
+    "mode": "0o664",
+    "sha256": "3eb9b847b398026a08ff6dd882a99fc3f43f73f969508023122e70fb7ed594e9",
+    "symlink": null
+  },
+  "tests/check-amule-connect-options.py": {
+    "mode": "0o664",
+    "sha256": "7bcf93a540451d4787a12a0ce2f0bb46fa16e8e50ecdeb12d5425bfe918dbb53",
+    "symlink": null
+  },
+  "tests/check-app-preferences.py": {
+    "mode": "0o664",
+    "sha256": "2ac8bb96d5f6a8bba797b84ac877b162e9145e6a9d2fb5f95be54ccc08e27ac9",
+    "symlink": null
+  },
+  "tests/check-credential-prompts.py": {
+    "mode": "0o755",
+    "sha256": "1b3bdea56f0d287a4ac84fa651886b140766733b1fd58956ea19fedd84e80be5",
+    "symlink": null
+  },
+  "tests/check-desktop-helpers.py": {
+    "mode": "0o664",
+    "sha256": "492bdd531c86b2d496d1957075f86ca294789caf9c0b7e889953d9857af79327",
+    "symlink": null
+  },
+  "tests/check-desktop-settings.py": {
+    "mode": "0o664",
+    "sha256": "0c9d6689cc4480fc722222972fc8561af77f1d0cd78c1ceed2615ee6f3f3a0b6",
+    "symlink": null
+  },
+  "tests/check-download-prepare.py": {
+    "mode": "0o664",
+    "sha256": "d4ba1f780ac156de8771154178157622b7a518c709e61132c98ab8d4fb61d79d",
+    "symlink": null
+  },
+  "tests/check-exit-ip.py": {
+    "mode": "0o664",
+    "sha256": "d3ac94eaf3f384e2e4661a4aa452b3a6a9df012c5315d76342146e5fd27f3f80",
+    "symlink": null
+  },
+  "tests/check-lock-display-wake.py": {
+    "mode": "0o664",
+    "sha256": "0f8187fffddd36903cf54a7245744908832ee7910e0fc17b88e7358d2f631800",
+    "symlink": null
+  },
+  "tests/check-memory-boot-config.py": {
+    "mode": "0o664",
+    "sha256": "ae13c4c19dda203fffbfa2ed93e25112334ec4beeae80a7b84cbb76ec9249cff",
+    "symlink": null
+  },
+  "tests/check-private-unlock-retry.py": {
+    "mode": "0o664",
+    "sha256": "02e4ff06302d4f1d7669011204d8b4a5d7f24d9f50978b7aa8e2deb6104ce8b1",
+    "symlink": null
+  },
+  "tests/check-sab-navigation.py": {
+    "mode": "0o664",
+    "sha256": "74bf7773ea029a81154257733e76b12bf8d1bce8a23464d302f2b03b448c7631",
+    "symlink": null
+  },
+  "tests/check-sleep-storage-hook.py": {
+    "mode": "0o664",
+    "sha256": "b3ad47bb9c0761ef8e3a0a12d00a9f5512ed5a76d73de7e0b3011d5ed2a16721",
+    "symlink": null
+  },
+  "tests/check-tor-install-gui.py": {
+    "mode": "0o664",
+    "sha256": "7d1a9d7612db8d9ace2a000dfa1aa14dd11536e2924e8ac3dfa9e26ae8499792",
+    "symlink": null
+  },
+  "tests/check-tor-maintenance.py": {
+    "mode": "0o664",
+    "sha256": "7c67c626d18fbe664710879c413f7ea1aabd54bca55f7d2e22aa26c52e0048a1",
+    "symlink": null
+  },
+  "tests/check-tor-signature.py": {
+    "mode": "0o664",
+    "sha256": "f35e5e8e43d77e6f824c0c3a0f8b6917e6038242af9c8f3717414e8dbf612c07",
+    "symlink": null
+  },
+  "tests/check-vpn-connect-flow.py": {
+    "mode": "0o755",
+    "sha256": "ade10035b966269bf2eedd760160dcfef14665b3a2d1bb8a248662179c038a9b",
+    "symlink": null
+  },
+  "tests/check-vpn-connection.py": {
+    "mode": "0o755",
+    "sha256": "e809d7349e7df3765b2aadd6392f30e43350d5caa8c916ad9965ebeba129b366",
+    "symlink": null
+  },
+  "tests/check-vpn-profile-gui.py": {
+    "mode": "0o664",
+    "sha256": "155fcde4a647aa472640f0a6f251581cad8026231ce5d2db15f7db53d1cd3b66",
+    "symlink": null
+  },
+  "tests/check-vpn-profiles.py": {
+    "mode": "0o664",
+    "sha256": "bbcc6be932baf8f2db5b75c249d84086ce233a4f206fdb4836bb4fb7f891bf64",
+    "symlink": null
+  },
+  "tests/compartment-cleanup-guest.py": {
+    "mode": "0o664",
+    "sha256": "ef3b3bc874f614f660e04af409e33c917222161d064baba2d47adbcc467758a0",
+    "symlink": null
+  },
+  "tests/compartments-boundary-guest.py": {
+    "mode": "0o664",
+    "sha256": "1f87db4e87501b394b1d61560f36f0f03d6ec306771a11e669da2de06f13489f",
+    "symlink": null
+  },
+  "tests/downloads-native-boundary-guest.py": {
+    "mode": "0o664",
+    "sha256": "e5bf13312b30c87d47d3cf75ea13e1762ea7a3fbb065ebafa17e6dea7060bfc5",
+    "symlink": null
+  },
+  "tests/dual-content-guest.py": {
+    "mode": "0o664",
+    "sha256": "34cecb17278172d7b8a030ecdcef393ca2e6db2381c5691cdf0501efd9847293",
+    "symlink": null
+  },
+  "tests/finish-development-card-root.py": {
+    "mode": "0o664",
+    "sha256": "d3c5e72f99d232a49de17eca2cd5133789290c4d4d9e206a66d486e778a29b7f",
+    "symlink": null
+  },
+  "tests/freeze-hardware-image.py": {
+    "mode": "0o664",
+    "sha256": "f3cdff3961fbbda200f3dcfb2bc7fa9a6d24f2c93e34e799de4bc59ebce3b09b",
+    "symlink": null
+  },
+  "tests/guest-ssh.py": {
+    "mode": "0o664",
+    "sha256": "bb21238b33c7f6853036dd3208aabc2145ce296ef57482d1fdf8b1a1983e2e94",
+    "symlink": null
+  },
+  "tests/hardening-boot-guest.py": {
+    "mode": "0o664",
+    "sha256": "f69a0108ada6f8caa240e5eaa156c25f1cde9df31dc13e10644d80a8bb9a232b",
+    "symlink": null
+  },
+  "tests/hardening-mac-guest.py": {
+    "mode": "0o664",
+    "sha256": "330a825a8107d2ff50dcca2011b9b2e5fc4e4e75abb103b49b7bd271eaced08b",
+    "symlink": null
+  },
+  "tests/hardware-av-load-guest.py": {
+    "mode": "0o664",
+    "sha256": "b137a98b508833a9bc64ef0f2511130b46d660f6e1fb519e42856717e9c94e35",
+    "symlink": null
+  },
+  "tests/hardware-away-pass-guest.py": {
+    "mode": "0o664",
+    "sha256": "ffe71f340a71d73dc62551ee0e4128504f7ea6d0bb4e52926d4c90a362960b54",
+    "symlink": null
+  },
+  "tests/hardware-egress-counters-guest.py": {
+    "mode": "0o664",
+    "sha256": "76fa197f16854933c731ffafd711ded254789dd5cdefa10a53a57b53d24874a5",
+    "symlink": null
+  },
+  "tests/hardware-guest-ssh.py": {
+    "mode": "0o664",
+    "sha256": "86839bb6084fafa51f837a1ec9ef3c5f2b3d24cf3abcbe878d6966edb3fff091",
+    "symlink": null
+  },
+  "tests/hardware-management-netns-guest.py": {
+    "mode": "0o664",
+    "sha256": "45dfa26bbab4a943da826c38a29ea300f7393bf0fbdad7831af7bf4417ef22b0",
+    "symlink": null
+  },
+  "tests/hardware-memory-check-guest.py": {
+    "mode": "0o664",
+    "sha256": "a6fee491a189525dc0db1d0bea9259b993cbfa0299e14eac0f05826021fccf53",
+    "symlink": null
+  },
+  "tests/hardware-ssh/9998-petalos-hardware-ssh": {
+    "mode": "0o664",
+    "sha256": "cb41b6d117f65ababda8b731b826f8010f979c0440d1f7a57920cdd4527a8da6",
+    "symlink": null
+  },
+  "tests/hardware-ssh/management.py": {
+    "mode": "0o664",
+    "sha256": "115057f7a46c20636b5e94c1394c60ba08886010e8cb32fec4f243c97329b609",
+    "symlink": null
+  },
+  "tests/hardware-ssh/petalos-hardware-ssh.service": {
+    "mode": "0o664",
+    "sha256": "69a1a21e01101a9981cdba89c7b0ea61cb40204fde20200740c54aff2e8856ce",
+    "symlink": null
+  },
+  "tests/hardware-ssh/sshd_config": {
+    "mode": "0o664",
+    "sha256": "dfd1f0df372c2d9bc5574967a9253937a033566b8f44bd540fab71eb138b8f11",
+    "symlink": null
+  },
+  "tests/host-hardware-connect.py": {
+    "mode": "0o664",
+    "sha256": "65862cee84646d0eece6b2c8e9c5c804752d57631be2e15c57c8b00774d235b0",
+    "symlink": null
+  },
+  "tests/host-hardware-management-root.py": {
+    "mode": "0o664",
+    "sha256": "2895ba156b9958db73078bf8061ffe45962b3c9bcd722385b00948685ad20f7e",
+    "symlink": null
+  },
+  "tests/inspect-card-update-root.py": {
+    "mode": "0o664",
+    "sha256": "725e221fba6b01f63f448c240c18857bf94c85165a272c4392da448405c63f7f",
+    "symlink": null
+  },
+  "tests/install-hardware-card-root.py": {
+    "mode": "0o664",
+    "sha256": "4c26b06a03790c845759a070acfd6cc14082aaf3ef9f156e6a35619d6a2f6e3f",
+    "symlink": null
+  },
+  "tests/keepass-save-guest.py": {
+    "mode": "0o664",
+    "sha256": "37759b72c4cfc9c014ce538b8ff7f7e73e7eeb63661b4501d9d94098406dad3d",
+    "symlink": null
+  },
+  "tests/launch-encrypted-qemu.py": {
+    "mode": "0o664",
+    "sha256": "36cb20b054982b7d25754225d6a213f4d81185960b6d7239e104b8f0e9e6f117",
+    "symlink": null
+  },
+  "tests/launch-hardware-qemu.py": {
+    "mode": "0o664",
+    "sha256": "932b02cc17363833045d88f8718f091b3b2675cd120b5e45fe0008a2d912578d",
+    "symlink": null
+  },
+  "tests/launch-qemu-desktop.py": {
+    "mode": "0o664",
+    "sha256": "acab8cb97010c6086878959dbdaa7eb8051c6b847387e42eb647cd927ec0115b",
+    "symlink": null
+  },
+  "tests/lock-auth-guest.py": {
+    "mode": "0o664",
+    "sha256": "7dba0d6ca559d726a8be8a983e17e7c134785b47122eaf8dc9bb2a7e66f8ab7d",
+    "symlink": null
+  },
+  "tests/lock-pam-guest.py": {
+    "mode": "0o664",
+    "sha256": "18ec22aaa8c26ba1d050e6d54f69478cf7485dca77c684075fbd5d9262d6fbdc",
+    "symlink": null
+  },
+  "tests/migrate-private-clone-root.py": {
+    "mode": "0o664",
+    "sha256": "abba57217f08f4ff59f27148e1688ff5b530462343cdbf5586c534f94f1041c3",
+    "symlink": null
+  },
+  "tests/native-vpn-transitions-guest.py": {
+    "mode": "0o664",
+    "sha256": "c9aaf5e0398b32adc27f58b3bcb3cbbd1b5076191d02192f786075f09fce3915",
+    "symlink": null
+  },
+  "tests/offline-atomic-save-guest.py": {
+    "mode": "0o664",
+    "sha256": "4efab88f2b10a15c1b427baa40f7a3ed3925a18c93f453532de3f0c5b78bdf9e",
+    "symlink": null
+  },
+  "tests/offline-file-handoff-guest.py": {
+    "mode": "0o664",
+    "sha256": "f8800dc536869726790bbcb74590de20a8d9cf79c5b9e936350855ee60c0d1f3",
+    "symlink": null
+  },
+  "tests/offline-native-boundary-guest.py": {
+    "mode": "0o664",
+    "sha256": "fdcde21d7acc6dd9936cca3f74ef6ae119129cf4dfa5e35e07c195a39566907c",
+    "symlink": null
+  },
+  "tests/open-hardware-maintenance.py": {
+    "mode": "0o664",
+    "sha256": "ff3cde88b53b87d3bfd79675b58f88d08e8d42cd36795447929dc78ff8abedd9",
+    "symlink": null
+  },
+  "tests/open-root-maintenance.py": {
+    "mode": "0o664",
+    "sha256": "6360bb6277e93490a43ec9093ab9a05175ac67414df85e5372aba2943c720177",
+    "symlink": null
+  },
+  "tests/playback-clock-guest.py": {
+    "mode": "0o664",
+    "sha256": "fb0f4927f3e2ad085d43d483b5894f87adc9b95cebebe35e45398aa121163212",
+    "symlink": null
+  },
+  "tests/playback-role-guest.py": {
+    "mode": "0o664",
+    "sha256": "bfec1dbc091e4e242a4a4114983bdcdbc06d9bc7db257fb4bb9a9f8bcfdec686",
+    "symlink": null
+  },
+  "tests/prepare-audit-vm.py": {
+    "mode": "0o664",
+    "sha256": "748b5d19601c2b0ccb48eeefd874bf33aa65e5179a809a4272849d5cf1b71017",
+    "symlink": null
+  },
+  "tests/prepare-config-test.py": {
+    "mode": "0o664",
+    "sha256": "aeb5e0e39fa3335ffb672c93f438c2cb6daffa73875933564e7d57ae3d32cced",
+    "symlink": null
+  },
+  "tests/prepare-encrypted-qemu.py": {
+    "mode": "0o664",
+    "sha256": "6adce501988951ac18c46c79fdde7c9e27532b776b4f07ca23394633b05fa636",
+    "symlink": null
+  },
+  "tests/prepare-hardware-image-root.py": {
+    "mode": "0o664",
+    "sha256": "84526752ea453fbe912978a4686afcb8d0b535ea5498fe2cc8a71e1f40ad6a03",
+    "symlink": null
+  },
+  "tests/prepare-hardware-image.py": {
+    "mode": "0o664",
+    "sha256": "0fabafeee8c8f302c5d256597bed4826421f64e38b87961d1c7c603ee001327a",
+    "symlink": null
+  },
+  "tests/prepare-private-migration.py": {
+    "mode": "0o664",
+    "sha256": "a43a92ffd7b4a2bcd8e1e58946ae55c59c6aa3c8c654722d29b21add26a3d3f1",
+    "symlink": null
+  },
+  "tests/prepare-profiles-test.py": {
+    "mode": "0o755",
+    "sha256": "678419c35632481048e3a85497e871a3afb8d86a77996f1bc301563c0ebead46",
+    "symlink": null
+  },
+  "tests/prepare-release-test.py": {
+    "mode": "0o755",
+    "sha256": "5c5a9d8254e471aa7ce73a2f858a23881508de09091f926a2966981164fb0a66",
+    "symlink": null
+  },
+  "tests/prepare-ssh-test.py": {
+    "mode": "0o664",
+    "sha256": "b6a941e61e96f8f736df6612d3cdae3f54c20e179a99e7683168b263d695a8d8",
+    "symlink": null
+  },
+  "tests/prepare-tor-test.py": {
+    "mode": "0o664",
+    "sha256": "5aa9afc51b1fe19650ee5e0a51066bcc887524b9a3ceda5f3103ea63bbe2c276",
+    "symlink": null
+  },
+  "tests/prepare-vpn-test.py": {
+    "mode": "0o664",
+    "sha256": "eb1e1312f46a3a2845f9f70e3425624d68fade04f80676d7e86a228d959af7bc",
+    "symlink": null
+  },
+  "tests/private-key-audit-guest.py": {
+    "mode": "0o664",
+    "sha256": "8b6f0d9bae83e6d81dc9bbf511c5fe4111d8cfe93e175d7198c643f3ea45c77c",
+    "symlink": null
+  },
+  "tests/private-key-rotation-fixture.py": {
+    "mode": "0o664",
+    "sha256": "4830d82ebfedeaf13b284e470f14e37f8fe63ddfdda3334c881b20fb2be3bf2a",
+    "symlink": null
+  },
+  "tests/private-notifications-guest.py": {
+    "mode": "0o664",
+    "sha256": "99978547d9e5ee1bd677161361f6d27d91f4c136401e55b4fadb11fbadcb16cf",
+    "symlink": null
+  },
+  "tests/private-storage-controller.py": {
+    "mode": "0o664",
+    "sha256": "8f68d6330861c929d591c183c7e347e00473084a389a4ac94410361a8a283e8a",
+    "symlink": null
+  },
+  "tests/provision-audit-root.py": {
+    "mode": "0o664",
+    "sha256": "f67be9f26e14dead854fcb01dc4c15baa110a1b12e0d8ce820138602a04c6449",
+    "symlink": null
+  },
+  "tests/provision-config-root.py": {
+    "mode": "0o664",
+    "sha256": "5169b2a5c075e9c71b546be81de8ebd4635618b15588f61ce15efc9f170ce8fd",
+    "symlink": null
+  },
+  "tests/provision-profiles-root.py": {
+    "mode": "0o664",
+    "sha256": "3768223e266b9e2f7cfd0e3a8754572f9e7695f95f32b3aa2dca594259363da4",
+    "symlink": null
+  },
+  "tests/provision-release-root.py": {
+    "mode": "0o664",
+    "sha256": "ab601a5f0b0a0bb2697b9921bcba80bef5dbb79f1a22794b840d606cc66b67cf",
+    "symlink": null
+  },
+  "tests/provision-ssh-root.py": {
+    "mode": "0o664",
+    "sha256": "22e47d0fdca8e611a6283da5726f4cc1bc5c3f2c2685f579ce52fb8d48d439dd",
+    "symlink": null
+  },
+  "tests/provision-tor-root.py": {
+    "mode": "0o664",
+    "sha256": "b0650cc8fe0771336d37c518ab8766f2f03130ed06e31ce874ca403e4364aadc",
+    "symlink": null
+  },
+  "tests/provision-vpn-root.py": {
+    "mode": "0o664",
+    "sha256": "fbae599450f8f7644cfda47e89fd587c3030b40a2953971dbc6612e339fc38b6",
+    "symlink": null
+  },
+  "tests/qemu-ssh/9999-petalos-qemu-ssh": {
+    "mode": "0o664",
+    "sha256": "f1e4ab690f4d1cbfc7f279b95b791a549a3e00c3d9efd09eeeadf8cb8ca0a919",
+    "symlink": null
+  },
+  "tests/qemu-ssh/admin-status.py": {
+    "mode": "0o664",
+    "sha256": "aa9f30bd8acb202cda14e4b63854ca5933a8c2a7dccf8c39590c0268382c10fd",
+    "symlink": null
+  },
+  "tests/qemu-ssh/petalos-qemu-ssh.service": {
+    "mode": "0o664",
+    "sha256": "d6a8ed7290042dc2a10e766bea0be8b648a9eb7ce669130db513068f0b38fb4a",
+    "symlink": null
+  },
+  "tests/qemu-ssh/petalos-qemu-vsock.service": {
+    "mode": "0o664",
+    "sha256": "0ae81df02270d00ca2fba88a4e82047c020afdfa4f9263b847c779616e5997c2",
+    "symlink": null
+  },
+  "tests/qemu-ssh/policy-rc.d": {
+    "mode": "0o664",
+    "sha256": "c2bcd9decf63ff2c0d9f473f38bc3607900530aad80f99139855d56678456230",
+    "symlink": null
+  },
+  "tests/qemu-ssh/sshd_config": {
+    "mode": "0o664",
+    "sha256": "3cd51e4dd5ee4fbf8533c51b0e08dbbb8bf6237df0181c3e3aa6488705e8a99c",
+    "symlink": null
+  },
+  "tests/ram-content-guest.py": {
+    "mode": "0o664",
+    "sha256": "b939d53f5695b019a6ac18deb337e6aac4bdde1c126c626cdfc4418b00bda4ee",
+    "symlink": null
+  },
+  "tests/rc-guest-audit.py": {
+    "mode": "0o664",
+    "sha256": "72d08994f5be513a188a8d48b56f6201edbafb0a4d0438962c009b398e1a2463",
+    "symlink": null
+  },
+  "tests/rebuild-release.py": {
+    "mode": "0o664",
+    "sha256": "ad0ee09d0047375e735b25809c0271b01e700b34816221e0ce0058ede5c43cd2",
+    "symlink": null
+  },
+  "tests/repair-card-efi-root.py": {
+    "mode": "0o664",
+    "sha256": "728f3c2337830beb948097ce2050e65bcd6d7f02a1e2fd4731316aab3f0faf4d",
+    "symlink": null
+  },
+  "tests/root-maintenance-guest.py": {
+    "mode": "0o664",
+    "sha256": "0b24b8383fcabd5b4e997ea286119f8c7e24c848dacdd78adaea2828f9a2c7e5",
+    "symlink": null
+  },
+  "tests/root-stage-frame.py": {
+    "mode": "0o664",
+    "sha256": "28b8e99d7fbe7a43487086aad27a214e32203bf17cf336723299ab484b90ed1c",
+    "symlink": null
+  },
+  "tests/run-vpn-live.py": {
+    "mode": "0o664",
+    "sha256": "ad4c043e21bc70c93ebde47f8c5de28a572591520a91079135bcea60baffa8bf",
+    "symlink": null
+  },
+  "tests/run-vpn-qemu.py": {
+    "mode": "0o664",
+    "sha256": "cc0a3be070d9ac3ad009a696f4c893907a313227c022f592aa3ac3f1c06eeb11",
+    "symlink": null
+  },
+  "tests/sab-bridge-guest.py": {
+    "mode": "0o664",
+    "sha256": "2eca3b710c28b77b19522bb1aee00be3eafb89b8d6f9387320a0b0f2556a39bf",
+    "symlink": null
+  },
+  "tests/security-audit-guest.py": {
+    "mode": "0o664",
+    "sha256": "01971d580c5bc94f61fe9834366dfda48e06b02566926be75900107f99b3b27c",
+    "symlink": null
+  },
+  "tests/security-boundary-probe.py": {
+    "mode": "0o664",
+    "sha256": "37ccc179e600477f4be83826bcad8cd4904f9b17b43b861ff9a58db1d3cf01db",
+    "symlink": null
+  },
+  "tests/security-desktop-probe.py": {
+    "mode": "0o664",
+    "sha256": "31ffe325d98b631299804b6c614bfdedf25de9765ab7b66d1cd990196d403076",
+    "symlink": null
+  },
+  "tests/security-network-probe.py": {
+    "mode": "0o664",
+    "sha256": "76224d3b3853a56d28b9b23995f064bd478cc7df31a204009d22a7c2aad05500",
+    "symlink": null
+  },
+  "tests/security-package-audit.py": {
+    "mode": "0o664",
+    "sha256": "f237f8f08e21d0d76af17a4a2e8f71fe58e2e4b139ffa184cae97dd46f049f0f",
+    "symlink": null
+  },
+  "tests/security-polkit-probe.py": {
+    "mode": "0o664",
+    "sha256": "7b2343e3edaf8b2bfa395a8c7ad6c948c2a7ce82812b88055bcc5e135fd71bf8",
+    "symlink": null
+  },
+  "tests/shutdown-policy-guest.py": {
+    "mode": "0o664",
+    "sha256": "2799238bccfa79a7c67013d063d8368f076ced5dd9f19b2077db684c699f5616",
+    "symlink": null
+  },
+  "tests/stage-guest-config.py": {
+    "mode": "0o664",
+    "sha256": "89c25c00ab9a2613e74bed7930c9da2b933fc6257fac16ecc135f7e55e385ef8",
+    "symlink": null
+  },
+  "tests/tor-cache-generation-guest.py": {
+    "mode": "0o664",
+    "sha256": "c6d4e076378400699e705ecbfd22926985417ca79dba33080baa1c669e11f15e",
+    "symlink": null
+  },
+  "tests/tor-control-guest.py": {
+    "mode": "0o664",
+    "sha256": "aac1cde6d4fd670483df87b5c46e1757a087ea85848305bf3d821872839c95b5",
+    "symlink": null
+  },
+  "tests/tor-readcheck-guest.py": {
+    "mode": "0o664",
+    "sha256": "38c31d08fa987bc3e2f95ef2d8ddb7ff9976a99d56bb42bb84d0153683923554",
+    "symlink": null
+  },
+  "tests/tor-socks-boundary-guest.py": {
+    "mode": "0o664",
+    "sha256": "f374717d10862979d41fed9f64e7b48a2e4e28513c1b515f7fc74928d605005f",
+    "symlink": null
+  },
+  "tests/transmission-piece-probe.py": {
+    "mode": "0o664",
+    "sha256": "218c46760880e6db1cc31902497b73a25aeee9cc32ed77efe63721e21b5d535e",
+    "symlink": null
+  },
+  "tests/update-card-release-root.py": {
+    "mode": "0o664",
+    "sha256": "b5ab83cafc8cb633fa1b424887c75a3b0a4eba7ebf4a58d127a465814bc0ce37",
+    "symlink": null
+  },
+  "tests/update-encrypted-clone.py": {
+    "mode": "0o664",
+    "sha256": "4236698a59dcbeac327ce78a5575537946e848428a5a50b3c8cfdef4798a2bb8",
+    "symlink": null
+  },
+  "tests/verify-apparmor.py": {
+    "mode": "0o664",
+    "sha256": "46d5b83e78ab4540f81992b4f4aadce556750c63e0700084a90f7666702362d2",
+    "symlink": null
+  },
+  "tests/verify-cold-boot.py": {
+    "mode": "0o664",
+    "sha256": "b7ea1423ef07dc5617a8152c96d7f061c0dee595162436d383d6e81e29f9ad35",
+    "symlink": null
+  },
+  "tests/verify-freed-memory-boot.py": {
+    "mode": "0o664",
+    "sha256": "714239d472ea2af1ea6341fb10509a32a3a4b61be1328e3618c237af845b2baf",
+    "symlink": null
+  },
+  "tests/verify-qemu-ssh.py": {
+    "mode": "0o664",
+    "sha256": "72b67d4425780a441939a8c890a9bfb60c66ef10905ccca1d5d0ed7de87ac8a4",
+    "symlink": null
+  },
+  "tests/vpn-command-mock": {
+    "mode": "0o664",
+    "sha256": "eabfb8e8c96885e89b10154a9a586e2e2ac713399dd963894e57cf2e7de479b1",
+    "symlink": null
+  },
+  "tests/vpn-live-guest": {
+    "mode": "0o664",
+    "sha256": "3d14954221170cb3d10fcea2b4ae306f87eef43630a5a1359ffaedba57cce684",
+    "symlink": null
+  },
+  "tests/vpn-profile-mock": {
+    "mode": "0o755",
+    "sha256": "0ddd230209dc5327354fccacee082c58eaf40b77a41ceb6025eeee7c73cb44a6",
+    "symlink": null
+  },
+  "tests/vpn-qemu-init": {
+    "mode": "0o664",
+    "sha256": "c2b863fbaec892f9cabc8762136102e0f9aea3ce69790fed3b64f91cd077a944",
+    "symlink": null
+  },
+  "tests/wayland-context-guest.py": {
+    "mode": "0o664",
+    "sha256": "ff2ce19f58d52aa18b9b4578cf1911377f53f227a1fb253e0a8f4dd3721817b6",
+    "symlink": null
+  },
+  "tests/wayland-native-boundary-guest.py": {
+    "mode": "0o664",
+    "sha256": "ea3797e3caf57a7f1aaa2a7ab4315e6cdeb7e753d7b8b8fbb35c97f5c25e1a67",
+    "symlink": null
+  }
+}

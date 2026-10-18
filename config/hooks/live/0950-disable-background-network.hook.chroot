@@ -1,0 +1,20 @@
+#!/bin/sh
+set -eu
+# Tor Browser uses its own signed RAM copy; no independent system Tor daemon.
+# Discovery remains disabled. Printing requires an explicit admin action.
+systemctl mask \
+    tor.service tor@.service tor@default.service \
+    avahi-daemon.service avahi-daemon.socket \
+    cups.service cups.socket cups.path cups-browsed.service \
+    ssh.service ssh.socket
+# Local CUPS clients use its Unix socket. Do not expose a TCP listener or
+# advertise printers, even after an explicit Start Printing action.
+python3 - <<'PY'
+from pathlib import Path
+p = Path('/etc/cups/cupsd.conf')
+lines = p.read_text().splitlines()
+directives = {'Listen', 'Port', 'Browsing', 'BrowseLocalProtocols', 'WebInterface'}
+lines = [line for line in lines if not line.split() or line.split()[0] not in directives]
+p.write_text('\n'.join(lines) + '\nListen /run/cups/cups.sock\nBrowsing Off\nWebInterface No\n')
+PY
+/usr/sbin/cupsd -t

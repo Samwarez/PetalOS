@@ -1,0 +1,5 @@
+#!/bin/sh
+set -eu
+# Validate included-file permissions as well as syntax. A policy that parses
+# but is ignored for its file mode must fail the image build.
+/usr/sbin/visudo -c >/dev/null

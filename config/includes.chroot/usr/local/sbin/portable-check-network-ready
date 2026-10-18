@@ -1,0 +1,40 @@
+#!/usr/bin/python3 -I
+"""Fixed no-argument read-only VPN gate for unprivileged desktop launchers."""
+import fcntl
+import os
+import stat
+import subprocess
+import sys
+import time
+
+def main():
+    if os.geteuid() != 0 or len(sys.argv) != 1:
+        return 1
+    fd = os.open('/run/portable-vpn.lock', os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
+    with os.fdopen(fd, 'rb') as lock:
+        info = os.fstat(lock.fileno())
+        if not stat.S_ISREG(info.st_mode) or info.st_uid != 0 or info.st_mode & 0o077 or info.st_nlink != 1:
+            return 1
+        deadline = time.monotonic() + 2
+        while True:
+            try:
+                fcntl.flock(lock, fcntl.LOCK_SH | fcntl.LOCK_NB)
+                break
+            except BlockingIOError:
+                if time.monotonic() >= deadline:
+                    return 1
+                time.sleep(0.05)
+        result = subprocess.run(['/usr/local/sbin/portable-check-vpn'],
+            stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+            env={'PATH': '/usr/sbin:/usr/bin:/sbin:/bin', 'HOME': '/root', 'LC_ALL': 'C'},
+            cwd='/', timeout=20)
+        return int(result.returncode != 0)
+
+if __name__ == '__main__':
+    try:
+        result = main()
+    except Exception:
+        result = 1
+    if result:
+        print('Current VPN verification failed.', file=sys.stderr)
+    sys.exit(result)

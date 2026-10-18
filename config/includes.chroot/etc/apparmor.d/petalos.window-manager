@@ -1,0 +1,11 @@
+#include <tunables/global>
+profile petalos_window_manager {
+  #include <abstractions/petalos-compartment-common>
+  /home/petal-*/ r,
+  owner /home/petal-*/.Xauthority r,
+  owner /home/petal-*/.config/{,**} rwkl,
+  owner /home/petal-*/.cache/{,**} rwkl,
+  deny network inet,
+  deny network inet6,
+  deny /mnt/private/{,**} rwkl,
+}

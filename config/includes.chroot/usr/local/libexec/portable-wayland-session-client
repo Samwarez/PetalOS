@@ -1,0 +1,28 @@
+#!/bin/sh
+set -eu
+# Labwc may export a lazy Xwayland DISPLAY even when its executable is blocked.
+# Never let trusted desktop launchers or toolkits select that fallback.
+unset DISPLAY XAUTHORITY
+export GDK_BACKEND=wayland
+export QT_QPA_PLATFORM=wayland
+export MOZ_ENABLE_WAYLAND=1
+export SDL_VIDEODRIVER=wayland
+export XDG_SESSION_TYPE=wayland
+# User services start before the desktop and can retain a stale X11 DISPLAY.
+/usr/bin/timeout 8 /usr/bin/systemctl --user unset-environment DISPLAY XAUTHORITY \
+    >/dev/null 2>&1 || true
+# startxfce4 creates the desktop bus after the user manager has already started.
+# Put the secret service on this bus before nm-applet requests Wi-Fi secrets.
+# Its storage remains in the volatile home; this adds no persisted credentials.
+if [ -x /usr/bin/gnome-keyring-daemon ]; then
+    if /usr/bin/timeout 8 /usr/bin/systemctl --user import-environment \
+        DBUS_SESSION_BUS_ADDRESS WAYLAND_DISPLAY XDG_SESSION_TYPE GDK_BACKEND \
+        >/dev/null 2>&1; then
+        /usr/bin/timeout 8 /usr/bin/systemctl --user restart \
+            gnome-keyring-daemon.service >/dev/null 2>&1 || true
+    fi
+    /usr/bin/timeout 8 /usr/bin/gnome-keyring-daemon --start \
+        --components=secrets >/dev/null 2>&1 || true
+fi
+/usr/local/bin/portable-restore-settings >/dev/null 2>&1 || true
+exec /usr/bin/xfce4-session

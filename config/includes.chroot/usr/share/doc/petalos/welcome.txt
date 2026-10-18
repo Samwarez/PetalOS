@@ -1,0 +1,40 @@
+PetalOS RC 1
+===========
+
+Default account: Petal
+Password login for this account is disabled; the desktop starts automatically.
+
+Temporary Files (RAM): ordinary home folders and temporary content.
+Private Files: encrypted personal files, downloads and activity-related app state.
+System Settings: encrypted VPN profiles, signed Tor Browser archives and selected
+desktop/app preferences. These remain available while Private is locked.
+
+Save Desktop Settings preserves supported desktop preferences. Save App
+Preferences preserves only approved preferences and aMule's server list.
+The OS supplies defaults when no saved preferences are available.
+
+VPN profiles: System Settings/Network/Profiles
+Use the VPN profile manager to import and select a profile. Connect VPN and
+wait for clock synchronization before launching network applications.
+The VPN firewall stays active when disconnected.
+Connect and Switch automatically test the tunnel, public IPv4/IPv6, VPN DNS
+and clock. Results appear in the VPN manager and Conky. IPv6 failure is a
+warning; required tunnel, IPv4 or DNS failures reject the connection.
+
+Tor (RAM session) checks current VPN and clock readiness without an
+administrator password. Browser sessions stay in RAM. Downloads use assigned
+folders in RAM or unlocked Private.
+
+SYSTEM passphrase: boot and desktop unlock.
+Administrator password: privileged system changes.
+Private passphrase: unlock Private Files using its separate shortcut.
+Desktop unlock leaves Private locked. Manual and idle locking close Private.
+Download mode can prevent idle locking; manual locking still works.
+
+Offline app launchers isolate external networking. AppArmor additionally
+confines the offline apps, Tor Browser, bundled Tor, and SAB's isolated viewer.
+This does not confine every process or guarantee anonymity.
+
+PetalOS is built from Debian trixie packages. Upstream package attribution,
+licenses, archive keys, package sources, and compatibility identifiers remain
+accurate. Application updates are manual; Tor distributions must be signed.

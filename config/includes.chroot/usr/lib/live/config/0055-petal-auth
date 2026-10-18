@@ -1,0 +1,26 @@
+#!/usr/bin/python3
+"""Disable Petal password login and restore administrator authentication."""
+from pathlib import Path
+import sys
+sys.path.insert(0,'/usr/local/lib/portable')
+import subprocess
+from account_auth import ACCOUNT, apply_admin_hash, load_hash, require_sudo_auth
+from private_storage import boot_unlock
+
+try:
+    # Never leave Debian Live's generated passwordless rule in effect on error.
+    require_sudo_auth()
+    subprocess.run(['/usr/sbin/usermod','--password','!',ACCOUNT],capture_output=True,check=True)
+    subprocess.run(['/usr/bin/passwd','--lock','root'],capture_output=True,check=True)
+    # Establish the verified full SYSTEM view before loading its credential.
+    # A second ro,noload mount can conflict with live-boot's active filesystem.
+    boot_unlock()
+    try:
+        apply_admin_hash(load_hash())
+    except FileNotFoundError:
+        # First boot: the root-owned graphical setup service provisions the
+        # private administrator credential after the trusted desktop appears.
+        pass
+except Exception:
+    print('Petal account remains locked: the OS default account configuration is invalid.')
+    sys.exit(1)

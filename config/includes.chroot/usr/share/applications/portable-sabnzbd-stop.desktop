@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Stop SABnzbd
+Exec=/usr/local/bin/portable-desktop sab-stop
+Icon=process-stop
+Terminal=false
+Categories=Network;FileTransfer;

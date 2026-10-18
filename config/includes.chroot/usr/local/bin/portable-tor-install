@@ -1,0 +1,87 @@
+#!/usr/bin/python3
+"""Manually select a local Tor archive and detached signature for installation."""
+import os
+from pathlib import Path
+import subprocess
+import sys
+import threading
+
+sys.path.insert(0, '/usr/local/lib/portable')
+from tor_archives import ArchiveError, install
+
+
+def main():
+    import gi
+    gi.require_version('Gtk', '3.0')
+    from gi.repository import Gtk, GLib
+    os.umask(0o077)
+
+    def message(text, error=False, parent=None):
+        dialog = Gtk.MessageDialog(transient_for=parent, modal=True,
+            message_type=Gtk.MessageType.ERROR if error else Gtk.MessageType.INFO,
+            buttons=Gtk.ButtonsType.OK, text=text)
+        dialog.run()
+        dialog.destroy()
+
+    check = subprocess.run(['/usr/bin/findmnt', '-n', '-o', 'SOURCE', '--mountpoint', '/mnt/system-state'],
+                           capture_output=True, text=True)
+    if os.geteuid() == 0 or check.returncode or not check.stdout.strip().startswith('/dev/mapper/portable_system'):
+        message('Encrypted SYSTEM settings must be available. Open Install Tor Archive as the desktop user.', True)
+        return 1
+
+    def choose(title):
+        dialog = Gtk.FileChooserDialog(title=title, action=Gtk.FileChooserAction.OPEN)
+        dialog.add_buttons('Cancel', Gtk.ResponseType.CANCEL, 'Open', Gtk.ResponseType.OK)
+        response = dialog.run()
+        filename = dialog.get_filename()
+        dialog.destroy()
+        return Path(filename) if response == Gtk.ResponseType.OK and filename else None
+
+    archive = choose('Choose the Tor Browser Linux x86_64 archive')
+    if archive is None:
+        return 0
+    signature = Path(str(archive) + '.asc')
+    if not signature.is_file():
+        signature = choose('Choose the matching detached .asc signature')
+    if signature is None:
+        return 0
+    window = Gtk.Window(title='Install Tor Archive')
+    box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
+    box.set_border_width(20)
+    box.add(Gtk.Label(label='Verifying and installing the signed Tor archive…'))
+    spinner = Gtk.Spinner()
+    box.add(spinner)
+    window.add(box)
+    window.connect('delete-event', lambda *_: True)
+    window.connect('destroy', Gtk.main_quit)
+    outcome = 1
+
+    def finished(error):
+        nonlocal outcome
+        spinner.stop()
+        if error:
+            message(error, True, window)
+        else:
+            outcome = 0
+            message('Signed Tor archive installed. Previous archives are preserved. Reboot to use the new archive in a fresh RAM session.', parent=window)
+        window.destroy()
+        return False
+
+    def worker():
+        error = None
+        try:
+            install(archive, signature)
+        except ArchiveError as exception:
+            error = str(exception)
+        except Exception:
+            error = 'Tor archive installation failed. Previous archive versions are retained.'
+        GLib.idle_add(finished, error)
+    window.show_all()
+    spinner.start()
+    threading.Thread(target=worker, daemon=True).start()
+    Gtk.main()
+    return outcome
+
+
+if __name__ == '__main__':
+    sys.exit(main())

@@ -1,0 +1,3 @@
+#!/bin/sh
+set -eu
+systemctl mask sabnzbdplus.service transmission-daemon.service amule-daemon.service

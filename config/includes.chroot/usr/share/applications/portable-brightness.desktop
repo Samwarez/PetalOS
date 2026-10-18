@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Display Brightness
+Comment=Adjust the laptop display brightness
+Exec=/usr/local/bin/portable-brightness
+Icon=display-brightness
+Terminal=false
+Categories=Settings;HardwareSettings;

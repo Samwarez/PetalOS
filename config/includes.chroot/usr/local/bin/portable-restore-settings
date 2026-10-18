@@ -1,0 +1,20 @@
+#!/usr/bin/python3 -I
+import os,sys,subprocess
+from pathlib import Path
+sys.path.insert(0,"/usr/local/lib/portable")
+try:
+    from system_state import ready,STATE
+    from desktop_settings import restore,sanitize
+    if ready():
+        path=STATE/'Desktop/desktop-settings.tar'
+        if path.exists():
+            sanitize(path)
+            fd=os.open(path,os.O_RDONLY|os.O_NOFOLLOW|os.O_NONBLOCK)
+            with os.fdopen(fd,'rb') as source:restore(source,Path.home())
+    link=Path.home()/'Private'
+    if not link.exists() and not link.is_symlink():link.symlink_to('/mnt/private')
+    link=Path.home()/'SystemSettings'
+    if not link.exists() and not link.is_symlink():link.symlink_to('/mnt/system-state')
+except Exception:
+    print("Encrypted desktop settings are unavailable or invalid; no private contents logged.",file=sys.stderr)
+    raise SystemExit(1)

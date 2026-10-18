@@ -1,0 +1,26 @@
+#!/usr/bin/python3
+"""Brand generated boot labels before live-build computes medium checksums."""
+from pathlib import Path
+import re
+
+# live-build executes binary hooks with the generated binary directory as cwd.
+for directory in ('boot/grub','isolinux','syslinux'):
+    root=Path(directory)
+    if not root.is_dir():continue
+    for path in root.rglob('*'):
+        if path.is_symlink() or not path.is_file() or path.suffix not in ('.cfg','.txt'):
+            continue
+        original=path.read_text()
+        lines=[]
+        for line in original.splitlines(keepends=True):
+            # Change only presentation labels, never boot paths or arguments.
+            if re.match(r'\s*(menuentry|submenu|menu (label|title)|title-text:)',line):
+                if re.match(r'\s*title-text:\s*""\s*$',line):
+                    line='title-text: "PetalOS Boot Menu"\n'
+                line=line.replace('Debian GNU/Linux','PetalOS').replace('Debian Live','PetalOS')
+                line=line.replace('Live system','PetalOS').replace('Live Boot Menu with GRUB','PetalOS Boot Menu')
+                line=line.replace('menu title Boot menu','menu title PetalOS Boot Menu')
+                line=re.sub(r'\bPetalOS\b(?! RC 1)', 'PetalOS RC 1', line)
+            lines.append(line)
+        changed=''.join(lines)
+        if changed!=original:path.write_text(changed)

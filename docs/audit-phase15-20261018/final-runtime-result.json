@@ -1,0 +1,23 @@
+{
+  "fixture": "tests/phase15-20261018/final-runtime.py",
+  "exit": 0,
+  "elapsed_seconds": 1.11,
+  "stderr": "",
+  "result": {
+    "settled_desktop_setting_restored_on_second_boot": true,
+    "Private_still_closed": true,
+    "SYSTEM_selective_state_ready": true,
+    "RAM_canary_absent": true,
+    "no_swap": true,
+    "no_runtime_WireGuard_key": true,
+    "unsigned_initrd_marker_present": false,
+    "failed_units": [],
+    "EFI_pstore_backend_registered": false,
+    "optional_services_active": {
+      "systemd-homed.service": false,
+      "systemd-oomd.service": false,
+      "nscd.service": false,
+      "cups.service": false
+    }
+  }
+}

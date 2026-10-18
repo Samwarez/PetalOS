@@ -1,0 +1,4 @@
+[D-BUS Service]
+Name=org.xfce.Notifyd
+Exec=/usr/lib/x86_64-linux-gnu/xfce4/notifyd/xfce4-notifyd
+# Sandboxed roles mask this service and cannot activate the desktop daemon.

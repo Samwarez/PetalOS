@@ -1,0 +1,10 @@
+#!/bin/sh
+set -eu
+
+# Review/rebuild the downstream patch when the trixie base package changes.
+test "$(dpkg-query -W -f='${Version}' conky-std)" = '1.22.1-1'
+cd /usr/local/share/portable/native-conky
+sha256sum -c conky.sha256
+test -x /usr/bin/conky
+install -o root -g root -m 0755 conky /usr/bin/conky
+rm conky

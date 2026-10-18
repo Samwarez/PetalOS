@@ -1,0 +1,15 @@
+#!/bin/sh
+set -eu
+. /usr/lib/live/init-config.sh
+[ "$LIVE_USERNAME" = Petal ] || exit 1
+if ! id Petal >/dev/null 2>&1; then
+    # shadow's useradd accepts the requested capitalized login name. This also
+    # avoids Debian adduser's lowercase-only default name check.
+    /usr/sbin/useradd --create-home --user-group --uid 1000 --shell /bin/bash --comment Petal Petal
+fi
+[ "$(id -u Petal)" = 1000 ]
+for group in $LIVE_USER_DEFAULT_GROUPS sudo; do
+    if getent group "$group" >/dev/null; then
+        /usr/sbin/usermod -a -G "$group" Petal
+    fi
+done

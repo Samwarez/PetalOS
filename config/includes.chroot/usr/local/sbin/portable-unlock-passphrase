@@ -1,0 +1,29 @@
+#!/usr/bin/python3
+"""Graphical DATA recovery. No secret arguments, files, stdout or diagnostics."""
+import os
+import pwd
+import subprocess
+import sys
+
+
+def main():
+    user = os.environ.get('SUDO_USER', '')
+    if os.geteuid() != 0 or not user or user == 'root' or len(sys.argv) != 1:
+        return 1
+    pwd.getpwnam(user)
+    response = subprocess.run(['/usr/sbin/runuser', '-u', user, '--',
+        '/usr/local/bin/portable-dialog', '--data-password'],
+        stdin=subprocess.DEVNULL, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
+    # Do not invoke cryptsetup at all after cancellation or a failed dialog.
+    if response.returncode != 0 or len(response.stdout) > 4096:
+        return 1
+    return subprocess.run(['/usr/sbin/cryptsetup', 'open', '--key-file=-',
+        '/dev/disk/by-label/PORTABLE_DATA', 'portable_data'], input=response.stdout,
+        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode
+
+
+if __name__ == '__main__':
+    try:
+        sys.exit(main())
+    except Exception:
+        sys.exit(1)

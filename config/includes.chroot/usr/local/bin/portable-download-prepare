@@ -1,0 +1,33 @@
+#!/bin/bash
+set -euo pipefail
+umask 007
+
+case "${1:-}" in
+    transmission|pan|sabnzbd|amule) app=$1 ;;
+    *) echo "Unknown download application." >&2; exit 1 ;;
+esac
+
+if ! /usr/bin/python3 -I - "$app" <<'INSIDE'
+import sys
+sys.path.insert(0,'/usr/local/lib/portable')
+from compartments import inside
+raise SystemExit(0 if inside(sys.argv[1]) else 1)
+INSIDE
+then
+    echo "Launch this application through its protected desktop action." >&2
+    exit 1
+fi
+# The broker actively verified the VPN and encrypted storage before setup.
+
+case "${PORTABLE_STATE_ROOT:-}" in
+    /mnt/private|/mnt/ram) root=$PORTABLE_STATE_ROOT ;;
+    *) echo "Application storage selection is unavailable." >&2; exit 1 ;;
+esac
+state="$root/AppState/$app"
+downloads="$root/Downloads/$app"
+
+mkdir -p "$state" "$downloads" "$downloads/incomplete"
+# Existing state belongs to Petal with a narrowly delegated app ACL. Do not
+# chmod it and inadvertently clear that ACL's effective mask.
+
+printf '%s\n' "$state"

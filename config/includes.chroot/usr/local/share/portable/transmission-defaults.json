@@ -1,0 +1,16 @@
+{
+    "download-dir": "/mnt/private/Downloads/transmission",
+    "open-dialog-dir": "/mnt/private/Downloads/transmission",
+    "incomplete-dir": "/mnt/private/Downloads/transmission/incomplete",
+    "incomplete-dir-enabled": true,
+    "rename-partial-files": true,
+    "cache-size-mb": 32,
+    "port-forwarding-enabled": false,
+    "lpd-enabled": false,
+    "rpc-enabled": false,
+    "blocklist-enabled": false,
+    "watch-dir-enabled": false,
+    "show-options-window": false,
+    "start-added-torrents": true,
+    "trash-original-torrent-files": false
+}

@@ -1,0 +1,36 @@
+#!/bin/bash
+set -euo pipefail
+
+for name in geany vim.basic gthumb lazpaint keepassxc libreoffice soffice atril parole ristretto mousepad quodlibet; do
+    original="/usr/bin/$name"
+    real="$original.portable-real"
+
+    [[ -x "$original" ]] || {
+        echo "Required application command missing: $original"
+        exit 1
+    }
+
+    destination=$(dpkg-divert --truename "$original")
+
+    if [[ "$destination" == "$original" ]]; then
+        dpkg-divert --local --add --rename \
+            --divert "$real" "$original"
+    elif [[ "$destination" != "$real" ]]; then
+        echo "Unexpected existing diversion for $original"
+        exit 1
+    fi
+
+    flags=""
+    private_bus=""
+    case "$name" in
+        parole|ristretto|mousepad)
+            # These Xfce viewers use Xfconf. Supply a private bus only after
+            # bubblewrap isolates /run and networking; never expose the host bus.
+            private_bus="/usr/bin/dbus-run-session -- "
+            ;;
+    esac
+
+    printf '#!/bin/sh\nexec /usr/local/bin/portable-offline %s"%s" %s "$@"\n' \
+        "$private_bus" "$real" "$flags" > "$original"
+    chmod 755 "$original"
+done

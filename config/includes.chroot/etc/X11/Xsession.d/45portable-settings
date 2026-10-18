@@ -1,0 +1,8 @@
+# This file is sourced by Xsession before the desktop session starts.
+if [ -x /usr/local/bin/portable-restore-settings ]; then
+    if /usr/local/bin/portable-restore-settings >/dev/null 2>&1; then
+        :
+    else
+        echo "Portable settings restore skipped." >&2
+    fi
+fi

@@ -1,0 +1,53 @@
+#!/usr/bin/python3
+"""Root-only profile preparation; payloads never reach stdout or diagnostics."""
+import json
+import os
+from pathlib import Path
+import subprocess
+import sys
+
+sys.path.insert(0, '/usr/local/lib/portable')
+from vpn_profiles import ProfileError, NETWORK, atomic_write, endpoint_transaction, safe_directory, select, serialize
+
+
+def main():
+    if os.geteuid() != 0:
+        raise ProfileError('Run through the VPN manager.')
+    os.umask(0o077)
+    action = sys.argv[1] if len(sys.argv) > 1 else ''
+    if action == 'reset' and len(sys.argv) == 2:
+        subprocess.run(['/usr/sbin/nft', '-f', '-'], input=endpoint_transaction(), text=True,
+                       stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
+        return
+    work = Path('/run/portable-vpn')
+    safe_directory(work)
+    work.mkdir(mode=0o700, exist_ok=True)
+    if work.stat().st_uid != 0 or work.stat().st_mode & 0o077:
+        raise ProfileError('The runtime profile directory is unsafe.')
+    if action == 'prepare' and len(sys.argv) in (2, 3):
+        name, profile = select(sys.argv[2] if len(sys.argv) == 3 else None)
+        atomic_write(Path('/etc/wireguard/wg0.conf'), serialize(profile, runtime=True))
+        atomic_write(work / 'resolv.conf', ''.join(f'nameserver {v}\n' for v in profile['dns']))
+        # One nft transaction replaces the endpoint allowance; no accept-all rule.
+        subprocess.run(['/usr/sbin/nft', '-f', '-'], input=endpoint_transaction(profile), text=True,
+                       stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
+        atomic_write(work / 'profile.json', json.dumps({'name': name}))
+    elif action == 'commit' and len(sys.argv) == 2:
+        name = json.loads((work / 'profile.json').read_text())['name']
+        if name != 'legacy':
+            from vpn_profiles import checked_name
+            checked_name(name)
+            atomic_write(NETWORK / 'selected-profile', name + '\n', 1000)
+    else:
+        raise ProfileError('Invalid profile-manager action.')
+
+
+if __name__ == '__main__':
+    try:
+        main()
+    except ProfileError as error:
+        print(str(error), file=sys.stderr)
+        sys.exit(1)
+    except Exception:
+        print('VPN profile preparation failed. No configuration contents were logged.', file=sys.stderr)
+        sys.exit(1)

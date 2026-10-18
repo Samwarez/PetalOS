@@ -1,0 +1,40 @@
+#!/usr/bin/python3 -I
+"""Keep CherryPy's startup self-probe inside the SAB application boundary.
+
+The host-loopback kill switch intentionally denies new SAB connections.
+CherryPy normally tests its own listener by connecting to loopback, which
+causes startup to fail after the socket is already serving HTTP. Verify its
+actual listening socket instead; the root supervisor separately probes HTTP.
+"""
+import os
+import runpy
+import socket
+import sys
+import time
+
+sys.path.insert(0, '/usr/local/lib/portable')
+from compartments import inside
+if not inside('sabnzbd'):
+    raise SystemExit('Launch SAB through its protected desktop action.')
+
+from cherrypy.process.servers import ServerAdapter
+
+
+def wait_for_listener(adapter):
+    deadline = time.monotonic() + 15
+    while not getattr(adapter.httpserver, 'ready', False):
+        if adapter.interrupt:
+            raise adapter.interrupt
+        if time.monotonic() >= deadline:
+            raise RuntimeError('The SAB listener did not become ready.')
+        time.sleep(.1)
+    listener = getattr(adapter.httpserver, 'socket', None)
+    if (listener is None or adapter.bound_addr != ('127.0.0.1', 8080)
+            or listener.getsockname() != ('127.0.0.1', 8080)
+            or not listener.getsockopt(socket.SOL_SOCKET, socket.SO_ACCEPTCONN)):
+        raise RuntimeError('Unexpected SAB listening socket.')
+
+
+ServerAdapter.wait = wait_for_listener
+sys.argv[0] = '/usr/bin/sabnzbdplus.portable-real'
+runpy.run_path(sys.argv[0], run_name='__main__')

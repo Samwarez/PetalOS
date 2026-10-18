@@ -1,0 +1,22 @@
+{
+  "binary/live/vmlinuz": {
+    "sha256": "4336c75fc1a6a58e7bda66cbe9f4042f88064e7abc93faaea9e2aceb19459561",
+    "bytes": 12154816,
+    "matches_manifest": true
+  },
+  "binary/live/initrd.img": {
+    "sha256": "2625d4f7a1c7ec10a0ec156e10c62df7874e595beacde15354dfc496cbd90247",
+    "bytes": 141860699,
+    "matches_manifest": true
+  },
+  "binary/live/filesystem.squashfs": {
+    "sha256": "50634c957ee1dece48d179407f57cf5071acc289ec76a83253073d81a485b17a",
+    "bytes": 1782624256,
+    "matches_manifest": true
+  },
+  "live-image-amd64.hybrid.iso": {
+    "sha256": "55668a8c92e1653d0d73a8b3311e96559b9fb8b5a2ac958f2c496afb909a10b2",
+    "bytes": 1951432704,
+    "matches_manifest": true
+  }
+}

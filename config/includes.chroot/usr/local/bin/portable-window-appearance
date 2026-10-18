@@ -1,0 +1,137 @@
+#!/usr/bin/python3
+"""Native Wayland window colors and frame sizes, with no privileged actions."""
+import os
+from pathlib import Path
+import re
+import stat
+import subprocess
+import tempfile
+
+PALETTES = {
+    'Dark': ('#30343b', '#f2f2f2', '#25282e', '#b8bcc8'),
+    'Light': ('#deddda', '#202020', '#f6f5f4', '#606060'),
+    'Petal': ('#e6b7cb', '#332632', '#493944', '#e4d7df'),
+}
+
+
+def destination():
+    assert os.getuid() == 1000
+    folder = Path.home() / '.config/labwc'
+    assert not folder.parent.is_symlink() and not folder.is_symlink()
+    folder.mkdir(mode=0o700, parents=True, exist_ok=True)
+    path = folder / 'themerc-override'
+    assert not path.is_symlink()
+    return path
+
+
+def read(path):
+    if not path.exists():
+        return ''
+    fd = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
+    with os.fdopen(fd) as source:
+        info = os.fstat(source.fileno())
+        assert stat.S_ISREG(info.st_mode) and info.st_uid == 1000 and info.st_size <= 65536
+        return source.read()
+
+
+def save(path, previous, colors, border, padding, alignment):
+    assert len(colors) == 4 and all(re.fullmatch(r'#[0-9a-fA-F]{6}', x) for x in colors)
+    assert 0 <= border <= 8 and 0 <= padding <= 12
+    assert alignment in ('Left', 'Center', 'Right')
+    values = {'border.width': str(border), 'window.titlebar.padding.height': str(padding),
+              'window.label.text.justify': alignment}
+    for state, bg, fg in [('active', *colors[:2]), ('inactive', *colors[2:])]:
+        values.update({f'window.{state}.title.bg': 'Solid',
+                       f'window.{state}.title.bg.color': bg,
+                       f'window.{state}.border.color': bg,
+                       f'window.{state}.label.text.color': fg,
+                       f'window.{state}.button.unpressed.image.color': fg})
+    lines = [line for line in previous.splitlines() if line.split(':', 1)[0].strip() not in values]
+    text = '\n'.join(lines + [f'{key}: {value}' for key, value in values.items()]) + '\n'
+    fd, name = tempfile.mkstemp(prefix='.appearance-', dir=path.parent)
+    try:
+        with os.fdopen(fd, 'w') as output:
+            output.write(text)
+        os.replace(name, path)
+    finally:
+        Path(name).unlink(missing_ok=True)
+    # Reconfigure the compositor belonging to this trusted desktop.
+    matches = []
+    for process in Path('/proc').glob('[0-9]*'):
+        try:
+            if process.stat().st_uid == 1000 and os.readlink(process / 'exe') == '/usr/bin/labwc':
+                matches.append(process.name)
+        except OSError:
+            pass
+    assert len(matches) == 1
+    subprocess.run(['/usr/bin/labwc', '--reconfigure'],
+                   env={**os.environ, 'LABWC_PID': matches[0]}, check=True,
+                   stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=5)
+
+
+def main():
+    import gi
+    gi.require_version('Gtk', '3.0')
+    from gi.repository import Gtk, Gdk
+    path = destination()
+    previous = read(path)
+    settings = dict(line.split(':', 1) for line in previous.splitlines() if ':' in line)
+    settings = {k.strip(): v.strip() for k, v in settings.items()}
+    window = Gtk.Dialog(title='Window Appearance')
+    window.add_buttons('Close', Gtk.ResponseType.CLOSE, 'Apply', Gtk.ResponseType.APPLY)
+    grid = Gtk.Grid(column_spacing=16, row_spacing=12, margin=20)
+    window.get_content_area().add(grid)
+    description = Gtk.Label(label='Window frames and title bars. Apps with their own title bars use Appearance settings.',
+                            wrap=True, max_width_chars=60, xalign=0)
+    grid.attach(description, 0, 0, 2, 1)
+    palette = Gtk.ComboBoxText()
+    for name in PALETTES:
+        palette.append_text(name)
+    palette.set_active(0)
+    grid.attach(Gtk.Label(label='Palette', xalign=0), 0, 1, 1, 1)
+    grid.attach(palette, 1, 1, 1, 1)
+    colors = []
+    keys = ['window.active.title.bg.color', 'window.active.label.text.color',
+            'window.inactive.title.bg.color', 'window.inactive.label.text.color']
+    for i, title in enumerate(['Active background', 'Active text', 'Inactive background', 'Inactive text']):
+        color = Gtk.ColorButton()
+        rgba = Gdk.RGBA()
+        rgba.parse(settings.get(keys[i], PALETTES['Dark'][i]))
+        color.set_rgba(rgba)
+        colors.append(color)
+        grid.attach(Gtk.Label(label=title, xalign=0), 0, i + 2, 1, 1)
+        grid.attach(color, 1, i + 2, 1, 1)
+    def choose(_):
+        for button, value in zip(colors, PALETTES[palette.get_active_text()]):
+            rgba = Gdk.RGBA(); rgba.parse(value); button.set_rgba(rgba)
+    palette.connect('changed', choose)
+    spins = []
+    for row, title, key, maximum, default in [(6, 'Border width', 'border.width', 8, 1),
+                                              (7, 'Title-bar padding', 'window.titlebar.padding.height', 12, 3)]:
+        spin = Gtk.SpinButton.new_with_range(0, maximum, 1)
+        value = settings.get(key, str(default))
+        spin.set_value(int(value) if value.isdecimal() and int(value) <= maximum else default)
+        spins.append(spin)
+        grid.attach(Gtk.Label(label=title, xalign=0), 0, row, 1, 1)
+        grid.attach(spin, 1, row, 1, 1)
+    align = Gtk.ComboBoxText()
+    for value in ['Left', 'Center', 'Right']:
+        align.append(value, value)
+    align.set_active_id(settings.get('window.label.text.justify', 'Center'))
+    grid.attach(Gtk.Label(label='Title alignment', xalign=0), 0, 8, 1, 1)
+    grid.attach(align, 1, 8, 1, 1)
+    window.show_all()
+    while window.run() == Gtk.ResponseType.APPLY:
+        try:
+            rgb = [button.get_rgba() for button in colors]
+            values = ['#%02x%02x%02x' % tuple(round(getattr(c, x) * 255) for x in ('red', 'green', 'blue')) for c in rgb]
+            save(path, read(path), values, *(s.get_value_as_int() for s in spins), align.get_active_id())
+        except Exception:
+            dialog = Gtk.MessageDialog(transient_for=window, modal=True, message_type=Gtk.MessageType.ERROR,
+                                       buttons=Gtk.ButtonsType.OK, text='Window appearance could not be applied.')
+            dialog.run(); dialog.destroy()
+    window.destroy()
+
+
+if __name__ == '__main__':
+    main()

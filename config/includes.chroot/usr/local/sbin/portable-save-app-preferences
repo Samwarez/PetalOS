@@ -1,0 +1,14 @@
+#!/usr/bin/python3 -I
+"""Fixed explicit save operation; no caller paths, content or raw logs."""
+import os
+import sys
+sys.path.insert(0, '/usr/local/lib/portable')
+try:
+    assert os.geteuid() == 0 and os.environ.get('SUDO_USER') == 'Petal'
+    assert os.environ.get('SUDO_UID') == '1000' and len(sys.argv) == 1
+    from app_preferences import save_all
+    count = save_all()
+    print('Approved application preferences saved to encrypted SYSTEM settings.')
+except Exception:
+    print('Close supported apps; keep Private unlocked if those apps used it, then retry. No file contents were logged.', file=sys.stderr)
+    raise SystemExit(1)

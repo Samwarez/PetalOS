@@ -1,0 +1,19 @@
+#!/bin/sh
+set -eu
+# trixie's affected alsa-utils rule repeats the "go" label where "std" is
+# intended. Keep a narrowly patched /etc override; leave fixed versions alone.
+python3 - <<'PY'
+from pathlib import Path
+vendor = Path('/usr/lib/udev/rules.d/90-alsa-restore.rules')
+if vendor.is_file():
+    text = vendor.read_text()
+    marker = 'LABEL="alsa_restore_go"\nTEST!="/etc/alsa/state-daemon.conf"'
+    if (text.count('LABEL="alsa_restore_go"') == 2 and
+            'LABEL="alsa_restore_std"' not in text and text.count(marker) == 1):
+        target = Path('/etc/udev/rules.d/90-alsa-restore.rules')
+        if target.exists():
+            raise RuntimeError('Existing ALSA rule override needs review.')
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text(text.replace(marker, marker.replace('alsa_restore_go', 'alsa_restore_std')))
+        target.chmod(0o644)
+PY

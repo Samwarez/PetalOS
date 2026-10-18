@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=PetalOS Wayland Wallpaper
+Exec=/usr/local/libexec/portable-wayland-wallpaper
+TryExec=/usr/bin/swaybg
+OnlyShowIn=XFCE;
+Terminal=false
+NoDisplay=true

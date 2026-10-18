@@ -1,0 +1,6 @@
+{
+  "scope": "Actual per-file updater replacement, public temporary files; no device access",
+  "first_file_new": true,
+  "remaining_files_old": true,
+  "automatic_rollback_absent_in_outer_main": true
+}

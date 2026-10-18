@@ -1,0 +1,24 @@
+{
+  "fixture": "tests/shutdown-policy-guest.py",
+  "exit": 0,
+  "elapsed_seconds": 1.93,
+  "stderr": "",
+  "result": {
+    "inhibit-delay-sleep_local_allowed": true,
+    "inhibit-handle-lid-switch_local_allowed": true,
+    "org.freedesktop.NetworkManager.settings.modify.system_still_requires_auth": true,
+    "org.freedesktop.login1.power-off-ignore-inhibit_still_requires_auth": true,
+    "org.freedesktop.login1.suspend-ignore-inhibit_still_requires_auth": true,
+    "org.freedesktop.policykit.exec_still_requires_auth": true,
+    "org.freedesktop.systemd1.manage-units_still_requires_auth": true,
+    "org.freedesktop.udisks2.modify-device_still_requires_auth": true,
+    "power-off-multiple-sessions_local_allowed": true,
+    "power-off_local_allowed": true,
+    "reboot-multiple-sessions_local_allowed": true,
+    "reboot_local_allowed": true,
+    "remote_uid_1000_requires_auth": true,
+    "remote_uid_944_requires_auth": true,
+    "suspend-multiple-sessions_local_allowed": true,
+    "suspend_local_allowed": true
+  }
+}

@@ -1,0 +1,8 @@
+#!/bin/sh
+# Prepare fixed volume identities; Private now requires its own passphrase.
+set -eu
+if SUDO_USER=Petal /usr/local/sbin/portable-unlock-data --boot >/dev/null 2>&1; then
+    :
+else
+    echo 'Private storage preparation failed; the desktop unlock action remains available.'
+fi

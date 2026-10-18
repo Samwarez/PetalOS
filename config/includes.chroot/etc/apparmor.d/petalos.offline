@@ -1,0 +1,15 @@
+#include <tunables/global>
+
+# Entered only after bubblewrap builds its isolated namespaces.
+profile petalos_offline flags=(attach_disconnected) {
+  #include <abstractions/petalos-offline-common>
+  deny network inet,
+}
+
+# SAB viewer's HTTP-to-Unix bridge needs TCP on its private loopback.
+# The inherited bubblewrap network namespace has no external interface/route.
+profile petalos_offline_sab flags=(attach_disconnected) {
+  #include <abstractions/petalos-offline-common>
+  network inet stream,
+  deny network inet dgram,
+}

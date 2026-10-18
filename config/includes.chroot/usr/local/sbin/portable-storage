@@ -1,0 +1,30 @@
+#!/usr/bin/python3 -I
+"""Fixed root storage-lock action; no paths, keys or arbitrary commands."""
+import os
+import sys
+
+assert os.geteuid() == 0 and os.environ.get('SUDO_USER') == 'Petal' and os.environ.get('SUDO_UID') == '1000'
+assert sys.argv[1:] in (['lock'], ['idle-lock'], ['download-toggle'], ['status'])
+sys.path.insert(0, '/usr/local/lib/portable')
+from private_storage import lock, directory, operation, PRIVATE, backend, identity
+from pathlib import Path
+import json
+if sys.argv[1] == 'download-toggle':
+    with operation():
+        flag = directory() / 'download-mode'
+        if flag.exists():flag.unlink()
+        else:flag.touch(mode=0o600)
+        print(json.dumps({'download_mode':flag.exists()}))
+elif sys.argv[1] == 'status':
+    try:
+        try:state=identity()
+        except FileNotFoundError:
+            state=backend().capture()
+            from private_storage import remember
+            remember(state)
+        opened = backend().is_unlocked(state)
+    except Exception:opened = False
+    print(json.dumps({'private_unlocked':opened,'download_mode':(directory()/'download-mode').exists()}))
+else:
+    if not lock(idle=sys.argv[1] == 'idle-lock'):
+        raise SystemExit(76)

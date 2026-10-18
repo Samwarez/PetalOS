@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=X11 Color Management
+Hidden=true
+# This X11-only daemon crashes in the native Wayland session. Color handling
+# belongs to the compositor; do not launch an X11 fallback for it.

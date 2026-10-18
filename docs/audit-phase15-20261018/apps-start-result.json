@@ -1,0 +1,428 @@
+{
+  "fixture": "tests/phase15-20261018/apps-start.py",
+  "exit": 0,
+  "elapsed_seconds": 34.84,
+  "stderr": "",
+  "result": {
+    "amule": {
+      "processes": [
+        {
+          "caps": "0000000000000000",
+          "cgroup": "0::/user.slice/user-1000.slice/session-34.scope",
+          "comm": "dbus-run-sessio",
+          "nnp": "1",
+          "profile": "unconfined"
+        },
+        {
+          "caps": "0000000000000000",
+          "cgroup": "0::/user.slice/user-1000.slice/session-34.scope",
+          "comm": "dbus-daemon",
+          "nnp": "1",
+          "profile": "unconfined"
+        },
+        {
+          "caps": "0000000000000000",
+          "cgroup": "0::/user.slice/user-1000.slice/session-34.scope",
+          "comm": "amule.portable-",
+          "nnp": "1",
+          "profile": "petalos_amule (enforce)"
+        },
+        {
+          "caps": "0000000000000000",
+          "cgroup": "0::/user.slice/user-1000.slice/session-34.scope",
+          "comm": "at-spi-bus-laun",
+          "nnp": "1",
+          "profile": "unconfined"
+        },
+        {
+          "caps": "0000000000000000",
+          "cgroup": "0::/user.slice/user-1000.slice/session-34.scope",
+          "comm": "dbus-daemon",
+          "nnp": "1",
+          "profile": "unconfined"
+        },
+        {
+          "caps": "0000000000000000",
+          "cgroup": "0::/user.slice/user-1000.slice/session-34.scope",
+          "comm": "gvfsd",
+          "nnp": "1",
+          "profile": "unconfined"
+        },
+        {
+          "caps": "0000000000000000",
+          "cgroup": "0::/user.slice/user-1000.slice/session-34.scope",
+          "comm": "xdg-desktop-por",
+          "nnp": "1",
+          "profile": "unconfined"
+        },
+        {
+          "caps": "0000000000000000",
+          "cgroup": "0::/user.slice/user-1000.slice/session-34.scope",
+          "comm": "xdg-permission-",
+          "nnp": "1",
+          "profile": "unconfined"
+        },
+        {
+          "caps": "0000000000000000",
+          "cgroup": "0::/user.slice/user-1000.slice/session-34.scope",
+          "comm": "xdg-desktop-por",
+          "nnp": "1",
+          "profile": "unconfined"
+        },
+        {
+          "caps": "0000000000000000",
+          "cgroup": "0::/user.slice/user-1000.slice/session-34.scope",
+          "comm": "at-spi2-registr",
+          "nnp": "1",
+          "profile": "unconfined"
+        }
+      ],
+      "ready": true,
+      "seconds": 4.24
+    },
+    "offline-keepassxc": {
+      "processes": [
+        {
+          "caps": "0000000000000000",
+          "cgroup": "0::/user.slice/user-1000.slice/session-34.scope",
+          "comm": "dbus-run-sessio",
+          "nnp": "1",
+          "profile": "unconfined"
+        },
+        {
+          "caps": "0000000000000000",
+          "cgroup": "0::/user.slice/user-1000.slice/session-34.scope",
+          "comm": "dbus-daemon",
+          "nnp": "1",
+          "profile": "unconfined"
+        },
+        {
+          "caps": "0000000000000000",
+          "cgroup": "0::/user.slice/user-1000.slice/session-34.scope",
+          "comm": "keepassxc.porta",
+          "nnp": "1",
+          "profile": "petalos_offline_keepassxc (enforce)"
+        },
+        {
+          "caps": "0000000000000000",
+          "cgroup": "0::/user.slice/user-1000.slice/session-34.scope",
+          "comm": "xdg-desktop-por",
+          "nnp": "1",
+          "profile": "unconfined"
+        },
+        {
+          "caps": "0000000000000000",
+          "cgroup": "0::/user.slice/user-1000.slice/session-34.scope",
+          "comm": "xdg-permission-",
+          "nnp": "1",
+          "profile": "unconfined"
+        },
+        {
+          "caps": "0000000000000000",
+          "cgroup": "0::/user.slice/user-1000.slice/session-34.scope",
+          "comm": "xdg-desktop-por",
+          "nnp": "1",
+          "profile": "unconfined"
+        },
+        {
+          "caps": "0000000000000000",
+          "cgroup": "0::/user.slice/user-1000.slice/session-34.scope",
+          "comm": "at-spi-bus-laun",
+          "nnp": "1",
+          "profile": "unconfined"
+        },
+        {
+          "caps": "0000000000000000",
+          "cgroup": "0::/user.slice/user-1000.slice/session-34.scope",
+          "comm": "dbus-daemon",
+          "nnp": "1",
+          "profile": "unconfined"
+        },
+        {
+          "caps": "0000000000000000",
+          "cgroup": "0::/user.slice/user-1000.slice/session-34.scope",
+          "comm": "gvfsd",
+          "nnp": "1",
+          "profile": "unconfined"
+        },
+        {
+          "caps": "0000000000000000",
+          "cgroup": "0::/user.slice/user-1000.slice/session-34.scope",
+          "comm": "at-spi2-registr",
+          "nnp": "1",
+          "profile": "unconfined"
+        }
+      ],
+      "ready": true,
+      "seconds": 1.62
+    },
+    "offline-parole": {
+      "processes": [
+        {
+          "caps": "0000000000000000",
+          "cgroup": "0::/user.slice/user-1000.slice/session-34.scope",
+          "comm": "pulseaudio",
+          "nnp": "1",
+          "profile": "petalos_playback (enforce)"
+        },
+        {
+          "caps": "0000000000000000",
+          "cgroup": "0::/user.slice/user-1000.slice/session-34.scope",
+          "comm": "dbus-run-sessio",
+          "nnp": "1",
+          "profile": "unconfined"
+        },
+        {
+          "caps": "0000000000000000",
+          "cgroup": "0::/user.slice/user-1000.slice/session-34.scope",
+          "comm": "dbus-daemon",
+          "nnp": "1",
+          "profile": "unconfined"
+        },
+        {
+          "caps": "0000000000000000",
+          "cgroup": "0::/user.slice/user-1000.slice/session-34.scope",
+          "comm": "parole.portable",
+          "nnp": "1",
+          "profile": "petalos_offline_parole (enforce)"
+        },
+        {
+          "caps": "0000000000000000",
+          "cgroup": "0::/user.slice/user-1000.slice/session-34.scope",
+          "comm": "xfconfd",
+          "nnp": "1",
+          "profile": "unconfined"
+        },
+        {
+          "caps": "0000000000000000",
+          "cgroup": "0::/user.slice/user-1000.slice/session-34.scope",
+          "comm": "at-spi-bus-laun",
+          "nnp": "1",
+          "profile": "unconfined"
+        },
+        {
+          "caps": "0000000000000000",
+          "cgroup": "0::/user.slice/user-1000.slice/session-34.scope",
+          "comm": "dbus-daemon",
+          "nnp": "1",
+          "profile": "unconfined"
+        },
+        {
+          "caps": "0000000000000000",
+          "cgroup": "0::/user.slice/user-1000.slice/session-34.scope",
+          "comm": "gvfsd",
+          "nnp": "1",
+          "profile": "unconfined"
+        },
+        {
+          "caps": "0000000000000000",
+          "cgroup": "0::/user.slice/user-1000.slice/session-34.scope",
+          "comm": "gvfs-udisks2-vo",
+          "nnp": "1",
+          "profile": "unconfined"
+        },
+        {
+          "caps": "0000000000000000",
+          "cgroup": "0::/user.slice/user-1000.slice/session-34.scope",
+          "comm": "at-spi2-registr",
+          "nnp": "1",
+          "profile": "unconfined"
+        }
+      ],
+      "ready": true,
+      "seconds": 8.06
+    },
+    "pan": {
+      "processes": [
+        {
+          "caps": "0000000000000000",
+          "cgroup": "0::/user.slice/user-1000.slice/session-34.scope",
+          "comm": "dbus-run-sessio",
+          "nnp": "1",
+          "profile": "unconfined"
+        },
+        {
+          "caps": "0000000000000000",
+          "cgroup": "0::/user.slice/user-1000.slice/session-34.scope",
+          "comm": "dbus-daemon",
+          "nnp": "1",
+          "profile": "unconfined"
+        },
+        {
+          "caps": "0000000000000000",
+          "cgroup": "0::/user.slice/user-1000.slice/session-34.scope",
+          "comm": "pan.portable-re",
+          "nnp": "1",
+          "profile": "petalos_pan (enforce)"
+        },
+        {
+          "caps": "0000000000000000",
+          "cgroup": "0::/user.slice/user-1000.slice/session-34.scope",
+          "comm": "at-spi-bus-laun",
+          "nnp": "1",
+          "profile": "unconfined"
+        },
+        {
+          "caps": "0000000000000000",
+          "cgroup": "0::/user.slice/user-1000.slice/session-34.scope",
+          "comm": "dbus-daemon",
+          "nnp": "1",
+          "profile": "unconfined"
+        },
+        {
+          "caps": "0000000000000000",
+          "cgroup": "0::/user.slice/user-1000.slice/session-34.scope",
+          "comm": "gvfsd",
+          "nnp": "1",
+          "profile": "unconfined"
+        },
+        {
+          "caps": "0000000000000000",
+          "cgroup": "0::/user.slice/user-1000.slice/session-34.scope",
+          "comm": "at-spi2-registr",
+          "nnp": "1",
+          "profile": "unconfined"
+        }
+      ],
+      "ready": true,
+      "seconds": 2.33
+    },
+    "sab-viewer": {
+      "processes": [
+        {
+          "caps": "0000000000000000",
+          "cgroup": "0::/user.slice/user-1000.slice/session-34.scope",
+          "comm": "dbus-run-sessio",
+          "nnp": "1",
+          "profile": "unconfined"
+        },
+        {
+          "caps": "0000000000000000",
+          "cgroup": "0::/user.slice/user-1000.slice/session-34.scope",
+          "comm": "dbus-daemon",
+          "nnp": "1",
+          "profile": "unconfined"
+        },
+        {
+          "caps": "0000000000000000",
+          "cgroup": "0::/user.slice/user-1000.slice/session-34.scope",
+          "comm": "portable-sab-vi",
+          "nnp": "1",
+          "profile": "petalos_sab_viewer (enforce)"
+        },
+        {
+          "caps": "0000000000000000",
+          "cgroup": "0::/user.slice/user-1000.slice/session-34.scope",
+          "comm": "at-spi-bus-laun",
+          "nnp": "1",
+          "profile": "unconfined"
+        },
+        {
+          "caps": "0000000000000000",
+          "cgroup": "0::/user.slice/user-1000.slice/session-34.scope",
+          "comm": "dbus-daemon",
+          "nnp": "1",
+          "profile": "unconfined"
+        },
+        {
+          "caps": "0000000000000000",
+          "cgroup": "0::/user.slice/user-1000.slice/session-34.scope",
+          "comm": "WebKitNetworkPr",
+          "nnp": "1",
+          "profile": "petalos_sab_viewer (enforce)"
+        },
+        {
+          "caps": "0000000000000000",
+          "cgroup": "0::/user.slice/user-1000.slice/session-34.scope",
+          "comm": "gvfsd",
+          "nnp": "1",
+          "profile": "unconfined"
+        },
+        {
+          "caps": "0000000000000000",
+          "cgroup": "0::/user.slice/user-1000.slice/session-34.scope",
+          "comm": "WebKitWebProces",
+          "nnp": "1",
+          "profile": "petalos_sab_viewer (enforce)"
+        },
+        {
+          "caps": "0000000000000000",
+          "cgroup": "0::/user.slice/user-1000.slice/session-34.scope",
+          "comm": "at-spi2-registr",
+          "nnp": "1",
+          "profile": "unconfined"
+        }
+      ],
+      "ready": true,
+      "seconds": 8.17
+    },
+    "sabnzbd": {
+      "processes": [
+        {
+          "caps": "0000000000000000",
+          "cgroup": "0::/user.slice/user-1000.slice/session-34.scope",
+          "comm": "portable-sab-ba",
+          "nnp": "1",
+          "profile": "petalos_sabnzbd (enforce)"
+        }
+      ],
+      "ready": true,
+      "seconds": 5.75
+    },
+    "transmission": {
+      "processes": [
+        {
+          "caps": "0000000000000000",
+          "cgroup": "0::/user.slice/user-1000.slice/session-34.scope",
+          "comm": "dbus-run-sessio",
+          "nnp": "1",
+          "profile": "unconfined"
+        },
+        {
+          "caps": "0000000000000000",
+          "cgroup": "0::/user.slice/user-1000.slice/session-34.scope",
+          "comm": "dbus-daemon",
+          "nnp": "1",
+          "profile": "unconfined"
+        },
+        {
+          "caps": "0000000000000000",
+          "cgroup": "0::/user.slice/user-1000.slice/session-34.scope",
+          "comm": "transmission-gt",
+          "nnp": "1",
+          "profile": "petalos_transmission (enforce)"
+        },
+        {
+          "caps": "0000000000000000",
+          "cgroup": "0::/user.slice/user-1000.slice/session-34.scope",
+          "comm": "gvfsd",
+          "nnp": "1",
+          "profile": "unconfined"
+        },
+        {
+          "caps": "0000000000000000",
+          "cgroup": "0::/user.slice/user-1000.slice/session-34.scope",
+          "comm": "at-spi-bus-laun",
+          "nnp": "1",
+          "profile": "unconfined"
+        },
+        {
+          "caps": "0000000000000000",
+          "cgroup": "0::/user.slice/user-1000.slice/session-34.scope",
+          "comm": "dbus-daemon",
+          "nnp": "1",
+          "profile": "unconfined"
+        },
+        {
+          "caps": "0000000000000000",
+          "cgroup": "0::/user.slice/user-1000.slice/session-34.scope",
+          "comm": "at-spi2-registr",
+          "nnp": "1",
+          "profile": "unconfined"
+        }
+      ],
+      "ready": true,
+      "seconds": 3.56
+    }
+  }
+}

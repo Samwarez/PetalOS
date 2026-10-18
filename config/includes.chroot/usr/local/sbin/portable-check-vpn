@@ -1,0 +1,83 @@
+#!/bin/bash
+set -euo pipefail
+
+[[ $EUID -eq 0 ]] || {
+    echo "Run this through sudo." >&2
+    exit 1
+}
+
+systemctl is-active --quiet nftables.service || {
+    echo "The firewall service is not active." >&2
+    exit 1
+}
+
+# Capture complete output: grep -q can cause the producer to receive SIGPIPE.
+for chain in input output forward; do
+    rules=$(nft list chain inet portable_vpn "$chain" 2>/dev/null) || {
+        echo "The required firewall chain is missing." >&2
+        exit 1
+    }
+    [[ $rules =~ policy[[:space:]]+drop\; ]] || {
+        echo "The required firewall drop policy is missing." >&2
+        exit 1
+    }
+done
+
+[[ -e /sys/class/net/wg0 ]] || {
+    echo "Connect the VPN first." >&2
+    exit 1
+}
+
+[[ $(wg show wg0 fwmark) == 0xca6c ]] || {
+    echo "The VPN firewall mark is incorrect." >&2
+    exit 1
+}
+
+# Authenticate the configured peer identity, without reading keys into output.
+config=/etc/wireguard/wg0.conf
+[[ -f "$config" && ! -L "$config" && $(stat -c '%u:%a' "$config") == 0:600 ]] || {
+    echo "The protected runtime VPN configuration is missing or unsafe." >&2
+    exit 1
+}
+expected_peer=$(awk '
+    { line=$0; sub(/#.*/, "", line) }
+    line ~ /^[[:space:]]*\[/ {
+        peer=(line ~ /^[[:space:]]*\[Peer\][[:space:]]*$/)
+        if (peer) peers++
+        next
+    }
+    peer && line ~ /^[[:space:]]*PublicKey[[:space:]]*=/ {
+        keys++; key=substr(line, index(line, "=")+1)
+        gsub(/^[[:space:]]+|[[:space:]]+$/, "", key)
+    }
+    END { if (peers != 1 || keys != 1 || key == "") exit 1; print key }
+' "$config") || {
+    echo "The configured VPN peer identity is invalid." >&2
+    exit 1
+}
+[[ $(wg show wg0 peers) == "$expected_peer" ]] || {
+    echo "The live VPN peer does not match the configured peer." >&2
+    exit 1
+}
+
+routes=$(ip -4 route show table 51820) || exit 1
+if ! grep -E '^default dev wg0([[:space:]]|$)' <<< "$routes" >/dev/null; then
+    echo "The VPN default route is missing." >&2
+    exit 1
+fi
+
+# Current reachability, never a cached connected flag. Ignore proxy environment.
+# Keep both DNS and HTTPS inside the existing firewall; bind the request to wg0.
+curl --disable --silent --fail --noproxy '*' --interface wg0 -4 \
+    --connect-timeout 5 --max-time 12 https://api.ipify.org >/dev/null 2>&1 || {
+    echo "The VPN is not currently reachable." >&2
+    exit 1
+}
+
+# Traffic must have completed a handshake with that same peer. A historical
+# timestamp alone is insufficient; the bounded request above must also pass.
+read -r handshake_peer handshake_time extra <<< "$(wg show wg0 latest-handshakes)"
+[[ $handshake_peer == "$expected_peer" && $handshake_time =~ ^[0-9]+$ && $handshake_time != 0 && -z $extra ]] || {
+    echo "The configured VPN peer has no confirmed handshake." >&2
+    exit 1
+}

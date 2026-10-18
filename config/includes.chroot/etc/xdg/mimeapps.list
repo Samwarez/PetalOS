@@ -1,0 +1,17 @@
+[Default Applications]
+x-scheme-handler/http=portable-tor.desktop;
+x-scheme-handler/https=portable-tor.desktop;
+text/html=firefox-esr.desktop;
+application/xhtml+xml=firefox-esr.desktop;
+application/pdf=atril.desktop;
+image/png=org.gnome.gThumb.desktop;
+image/jpeg=org.gnome.gThumb.desktop;
+image/gif=org.gnome.gThumb.desktop;
+image/webp=org.gnome.gThumb.desktop;
+image/bmp=org.gnome.gThumb.desktop;
+image/tiff=org.gnome.gThumb.desktop;
+video/mp4=org.xfce.Parole.desktop;
+video/x-matroska=org.xfce.Parole.desktop;
+audio/mpeg=io.github.quodlibet.QuodLibet.desktop;
+audio/flac=io.github.quodlibet.QuodLibet.desktop;
+text/plain=geany.desktop;

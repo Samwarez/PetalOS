@@ -1,0 +1,16 @@
+{
+  "fixture": "tests/phase15-20261018/boot-marker-journal.py",
+  "exit": 0,
+  "elapsed_seconds": 0.98,
+  "stderr": "",
+  "result": {
+    "dmesg_bytes": 56026,
+    "journal_kernel_bytes": 43530,
+    "marker_in_current_dmesg": false,
+    "marker_in_current_boot_kernel_journal": false,
+    "dmesg_includes_early_linux_version": true,
+    "kernel_journal_includes_early_linux_version": true,
+    "initramfs_unpack_error": true,
+    "SecureBoot_enabled": true
+  }
+}

@@ -1,0 +1,50 @@
+#!/usr/bin/python3 -I
+"""Native desktop brightness dialog and bounded hardware-key adjustments."""
+from pathlib import Path
+import os
+import subprocess
+import sys
+
+
+def gtk():
+    import gi
+    gi.require_version('Gtk', '3.0')
+    from gi.repository import Gtk
+    return Gtk
+
+try:
+    assert os.getuid() == 1000 and sys.argv[1:] in ([], ['up'], ['down'])
+    devices = list(Path('/sys/class/backlight').iterdir())
+    assert devices, 'No supported display backlight was found.'
+    devices.sort(key=lambda p: ((p / 'type').read_text().strip() != 'raw', p.name))
+    device = devices[0]
+    maximum = int((device / 'max_brightness').read_text())
+    current = int((device / 'brightness').read_text())
+    assert 0 <= current <= maximum and maximum > 0
+    if sys.argv[1:]:
+        delta = max(1, (maximum + 19) // 20)
+        target = current + (delta if sys.argv[1] == 'up' else -delta)
+    else:
+        Gtk = gtk()
+        dialog = Gtk.Dialog(title='Display Brightness')
+        dialog.add_buttons('Cancel', Gtk.ResponseType.CANCEL, 'Apply', Gtk.ResponseType.OK)
+        dialog.set_default_size(360, -1)
+        box = dialog.get_content_area(); box.set_border_width(16); box.set_spacing(12)
+        box.add(Gtk.Label(label='Choose the display brightness.'))
+        slider = Gtk.Scale.new_with_range(Gtk.Orientation.HORIZONTAL, 5, 100, 1)
+        slider.set_value(max(5, min(100, round(100 * current / maximum))))
+        slider.set_digits(0); box.add(slider); dialog.show_all()
+        response = dialog.run(); value = round(slider.get_value()); dialog.destroy()
+        if response != Gtk.ResponseType.OK: raise SystemExit(0)
+        assert 5 <= value <= 100
+        target = round(maximum * value / 100)
+    target = max(1, min(maximum, target))
+    result = subprocess.run(['/usr/bin/pkexec', '/usr/sbin/xfpm-power-backlight-helper',
+                             '--set-brightness', str(target)], capture_output=True, timeout=15)
+    assert result.returncode == 0, 'The display brightness could not be changed.'
+except Exception:
+    Gtk = gtk()
+    dialog = Gtk.MessageDialog(message_type=Gtk.MessageType.ERROR,
+        buttons=Gtk.ButtonsType.CLOSE, text='The display brightness could not be changed.')
+    dialog.set_title('Display Brightness'); dialog.run(); dialog.destroy()
+    raise SystemExit(1)

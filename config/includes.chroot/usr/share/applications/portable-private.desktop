@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Unlock Private Storage
+Comment=Unlock encrypted personal files and download state
+Exec=/usr/local/bin/portable-desktop private
+Icon=drive-harddisk
+Terminal=false
+Categories=Utility;

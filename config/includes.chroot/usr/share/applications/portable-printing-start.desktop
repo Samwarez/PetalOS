@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Start Printing
+Comment=Enable local printing for this session
+Exec=/usr/local/bin/portable-desktop printing-start
+Icon=printer
+Terminal=false
+Categories=System;

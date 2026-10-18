@@ -1,0 +1,12 @@
+#!/usr/bin/python3 -I
+import os,sys,subprocess
+from pathlib import Path
+sys.path.insert(0,"/usr/local/lib/portable")
+try:
+    from system_state import require,STATE
+    from desktop_settings import save
+    require();save(Path.home(),STATE/'Desktop/desktop-settings.tar')
+    subprocess.run(['/usr/local/bin/portable-message','--notify','success','Desktop settings saved to encrypted SYSTEM storage.'],timeout=10)
+except Exception:
+    print("Encrypted desktop settings are unavailable or invalid; no private contents logged.",file=sys.stderr)
+    raise SystemExit(1)

@@ -1,0 +1,18 @@
+#!/usr/bin/python3
+import subprocess
+import textwrap
+
+result = subprocess.run(
+    ["/usr/local/bin/portable-status"],
+    capture_output=True, text=True, timeout=15
+)
+
+for line in result.stdout.splitlines():
+    safe = "".join(
+        c for c in line if c.isprintable()
+    ).replace("$", "＄")
+    wrapped = textwrap.wrap(
+        safe, width=65, break_long_words=True, break_on_hyphens=False
+    )
+    for part in wrapped or [""]:
+        print("${alignr}" + part)

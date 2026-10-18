@@ -1,0 +1,9 @@
+[Unit]
+Description=Legacy SABnzbd launcher notice
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/portable-message --notify error "Use the PetalOS SABnzbd desktop shortcut."
+UMask=0077
+TimeoutStopSec=60
+Restart=no

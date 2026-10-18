@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Save Desktop Settings
+Comment=Save selected desktop preferences to encrypted SYSTEM storage
+Exec=/usr/local/bin/portable-desktop save-settings
+Icon=document-save
+Terminal=false
+Categories=Utility;

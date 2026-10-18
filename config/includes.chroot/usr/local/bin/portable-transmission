@@ -1,0 +1,46 @@
+#!/bin/bash
+set -euo pipefail
+umask 007
+if ! /usr/bin/python3 -I -c 'import sys;sys.path.insert(0,"/usr/local/lib/portable");from compartments import inside;sys.exit(0 if inside("transmission") else 1)'; then
+    if [[ ${1:-} == --prepare ]]; then
+        exec /usr/bin/sudo -n -- /usr/local/sbin/portable-compartment prepare transmission
+    fi
+    exec /usr/bin/sudo -n -- /usr/local/sbin/portable-compartment launch transmission "$@"
+fi
+
+fail() {
+    echo "$1" >&2
+    read -r -p "Press Enter to close." || true
+    exit 1
+}
+
+state=$(/usr/local/bin/portable-download-prepare transmission) ||
+    fail "Transmission was not started."
+
+# Seed defaults only once; preserve subsequent settings and resume state.
+if [[ ! -e "$state/settings.json" ]]; then
+    cp /usr/local/share/portable/transmission-defaults.json \
+        "$state/settings.json"
+fi
+
+python3 - "$state" <<'PY'
+import json
+import sys
+import os
+from pathlib import Path
+path = Path(sys.argv[1]) / 'settings.json'
+settings = json.loads(path.read_text())
+base = os.environ['PORTABLE_STATE_ROOT'] + '/Downloads/transmission'
+for key, default in [('download-dir', base), ('incomplete-dir', base + '/incomplete')]:
+    value = settings.get(key, default)
+    permitted = [base, '/mnt/ram/Downloads/transmission']
+    if not isinstance(value, str) or not any(value == p or value.startswith(p + '/') for p in permitted) or '..' in Path(value).parts:
+        settings[key] = default
+settings.update({'port-forwarding-enabled': False, 'lpd-enabled': False,
+                 'rpc-enabled': False, 'blocklist-enabled': False, 'watch-dir-enabled': False})
+settings['open-dialog-dir'] = base
+path.write_text(json.dumps(settings, indent=2) + '\n')
+PY
+
+[[ ${1:-} != --prepare ]] || exit 0
+exec -a transmission-gtk /usr/bin/transmission-gtk.portable-real --config-dir "$state" "$@"

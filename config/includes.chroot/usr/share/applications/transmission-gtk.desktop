@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Transmission (VPN)
+Comment=Torrent downloads with encrypted persistent state
+Exec=/usr/local/bin/portable-desktop transmission %U
+Icon=transmission
+Terminal=false
+Categories=Network;FileTransfer;P2P;
+MimeType=application/x-bittorrent;x-scheme-handler/magnet;

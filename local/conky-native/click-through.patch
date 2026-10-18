@@ -1,0 +1,15 @@
+--- a/src/output/display-wayland.cc
++++ b/src/output/display-wayland.cc
+@@ -582,6 +582,12 @@
+   wl_seat_add_listener(wl_globals.seat, &listener, global_window);
+ #endif /* BUILD_MOUSE_EVENTS */
+ 
++  // PetalOS status is display-only. Transparency alone does not let pointer
++  // events reach desktop icons beneath this layer surface.
++  struct wl_region *input_region = wl_compositor_create_region(wl_globals.compositor);
++  wl_surface_set_input_region(global_window->surface, input_region);
++  wl_region_destroy(input_region);
++
+   wl_surface_commit(global_window->surface);
+   wl_display_roundtrip(global_display);
+ 

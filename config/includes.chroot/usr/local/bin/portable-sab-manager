@@ -1,0 +1,10 @@
+#!/bin/bash
+set -euo pipefail
+[[ $# -le 1 ]] || exit 1
+case ${1:-open} in
+ open) action=launch;;
+ prepare) action=prepare;;
+ stop) action=stop;;
+ *) exit 1;;
+esac
+exec /usr/bin/sudo -n -- /usr/local/sbin/portable-compartment "$action" sabnzbd

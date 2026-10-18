@@ -1,0 +1,6 @@
+#!/bin/sh
+set -eu
+# 1080-policykit creates this broad grant after ordinary account setup.
+# The early shipped rule already overrides it; remove the misleading grant.
+test -f /etc/polkit-1/rules.d/00-petal-admin.rules
+rm -f /usr/share/polkit-1/rules.d/sudo_on_live.rules

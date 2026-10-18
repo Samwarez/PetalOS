@@ -1,0 +1,12 @@
+{
+  "fixture": "tests/phase15-20261018/soak-start.py",
+  "exit": 0,
+  "elapsed_seconds": 0.98,
+  "stderr": "",
+  "result": {
+    "soak_started": true,
+    "duration_seconds": 900,
+    "workers": 4,
+    "committed_worker_memory_MiB": 512
+  }
+}

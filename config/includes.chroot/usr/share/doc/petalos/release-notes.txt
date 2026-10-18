@@ -1,0 +1,16 @@
+PetalOS RC 1
+===========
+
+This release candidate includes the native Wayland desktop, selected encrypted
+SYSTEM preferences, optional independent Private storage, RAM content folders,
+VPN post-connect checks, and the corrected private playback audio clock.
+Wrong Private passphrases reopen a fresh prompt with a warning graphic.
+
+Known limits:
+- Kad may report firewalled despite working VPN port-forwarding probes. This is
+  accepted as a low-priority known issue; the experimental aMule patch is excluded.
+- Slight choppiness with 1080p playback in QEMU needs a hardware follow-up.
+- Configured Usenet transfers have not yet been tested.
+
+The PetalOS Guide describes the storage and password layout. Functional tests
+do not establish anonymity or the absence of forensic traces.

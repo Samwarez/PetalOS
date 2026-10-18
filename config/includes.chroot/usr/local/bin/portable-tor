@@ -1,0 +1,5 @@
+#!/bin/bash
+set -euo pipefail
+action=launch
+if [[ ${1:-} == --prepare ]]; then action=prepare; shift; fi
+exec /usr/bin/sudo -n -- /usr/local/sbin/portable-compartment "$action" tor "$@"

@@ -1,0 +1,24 @@
+{
+  "fixture": "tests/phase15-20261018/full-storage-detail.py",
+  "exit": 0,
+  "elapsed_seconds": 2.11,
+  "stderr": "",
+  "result": {
+    "initial_reopen_success": true,
+    "initial_size": 1838,
+    "full_store_update_reports_failure": false,
+    "full_store_returncode": 0,
+    "full_store_public_stdout": "Successfully added group Public group.\n",
+    "full_store_public_stderr": "Enter password to unlock /mnt/ram/Documents/keepassxc/public-full-fixture.kdbx: \n",
+    "post_update_size": 0,
+    "public_fixture_names": [
+      "public-full-fixture.kdbx",
+      "public-full-fixture.fill"
+    ],
+    "original_database_unchanged": false,
+    "original_database_readable": false,
+    "reopen_public_stderr": "Enter password to unlock /mnt/ram/Documents/keepassxc/public-full-fixture.kdbx: \nError while reading the database: Failed to read database file.\n",
+    "retry_after_freeing_space_succeeds": false,
+    "retried_change_persisted": false
+  }
+}

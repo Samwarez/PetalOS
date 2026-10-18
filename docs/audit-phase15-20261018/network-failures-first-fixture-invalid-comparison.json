@@ -1,0 +1,39 @@
+{
+  "fixture": "tests/phase15-20261018/network-failures.py",
+  "exit": 0,
+  "elapsed_seconds": 27.52,
+  "stderr": "",
+  "result": {
+    "DNS_failure_denies_gate": true,
+    "DNS_recovery_without_reboot": false,
+    "apps_running_before": {
+      "amule": true,
+      "pan": true,
+      "sabnzbd": true,
+      "transmission": true
+    },
+    "apps_survive_transitions": {
+      "amule": true,
+      "pan": true,
+      "sabnzbd": true,
+      "transmission": true
+    },
+    "disconnect": true,
+    "disconnected_gate_denied": true,
+    "failed_profile_no_tunnel": true,
+    "firewall_unchanged": false,
+    "gate_after_reconnect": true,
+    "initial_gate": true,
+    "link_recovery_without_reboot": false,
+    "live_gate_denies_tunnel_loss": true,
+    "missing_profile_rejected": true,
+    "packet_counts": {
+      "arp": 1,
+      "wireguard": 218
+    },
+    "reconnect": true,
+    "repeated_disconnect": true,
+    "same_profile_switch": true,
+    "stale_connection_report_exists": true
+  }
+}

@@ -1,0 +1,58 @@
+#include <tunables/global>
+
+profile petalos_transmission /usr/bin/transmission-gtk.portable-real {
+  #include <abstractions/petalos-compartment-common>
+  network inet,
+  network inet6,
+  /home/petal-transmission/{,**} rwkl,
+  /mnt/ram/{,AppState/,Downloads/} r,
+  /mnt/ram/AppState/transmission/{,**} rwkl,
+  /mnt/ram/Downloads/transmission/{,**} rwkl,
+  /mnt/private/AppState/transmission/{,**} rwkl,
+  /mnt/private/Downloads/transmission/{,**} rwkl,
+  /mnt/private/{,AppState/,Downloads/} r,
+}
+profile petalos_pan /usr/bin/pan.portable-real {
+  #include <abstractions/petalos-compartment-common>
+  network inet,
+  network inet6,
+  /home/petal-pan/{,**} rwkl,
+  /mnt/ram/{,AppState/,Downloads/} r,
+  /mnt/ram/AppState/pan/{,**} rwkl,
+  /mnt/ram/Downloads/pan/{,**} rwkl,
+  /mnt/private/AppState/pan/{,**} rwkl,
+  /mnt/private/Downloads/pan/{,**} rwkl,
+  /mnt/private/{,AppState/,Downloads/} r,
+}
+profile petalos_amule /usr/bin/amule.portable-real {
+  #include <abstractions/petalos-compartment-common>
+  network inet,
+  network inet6,
+  /home/petal-amule/{,**} rwkl,
+  /mnt/ram/{,AppState/,Downloads/} r,
+  /mnt/ram/AppState/amule/{,**} rwkl,
+  /mnt/ram/Downloads/amule/{,**} rwkl,
+  /mnt/private/AppState/amule/{,**} rwkl,
+  /mnt/private/Downloads/amule/{,**} rwkl,
+  /mnt/private/{,AppState/,Downloads/} r,
+}
+profile petalos_sabnzbd /usr/bin/sabnzbdplus.portable-real {
+  #include <abstractions/petalos-compartment-common>
+  network inet,
+  network inet6,
+  /home/petal-sabnzbd/{,**} rwkl,
+  /mnt/ram/{,AppState/,Downloads/} r,
+  /mnt/ram/AppState/sabnzbd/{,**} rwkl,
+  /mnt/ram/Downloads/sabnzbd/{,**} rwkl,
+  /mnt/private/AppState/sabnzbd/{,**} rwkl,
+  /mnt/private/Downloads/sabnzbd/{,**} rwkl,
+  /mnt/private/{,AppState/,Downloads/} r,
+}
+profile petalos_sab_viewer {
+  #include <abstractions/petalos-compartment-common>
+  network inet stream,
+  deny network inet dgram,
+  deny network inet6,
+  userns,
+  /home/petal-sab-viewer/{,**} rwkl,
+}

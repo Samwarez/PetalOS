@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=PetalOS XFCE
+Comment=PetalOS native Wayland desktop
+Exec=/usr/local/bin/portable-xfce-wayland
+TryExec=/usr/bin/labwc
+Type=Application
+DesktopNames=XFCE

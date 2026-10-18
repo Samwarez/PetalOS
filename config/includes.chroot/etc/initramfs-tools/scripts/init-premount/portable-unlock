@@ -1,0 +1,36 @@
+#!/bin/sh
+
+PREREQ=""
+prereqs() { echo "$PREREQ"; }
+
+case "$1" in
+    prereqs) prereqs; exit 0 ;;
+esac
+
+# Only run for our encrypted-system boot entry.
+case " $(cat /proc/cmdline) " in
+    *" live-media=/dev/mapper/portable_system "*) ;;
+    *) exit 0 ;;
+esac
+
+. /scripts/functions
+
+modprobe dm_crypt
+udevadm settle --timeout=10 || true
+
+device=/dev/disk/by-label/PORTABLE_SYSTEM
+count=0
+while [ ! -e "$device" ]; do
+    sleep 1
+    count=$((count + 1))
+    if [ "$count" -ge 30 ]; then
+        panic "Encrypted system volume PORTABLE_SYSTEM was not found."
+        exit 1
+    fi
+done
+
+echo "Unlocking portable Linux system..."
+if ! cryptsetup open --type luks --tries 3 "$device" portable_system; then
+    panic "Unable to unlock the portable system."
+    exit 1
+fi

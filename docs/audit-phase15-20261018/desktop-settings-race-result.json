@@ -1,0 +1,21 @@
+{
+  "fixture": "tests/phase15-20261018/desktop-settings-race.py",
+  "exit": 0,
+  "elapsed_seconds": 8.85,
+  "stderr": "",
+  "result": {
+    "restored_runtime": {
+      "returncode": 0,
+      "value": "400"
+    },
+    "archived_before_test": null,
+    "disk_before_test": null,
+    "runtime_after_change": {
+      "returncode": 0,
+      "value": "322"
+    },
+    "archive_immediately_after_save": null,
+    "disk_after_settling": "322",
+    "archive_after_wait_and_resave": "322"
+  }
+}

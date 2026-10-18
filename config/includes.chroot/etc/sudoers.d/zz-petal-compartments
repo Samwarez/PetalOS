@@ -1,0 +1,2 @@
+# Root broker accepts only fixed applications and validates every argument.
+Petal ALL=(root) NOPASSWD: NOSETENV: /usr/local/sbin/portable-compartment

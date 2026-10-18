@@ -1,0 +1,16 @@
+{
+  "fixture": "tests/phase15-20261018/boot-proof-stage.py",
+  "exit": 0,
+  "elapsed_seconds": 2.63,
+  "stderr": "",
+  "result": {
+    "original_sha256": "2625d4f7a1c7ec10a0ec156e10c62df7874e595beacde15354dfc496cbd90247",
+    "appended_bytes": 512,
+    "boot_configs": {
+      "boot/grub/grub.cfg": "set timeout=1\nset default=0\nsearch --no-floppy --label PORT_BOOT --set=root\nmenuentry 'PetalOS disposable audit VM' {\n linux /live/vmlinuz boot=live components username=Petal hostname=PetalOS toram swap=false init_on_alloc=1 init_on_free=1 live-media=/dev/mapper/portable_system petalos_qemu_ssh=1 console=tty0 console=ttyS0,115200\n initrd /live/initrd.img\n}\n",
+      "EFI/BOOT/grub.cfg": "set timeout=1\nset default=0\nsearch --no-floppy --label PORT_BOOT --set=root\nmenuentry 'PetalOS disposable audit VM' {\n linux /live/vmlinuz boot=live components username=Petal hostname=PetalOS toram swap=false init_on_alloc=1 init_on_free=1 live-media=/dev/mapper/portable_system petalos_qemu_ssh=1 console=tty0 console=ttyS0,115200\n initrd /live/initrd.img\n}\n",
+      "EFI/debian/grub.cfg": "set timeout=1\nset default=0\nsearch --no-floppy --label PORT_BOOT --set=root\nmenuentry 'PetalOS disposable audit VM' {\n linux /live/vmlinuz boot=live components username=Petal hostname=PetalOS toram swap=false init_on_alloc=1 init_on_free=1 live-media=/dev/mapper/portable_system petalos_qemu_ssh=1 console=tty0 console=ttyS0,115200\n initrd /live/initrd.img\n}\n"
+    },
+    "test_only_disposable_disk": true
+  }
+}
