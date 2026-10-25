@@ -1,5 +1,11 @@
 # PetalOS
 
+## Install PetalOS with Bloom
+
+[Bloom](https://github.com/Samwarez/Bloom) is the portable graphical installer for PetalOS. Download it from [Bloom releases](https://github.com/Samwarez/Bloom/releases), extract the complete Linux amd64 folder, and run `./bloom` as your normal desktop user. Drive operations ask for administrator authorization.
+
+In Bloom, select `Samwarez/PetalOS`, choose a published version and build, download it, then review the exact target drive before installation. [PetalOS releases](https://github.com/Samwarez/PetalOS/releases) supply the catalog and verified OS payloads that Bloom lists and downloads. An ISO alone is not a Bloom download bundle. See the [Bloom instructions](https://github.com/Samwarez/Bloom#readme) for protection tiers, requirements and usage.
+
 PetalOS is a Debian trixie live system with an XFCE desktop on the labwc
 Wayland compositor. The OS runs from RAM, with selectively persistent encrypted
 SYSTEM settings and a separately unlocked Private store. Network applications
