@@ -16,6 +16,7 @@ import subprocess
 import sys
 import tarfile
 import tempfile
+import time
 import urllib.request
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -181,14 +182,44 @@ def check_index(checkout, entries):
             raise RuntimeError('Staged source differs from the reviewed file: ' + entry['path'])
 
 
-def release_or_none(tag):
-    response = subprocess.run(['gh', 'api', f'repos/{REPO}/releases/tags/{tag}'],
-                              text=True, capture_output=True)
-    if response.returncode == 0:
-        return json.loads(response.stdout)
-    if '(HTTP 404)' in response.stderr:
-        return None
-    raise RuntimeError('Could not query the release. Check GitHub connectivity/authentication.')
+def release_or_none(tag, release_id=None):
+    # A draft has no published Git tag. The tag endpoint can return 404 even
+    # after creation succeeds; the authenticated release collection includes it.
+    if release_id is not None:
+        release = gh_json(f'repos/{REPO}/releases/{int(release_id)}')
+        if release.get('tag_name') != tag:
+            raise RuntimeError('Saved release ID belongs to a different tag.')
+        return release
+    matches = []
+    for page in range(1, 101):
+        batch = gh_json(f'repos/{REPO}/releases?per_page=100&page={page}')
+        if not isinstance(batch, list):
+            raise RuntimeError('Invalid release collection response.')
+        matches.extend(release for release in batch if release.get('tag_name') == tag)
+        if len(batch) < 100:
+            break
+    else:
+        raise RuntimeError('Release collection exceeded the pagination limit.')
+    if len(matches) > 1:
+        raise RuntimeError('Multiple releases have the requested tag; no release selected.')
+    return matches[0] if matches else None
+
+
+def remember_release(state_path, state, release, tag, notes, expected_assets):
+    if (not isinstance(release, dict) or not isinstance(release.get('id'), int)
+            or release.get('tag_name') != tag
+            or release.get('target_commitish') != state['source_commit']):
+        raise RuntimeError('Release does not match the prepared tag/source commit; nothing overwritten.')
+    if state.get('release_id') is None:
+        # Recover an interrupted create-before-save using the original draft's
+        # exact identity and notes, rather than making another release.
+        if not release.get('draft') or (release.get('body') or '').strip() != notes.strip():
+            raise RuntimeError('Unrecorded release differs from the prepared draft; nothing overwritten.')
+        check_remote_assets(release, expected_assets, complete=False)
+        state['release_id'] = release['id']
+        save_state(state_path, state)
+    elif state['release_id'] != release['id']:
+        raise RuntimeError('Existing release does not belong to this publication; nothing overwritten.')
 
 
 def check_remote_assets(release, expected, *, complete):
@@ -218,18 +249,22 @@ def main():
     plan, entries, snapshot = check_plan(plan_path)
     base = plan_path.parent
     print('Verified prepared source:', len(entries), 'files; release:', plan['version'], flush=True)
-    print('Publication will push reviewed source, upload the OS catalog/payloads, make PetalOS public, and test Bloom.', flush=True)
     if args.dry_run:
         print('Dry run passed; no GitHub change made.')
         return
-    for name in ('git', 'gh'):
-        if not shutil.which(name):
-            raise RuntimeError('Required command missing: ' + name)
     state_path = base / 'publication/state.json'
     state = json.loads(state_path.read_text()) if state_path.exists() else {}
     plan_sha = digest(plan_path)
     if state and state.get('plan_sha256') != plan_sha:
         raise RuntimeError('Publication plan differs from the saved state.')
+    if state.get('published'):
+        print('Release is already published; checking the public listing/download only.', flush=True)
+        finish_public_verification(plan, base, snapshot, state_path, state)
+        return
+    for name in ('git', 'gh'):
+        if not shutil.which(name):
+            raise RuntimeError('Required command missing: ' + name)
+    print('Publication will push reviewed source, upload checked assets and publish the release.', flush=True)
     state['plan_sha256'] = plan_sha
     if 'work' not in state:
         parent = ROOT.parent / 'publication-work';parent.mkdir(exist_ok=True)
@@ -268,21 +303,27 @@ def main():
     if head != state['source_commit']:
         git('push', 'origin', state['source_commit'] + ':refs/heads/main', cwd=checkout)
     tag = plan['version']
-    release = release_or_none(tag)
+    release = release_or_none(tag, state.get('release_id'))
     if release is None:
         run('gh', 'release', 'create', tag, '--repo', REPO, '--draft', '--target', state['source_commit'],
             '--title', 'PetalOS RC 1 — split-storage development release',
             '--notes-file', base / 'publication/release-notes.md')
-        release = release_or_none(tag)
-        state['release_id'] = release['id'];save_state(state_path, state)
-    if state.get('release_id') != release['id'] or release['target_commitish'] != state['source_commit']:
-        raise RuntimeError('Existing release does not belong to this prepared publication; nothing overwritten.')
+        for attempt in range(6):
+            release = release_or_none(tag)
+            if release is not None:
+                break
+            if attempt < 5:
+                time.sleep(1)
+        if release is None:
+            raise RuntimeError('Draft creation succeeded, but the draft is not visible yet. Retry this command to resume.')
+    remember_release(state_path, state, release, tag,
+                     (base / 'publication/release-notes.md').read_text(), plan['assets'])
     uploaded = check_remote_assets(release, plan['assets'], complete=False)
     for item in plan['assets']:
         if item['name'] not in uploaded:
             print('Uploading', item['name'], flush=True)
             run('gh', 'release', 'upload', tag, '--repo', REPO, base / item['path'])
-    release = release_or_none(tag)
+    release = release_or_none(tag, state['release_id'])
     check_remote_assets(release, plan['assets'], complete=True)
     # The original user request explicitly authorizes public source/releases.
     # Change visibility only after source/history scans and complete draft checks.
@@ -292,34 +333,55 @@ def main():
     run('gh', 'release', 'edit', tag, '--repo', REPO, '--draft=false', '--prerelease=false')
     state['published'] = True
     save_state(state_path, state)
+    finish_public_verification(plan, base, snapshot, state_path, state)
+
+
+def finish_public_verification(plan, base, snapshot, state_path, state):
     # Exercise exactly Bloom's default unauthenticated listing and downloader.
     # API/catalog/payload requests get no token and verify every downloaded byte.
-    sys.path.insert(0, str(checkout / 'local/installer'))
+    sys.path.insert(0, str(snapshot / 'local/installer'))
     from petal_installer import InstallerError
     from petal_installer.releases import GitHub, verify_bundle
     try:
-        public_download(plan, base, GitHub, verify_bundle)
+        public_download(plan, base, GitHub, verify_bundle, retry_errors=(InstallerError,))
     except InstallerError as error:
         raise RuntimeError('Release is published, but Bloom download verification stopped: '
                            + str(error) + ' Rerun this command to retry the check.') from None
     state['public_download_verified'] = True
     save_state(state_path, state)
-    print('Published:', 'https://github.com/' + REPO + '/releases/tag/' + tag)
+    print('Published:', 'https://github.com/' + REPO + '/releases/tag/' + plan['version'])
     print('PASS Bloom default listing and complete unauthenticated download/hash verification.')
 
 
-def public_download(plan, base, GitHub, verify_bundle):
+def public_download(plan, base, GitHub, verify_bundle, *, retry_errors=()):
     tag = plan['version']
     client = GitHub(REPO, token=None)
-    releases = client.releases()
-    if not any(x['version'] == tag and x['installer_catalog'] for x in releases):
-        raise RuntimeError('Public release is not visible in Bloom\'s default listing.')
+    observations = []
+    report = base / 'publication/public-listing-check.json'
+    for attempt in range(7):
+        try:
+            releases = client.releases()
+            visible = any(x['version'] == tag and x['installer_catalog'] for x in releases)
+            observations.append({'attempt': attempt + 1, 'visible': visible, 'releases': releases})
+        except retry_errors as error:
+            visible = False
+            observations.append({'attempt': attempt + 1, 'error': str(error)})
+        report.write_text(json.dumps({'authenticated': False, 'version': tag,
+                                      'attempts': observations}, indent=2) + '\n')
+        if visible:
+            break
+        if attempt == 6:
+            raise RuntimeError('Release is published, but Bloom public-listing verification is pending. Details: ' + str(report))
+        print('Waiting for public release visibility; retrying in 10 seconds.', flush=True)
+        time.sleep(10)
     destination = base / 'public-download-check'
     if not destination.exists():
-        last_role = [None]
+        last_role = [None, 0.0]
         def progress(event):
-            if event.get('payload') != last_role[0]:
-                last_role[0] = event.get('payload');print('Bloom downloading:', last_role[0], flush=True)
+            now = time.monotonic()
+            if event.get('payload') != last_role[0] or now - last_role[1] >= 15:
+                last_role[:] = [event.get('payload'), now]
+                print('Bloom downloading:', last_role[0], event['bytes'], '/', event['total'], flush=True)
         client.download(tag, 'base', destination, progress=progress)
     catalog, variant = verify_bundle(destination)
     if catalog['version'] != tag or variant['id'] != 'base' or digest(destination / 'petalos-release.json') != plan['catalog_sha256']:
@@ -330,5 +392,5 @@ if __name__ == '__main__':
     try:
         main()
     except (RuntimeError, subprocess.CalledProcessError, OSError) as error:
-        print('Publication stopped:', str(error), file=sys.stderr)
+        print('Release workflow stopped:', str(error), file=sys.stderr)
         raise SystemExit(1)

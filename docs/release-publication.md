@@ -18,6 +18,12 @@ and physical hardware acceptance remain separate. Focused fixtures use test-only
 PBKDF2; production Bloom Argon2id acceptance is recorded separately. Test
 credentials, test initramfs files and VM disks are never release assets.
 
+The release is now public. Bloom 0.4.0 listed it on the first attempt and
+downloaded all six payloads (2,021,564,665 bytes) without a token, verifying the
+catalog and every payload hash. The client source matches the shipped portable
+application. See the [integration run](https://github.com/Samwarez/Bloom/actions/runs/40383839474)
+and [result record](public-download-20261026.json).
+
 Sam authorized public project source and releases. The prepared publisher runs
 from the normal desktop user's terminal with authenticated `gh` and `git`:
 
@@ -47,3 +53,9 @@ state live under `../release-dist/VERSION/publication/`, outside the source Git
 root. `--dry-run` checks that prepared source and the assets without networking
 or changing GitHub. If the reviewed remote branch has advanced, the publisher
 stops for a new review; it never overwrites a conflicting commit or asset.
+
+If the state records a completed publication, rerunning the publisher performs
+only the public listing/download verification. It allows a bounded visibility
+delay after publishing and saves the actual listing observations under the
+publication directory. Drafts are recovered by authenticated collection or
+recorded release ID, including interrupted creation before the ID was saved.

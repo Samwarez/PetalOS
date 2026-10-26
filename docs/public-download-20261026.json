@@ -1,0 +1,17 @@
+{
+  "passed": true,
+  "bloom_version": "0.4.0",
+  "repository": "Samwarez/PetalOS",
+  "version": "rc1-layout2-20261026-145911-818721",
+  "variant": "base",
+  "authenticated": false,
+  "default_listing": true,
+  "downloaded_payloads": 6,
+  "payload_bytes": 2021564665,
+  "catalog_sha256": "90087752102293254fd967a6fe7f84a6f7a680ae3f25e06c4d9081094720646a",
+  "client_source_sha256": "2578f092ffc3bd579a42e42b92ccd5286bf31f5231128a2433353376288f8a4f",
+  "listing_attempts": 1,
+  "workflow_url": "https://github.com/Samwarez/Bloom/actions/runs/40383839474",
+  "workflow_commit": "7cacac3d22b32382e4b60705523893f95ccce3bd",
+  "verification_location": "GitHub Actions; no authenticated GitHub token"
+}

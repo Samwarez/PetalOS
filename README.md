@@ -20,7 +20,8 @@ bundles its runtime and uses a protected temporary administrator backend without
 package installation; a root-owned Debian package remains available. Card
 deployment requires a verified split-storage OS build and separately authorized
 physical installation; no card was changed here. Build `20261026-145911-818721`
-passed clean layout-2 VM verification and is prepared for publication.
+passed clean layout-2 VM verification and is available as a
+[public release](https://github.com/Samwarez/PetalOS/releases/tag/rc1-layout2-20261026-145911-818721).
 
 Download Bloom from its [public releases](https://github.com/Samwarez/Bloom/releases).
 Its [instructions](https://github.com/Samwarez/Bloom#readme) describe portable
@@ -47,6 +48,10 @@ The checked release is `rc1-layout2-20261026-145911-818721`, base variant
 kernel, production initramfs, rootfs, signed EFI chain and verification reports.
 See [release publication](docs/release-publication.md) for the prepared command
 and the limits of its clean-build acceptance.
+
+Bloom 0.4.0 successfully listed that release and downloaded/verified all six
+payloads without a GitHub token in the
+[public integration test](https://github.com/Samwarez/Bloom/actions/runs/40383839474).
 
 OS changes are delivered through verified builds installed offline, never by a
 live-system updater. Test media keeps at most one previous OS; production keeps
