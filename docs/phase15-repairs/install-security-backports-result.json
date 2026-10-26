@@ -1,0 +1,85 @@
+{
+  "fixture": "tests/phase15-repairs/install-security-backports.py",
+  "exit": 0,
+  "elapsed_seconds": 12.79,
+  "stderr": "",
+  "result": {
+    "hook_exit": 0,
+    "installed_packages": [
+      {
+        "package": "amule-common",
+        "version": "1:2.3.3-3.2+petalos1",
+        "action": "security_backport"
+      },
+      {
+        "package": "amule-utils",
+        "version": "1:2.3.3-3.2+petalos1",
+        "action": "security_backport"
+      },
+      {
+        "package": "amule",
+        "version": "1:2.3.3-3.2+petalos1",
+        "action": "security_backport"
+      },
+      {
+        "package": "libxml2",
+        "version": "2.12.7+dfsg+really2.9.14-2.1+deb13u3+petalos1",
+        "action": "security_backport"
+      },
+      {
+        "package": "libpolkit-gobject-1-0",
+        "version": "126-2+petalos1",
+        "action": "security_backport"
+      },
+      {
+        "package": "pkexec",
+        "version": "126-2+petalos1",
+        "action": "security_backport"
+      },
+      {
+        "package": "libpolkit-agent-1-0",
+        "version": "126-2+petalos1",
+        "action": "security_backport"
+      },
+      {
+        "package": "gir1.2-polkit-1.0",
+        "version": "126-2+petalos1",
+        "action": "security_backport"
+      },
+      {
+        "package": "polkitd",
+        "version": "126-2+petalos1",
+        "action": "security_backport"
+      },
+      {
+        "package": "libpoppler-glib8t64",
+        "version": "25.03.0-5+deb13u4+petalos1",
+        "action": "security_backport"
+      },
+      {
+        "package": "gir1.2-poppler-0.18",
+        "version": "25.03.0-5+deb13u4+petalos1",
+        "action": "security_backport"
+      },
+      {
+        "package": "poppler-utils",
+        "version": "25.03.0-5+deb13u4+petalos1",
+        "action": "security_backport"
+      },
+      {
+        "package": "libpoppler-cpp2",
+        "version": "25.03.0-5+deb13u4+petalos1",
+        "action": "security_backport"
+      },
+      {
+        "package": "libpoppler147",
+        "version": "25.03.0-5+deb13u4+petalos1",
+        "action": "security_backport"
+      }
+    ],
+    "production_policies_unchanged": true,
+    "amule_wrapper_preserved": true,
+    "no_duplicate_debs_in_OS": true,
+    "RAM_overlay_only": true
+  }
+}

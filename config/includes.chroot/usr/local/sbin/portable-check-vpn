@@ -6,6 +6,10 @@ set -euo pipefail
     exit 1
 }
 
+# Bootstrap is only for the privileged connection transaction. Ordinary app
+# gates pass no arguments and still require the active HTTPS/peer checks.
+[[ $# -eq 0 || ( $# -eq 1 && $1 == --transport-only ) ]] || exit 2
+
 systemctl is-active --quiet nftables.service || {
     echo "The firewall service is not active." >&2
     exit 1
@@ -65,6 +69,11 @@ if ! grep -E '^default dev wg0([[:space:]]|$)' <<< "$routes" >/dev/null; then
     echo "The VPN default route is missing." >&2
     exit 1
 fi
+
+# A TLS request cannot bootstrap a clock outside certificate validity dates.
+# With the default-drop firewall, peer identity, mark and route checked, chrony
+# may attempt synchronization through wg0 before full application readiness.
+[[ ${1:-} != --transport-only ]] || exit 0
 
 # Current reachability, never a cached connected flag. Ignore proxy environment.
 # Keep both DNS and HTTPS inside the existing firewall; bind the request to wg0.

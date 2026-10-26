@@ -1,0 +1,8 @@
+{
+  "fixture": "tests/phase15-repairs/manual-clock-recovery.py",
+  "VM": "20261019-220338-142131",
+  "exit": 0,
+  "seconds": 13.64,
+  "stdout": "{\"unauthenticated_correction_rejected\": true, \"correction_while_connected_rejected\": true, \"invalid_inputs_leave_clock_unchanged\": true, \"manual_correction_succeeded\": true, \"reconnect_and_active_checks_succeeded\": true, \"hardware_clock_not_reset\": true}\n",
+  "stderr": ""
+}

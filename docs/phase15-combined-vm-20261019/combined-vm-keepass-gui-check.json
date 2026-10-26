@@ -1,0 +1,8 @@
+{
+  "fixture": "tests/combined-vm-keepass-gui-check.py",
+  "VM": "20261019-220338-142131",
+  "exit": 0,
+  "seconds": 1.35,
+  "stdout": "{\"GUI_saved_database_reopens\": true, \"GUI_created_group_persisted\": true, \"database_stays_desktop_owned\": true}\n",
+  "stderr": ""
+}

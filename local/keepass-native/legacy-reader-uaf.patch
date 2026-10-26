@@ -1,0 +1,17 @@
+From upstream commit 6a534f38c61295d60b0e937739a12511e76dbfeb
+Subject: Remove deleted legacy metastream entries from lookup tables
+Origin: https://github.com/keepassxreboot/keepassxc/commit/6a534f38c61295d60b0e937739a12511e76dbfeb
+Bug: https://security-tracker.debian.org/tracker/CVE-2026-69150
+
+--- a/src/format/KeePass1Reader.cpp
++++ b/src/format/KeePass1Reader.cpp
+@@ -193,7 +193,8 @@
+     for (Entry* entry : asConst(entries)) {
+         if (isMetaStream(entry)) {
+             parseMetaStream(entry);
+-
++            m_entryUuids.remove(m_entryUuids.key(entry));
++            m_entryGroupIds.remove(entry);
+             delete entry;
+         } else {
+             quint32 groupId = m_entryGroupIds.value(entry);

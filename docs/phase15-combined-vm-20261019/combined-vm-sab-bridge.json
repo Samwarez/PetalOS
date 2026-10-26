@@ -1,0 +1,8 @@
+{
+  "fixture": "tests/combined-vm-sab-bridge.py",
+  "VM": "20261019-220338-142131",
+  "exit": 0,
+  "seconds": 1.31,
+  "stdout": "{\"management_HTTP_response_received\": true, \"ordinary_desktop_identity_denied_management_socket\": true}\n",
+  "stderr": ""
+}

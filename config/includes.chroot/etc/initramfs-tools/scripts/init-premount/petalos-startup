@@ -1,0 +1,11 @@
+#!/bin/sh
+PREREQ="plymouth"
+case "${1:-}" in prereqs) echo "$PREREQ"; exit 0;; esac
+case " $(cat /proc/cmdline) " in
+    *" live-media=/dev/mapper/portable_system "*|*" live-media=/dev/mapper/portable_os "*) exit 0;;
+esac
+if plymouth --ping >/dev/null 2>&1; then
+    /bin/petalos-splash startup
+    sleep 4
+    /bin/petalos-splash wait
+fi

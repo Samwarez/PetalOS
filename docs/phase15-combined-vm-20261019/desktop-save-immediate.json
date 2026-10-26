@@ -1,0 +1,8 @@
+{
+  "fixture": "tests/phase15-repairs/desktop-save-immediate.py",
+  "VM": "20261019-220338-142131",
+  "exit": 0,
+  "seconds": 3.05,
+  "stdout": "{\"rapid_immediate_saves\": [{\"requested\": 331, \"archived\": 331, \"match\": true}, {\"requested\": 332, \"archived\": 332, \"match\": true}, {\"requested\": 333, \"archived\": 333, \"match\": true}], \"expected_after_reboot\": 333}\n",
+  "stderr": ""
+}

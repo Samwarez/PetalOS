@@ -1,0 +1,29 @@
+#!/bin/sh
+set -eu
+test "$(dpkg-query -W -f='${Version}' plymouth)" = '24.004.60-5'
+plymouth-set-default-theme petalos
+if [ -L /usr/share/backgrounds/petalos-wallpapers ]; then
+    test "$(readlink /usr/share/backgrounds/petalos-wallpapers)" = /mnt/system-state/Wallpapers
+else
+    test ! -e /usr/share/backgrounds/petalos-wallpapers
+    ln -s /mnt/system-state/Wallpapers /usr/share/backgrounds/petalos-wallpapers
+fi
+# Integrate only with the reviewed generation-aware trixie RAM copy function.
+python3 - <<'PY'
+from pathlib import Path
+import hashlib
+assert [line.strip() for line in Path('/usr/lib/systemd/system/lightdm.service').read_text().splitlines()
+        if line.strip().startswith('OnFailure=')]==['OnFailure=plymouth-quit.service']
+path=Path('/usr/lib/live/boot/9990-toram-todisk.sh')
+sha=hashlib.sha256(path.read_bytes()).hexdigest()
+if sha=='c93883b9d805debc58fd6524720498949cc18a858b20039b88c0ae93c956a5b1':raise SystemExit(0)
+assert sha=='7e34357c9ccdd478786c4ece34a15572d5b5c06af3e3710c985758c2ceee1b2c'
+content=path.read_text()
+start='\t# begin copying (or uncompressing)\n'
+end='\trmdir ${copyto}\n\treturn 0\n'
+assert content.count(start)==content.count(end)==1
+content=content.replace(start,'\t[ ! -x /bin/petalos-splash ] || /bin/petalos-splash ram\n'+start)
+content=content.replace(end,'\t[ ! -x /bin/petalos-splash ] || /bin/petalos-splash wait\n'+end)
+path.write_text(content)
+PY
+update-initramfs -u -k all

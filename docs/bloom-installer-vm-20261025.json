@@ -1,0 +1,54 @@
+{
+  "passed": true,
+  "fresh": {
+    "stage": "installer-fresh",
+    "checks": {
+      "target_is_removable_usb": true,
+      "readonly_source_refused_as_target": true,
+      "stale_confirmation_refused_before_partitioning": true,
+      "fresh_install_completed": true,
+      "all_five_partitions_created": true,
+      "no_installer_mappings_left": true,
+      "layout_two_identified": true,
+      "production_argon2id_os": true,
+      "production_argon2id_system": true,
+      "production_argon2id_private": true,
+      "admin_hash_only_in_settings": true,
+      "fresh_resources_closed_after_preload": true,
+      "wipe_interruption_reports_completed_key_removal": true,
+      "interrupted_wipe_leaves_no_maps": true,
+      "wipe_retry_finishes_random_readback": true
+    },
+    "passed": true
+  },
+  "update": {
+    "stage": "installer-update",
+    "checks": {
+      "target_is_removable_usb": true,
+      "readonly_source_refused_as_target": true,
+      "os_update_completed": true,
+      "update_never_opened_persistent_volumes": true,
+      "update_resources_closed": true,
+      "firmware_probe_installed_without_password_files": true
+    },
+    "passed": true
+  },
+  "firmware": {
+    "stage": "firmware",
+    "passed": true,
+    "checks": {
+      "signed_uefi_boot": true,
+      "os_unlocked": true,
+      "settings_unlocked": true,
+      "private_closed": true,
+      "os_readonly": true
+    }
+  },
+  "persistent_partitions_byte_identical": true,
+  "scope": "Installed package core on virtual USB, real Argon2id, signed EFI chain and one-prompt unlock",
+  "limits": [
+    "Synthetic OS payloads, not desktop acceptance",
+    "Firmware probe appended only after installed artifact verification",
+    "No physical card or pre-existing images modified"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "fixture": "tests/phase15-20261018/wrong-clock.py",
+  "exit": 0,
+  "elapsed_seconds": 98.07,
+  "stderr": "",
+  "result": {
+    "chrony_active_after_attempt": false,
+    "clock_corrected": false,
+    "connection_succeeds_with_2020_clock": false,
+    "failure_is_current_reachability": false,
+    "restored_clock_reconnect": true,
+    "tunnel_exists_after_attempt": false
+  }
+}

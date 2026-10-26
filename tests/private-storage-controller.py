@@ -50,7 +50,8 @@ def check(name,condition):
 
 with tempfile.TemporaryDirectory(prefix='petalos-storage-fixture-') as root:
     fake_c=types.SimpleNamespace(ram_ready=lambda:None,ROLES={},reset_ram=lambda app:None)
-    with patch.dict(sys.modules,{'compartments':fake_c}), patch.object(s,'ROOT',Path(root)), patch.object(s,'operation',operation), patch.object(s,'identity',lambda:{}), patch.object(s,'power_off',shutdown), patch.object(s,'command',lambda *a,**k:None), patch.object(s,'kill_private_users',lambda *a,**k:None), patch.object(s.time,'sleep',lambda *a:None), patch.object(s.subprocess,'Popen',lambda *a,**k:Watchdog()), patch.object(Path,'write_text',lambda *a,**k:None):
+    fake_trash=types.SimpleNamespace(clear=lambda:None,block_private_trash=lambda:None,allow_private_trash=lambda:None)
+    with patch.dict(sys.modules,{'compartments':fake_c,'volatile_trash':fake_trash}), patch.object(s,'ROOT',Path(root)), patch.object(s,'operation',operation), patch.object(s,'identity',lambda:{}), patch.object(s,'power_off',shutdown), patch.object(s,'command',lambda *a,**k:None), patch.object(s,'kill_private_users',lambda *a,**k:None), patch.object(s.time,'sleep',lambda *a:None), patch.object(s.subprocess,'Popen',lambda *a,**k:Watchdog()), patch.object(Path,'write_text',lambda *a,**k:None):
         for opened in (False,True):
             a=Adapter(opened=opened,fail_unlock=True)
             with patch.object(s,'backend',lambda:a):
@@ -74,6 +75,17 @@ with tempfile.TemporaryDirectory(prefix='petalos-storage-fixture-') as root:
                 result=s.authenticate_system(b'synthetic-fixture')
                 check('SYSTEM screen authentication '+('rejects bad secret' if rejected else 'accepts valid secret'),result is not rejected)
                 check('screen authentication never opens Private',not a.opened and a.events==['system-auth'])
+        order=[]
+        a=Adapter(opened=True)
+        with patch.object(s,'backend',lambda:a), patch.object(s,'kill_private_users',lambda *args,**kwargs:order.append('drain')), patch.object(fake_trash,'block_private_trash',lambda:order.append('block-trash')), patch.object(fake_trash,'clear',lambda:order.append('clear-trash')), patch.object(a,'lock',lambda state:order.append('close-private')):
+            s.lock()
+        check('new copies are blocked, readers drained, Trash cleared and late readers drained before Private closure',order==['block-trash','drain','drain','drain','clear-trash','drain','close-private'])
+        a=Adapter(opened=True)
+        with patch.object(s,'backend',lambda:a), patch.object(fake_trash,'clear',side_effect=RuntimeError('public unsafe trash fixture')):
+            try:s.lock()
+            except Shutdown:pass
+            else:raise AssertionError('Trash cleanup failure must fail closed')
+        check('failed Trash cleanup evicts keys and powers off',a.events==['evict'])
         a=Adapter(opened=True,busy=True)
         with patch.object(s,'backend',lambda:a):
             try:s.lock()
@@ -110,3 +122,15 @@ with patch.dict(sys.modules, {'private_storage': s}), patch.object(s.os, 'geteui
         else:raise AssertionError('sleep must not continue with an unresolved unlock')
 
 print('All synthetic storage and sleep-hook checks passed.')
+
+with tempfile.TemporaryDirectory(prefix='petalos-trash-fd-',dir='/dev/shm') as work:
+    trash=Path(work)/'Trash';trash.mkdir();file=trash/'fixture';file.write_bytes(b'public FD fixture')
+    with patch.object(s,'DESKTOP_TRASH',trash):
+        with file.open('rb') as handle:
+            path=Path('/proc/self/fd')/str(handle.fileno())
+            check('RAM Trash reader is identified independently of the Private block device',s.private_content_handle(path,0))
+            file.unlink()
+            check('deleted-but-open RAM Trash reader is still identified',s.private_content_handle(path,0))
+    other=Path(work)/'unrelated';other.write_bytes(b'preserve unrelated RAM')
+    with other.open('rb') as handle:
+        check('unrelated RAM handle is not a Private reader',not s.private_content_handle(Path('/proc/self/fd')/str(handle.fileno()),0))

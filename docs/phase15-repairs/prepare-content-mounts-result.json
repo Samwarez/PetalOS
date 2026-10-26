@@ -1,0 +1,11 @@
+{
+  "fixture": "tests/phase15-repairs/prepare-content-mounts.py",
+  "exit": 0,
+  "elapsed_seconds": 2.04,
+  "stderr": "",
+  "result": {
+    "guest_ram_files_verified": 0,
+    "original_guest_ram_folders_preserved": true,
+    "new_content_service_active": true
+  }
+}

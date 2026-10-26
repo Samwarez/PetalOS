@@ -1,0 +1,14 @@
+#!/bin/sh
+set -eu
+cd /usr/local/share/portable/native-crystal-dock
+sha256sum -c crystal-dock.sha256
+python3 - <<'PY'
+from pathlib import Path
+import json,subprocess
+versions=json.loads(Path('provenance.json').read_text())['runtime_versions']
+assert set(versions)=={'libqt6gui6','liblayershellqtinterface6','qt6-wayland','layer-shell-qt'}
+for package,version in versions.items():
+    assert subprocess.check_output(['dpkg-query','-W','-f=${Version}',package],text=True)==version, 'Rebuild Crystal Dock against the current trixie runtime.'
+PY
+install -o root -g root -m 0755 crystal-dock /usr/bin/crystal-dock
+rm crystal-dock

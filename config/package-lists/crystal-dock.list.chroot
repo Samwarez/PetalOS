@@ -1,0 +1,10 @@
+libqt6widgets6
+libqt6dbus6
+libqt6svg6
+qt6-svg-plugins
+qt6-wayland
+liblayershellqtinterface6
+layer-shell-qt
+adwaita-icon-theme
+adwaita-icon-theme-legacy
+procps

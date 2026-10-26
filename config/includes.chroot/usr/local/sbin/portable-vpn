@@ -80,17 +80,24 @@ case "${1:-}" in
         cp /run/portable-vpn/resolv.conf /etc/resolv.conf
         chmod 644 /etc/resolv.conf
 
-        /usr/local/sbin/portable-check-vpn
+        /usr/local/sbin/portable-check-vpn --transport-only
         systemctl restart chrony.service
         echo "Waiting up to one minute for clock synchronization..."
+        clock_ready=0
         if chronyc waitsync 60 0.5 0 1; then
+            clock_ready=1
             echo "Clock synchronized. You can start Tor."
         else
-            echo "Clock has not synchronized yet. Keep Tor closed."
-            echo "Check: chronyc tracking"
-            echo "Check: chronyc sources -v"
+            echo "Clock synchronization is unavailable. Checking the tunnel with normal TLS verification; Tor must wait." >&2
         fi
 
+        if ! /usr/local/sbin/portable-check-vpn; then
+            if (( clock_ready == 0 )); then
+                echo "Clock synchronization and tunnel verification failed. Correct an inaccurate clock before retrying." >&2
+                exit 21
+            fi
+            exit 1
+        fi
         echo "Testing public IPv4, IPv6, VPN DNS and current tunnel readiness..."
         /usr/local/sbin/portable-test-vpn-connection || exit 20
         /usr/local/sbin/portable-vpn-profile commit

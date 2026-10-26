@@ -1,0 +1,52 @@
+{
+  "checked_at": "2026-10-24T16:18:05.175534+00:00",
+  "release": "20261023-211330-297439",
+  "result": "passed",
+  "current_config_files": 428,
+  "current_auto_files": 1,
+  "source_matches_staged_inputs": true,
+  "verified_public_files": 325,
+  "verified_live_boot_entries": 5,
+  "artifact_manifest_unchanged": true,
+  "artifacts": {
+    "binary/live/vmlinuz": {
+      "sha256": "4336c75fc1a6a58e7bda66cbe9f4042f88064e7abc93faaea9e2aceb19459561",
+      "bytes": 12154816
+    },
+    "binary/live/initrd.img": {
+      "sha256": "229601a611c21dac4f0c30b8ef6326735d0cc86bdec3fd4e17156213e9ce5ba7",
+      "bytes": 156757035
+    },
+    "binary/live/filesystem.squashfs": {
+      "sha256": "e530498145316eb210a487e50c0a8b963d74db22dc243c9e54075d9a8225383c",
+      "bytes": 1846681600
+    },
+    "live-image-amd64.hybrid.iso": {
+      "sha256": "b14157f27e42ac1061b0e15ccd5792c695cc9bafb22f6173c74d77af6462841f",
+      "bytes": 2032828416
+    },
+    "binary/boot/grub/petalos/grub.png": {
+      "sha256": "2612b56820dac5ddea5c272d7335f991e41c0ad807e281e2b65c03d70148d5cd",
+      "bytes": 456267
+    },
+    "binary/boot/grub/petalos/theme.txt": {
+      "sha256": "bce2d9cfcc85d113e5008f8367de40db4c3c9065649d6b59f8be142b061079de",
+      "bytes": 373
+    },
+    "binary/boot/grub/petalos/unicode.pf2": {
+      "sha256": "662eb86fc1ea89635e4bba8413590b79eb714ade5a2b5a5aa3dc5cf5f53a4463",
+      "bytes": 2411806
+    }
+  },
+  "backup": "snapshots/before-installer-20261024-134641.tar.gz",
+  "backup_checksum_and_archive_readability": "passed",
+  "scope": "Existing complete build reverified; no new build or runtime acceptance performed.",
+  "pending": [
+    "Bottom-dock battery/network integration",
+    "VPN task icon identity",
+    "Tor minimize/maximize controls",
+    "Signed-GRUB background",
+    "Full dock/settings/volatile-Trash image acceptance"
+  ],
+  "physical_media_modified": false
+}

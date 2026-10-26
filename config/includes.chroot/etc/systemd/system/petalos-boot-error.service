@@ -1,0 +1,7 @@
+[Unit]
+Description=Show PetalOS boot error artwork and bounded RAM boot log
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/libexec/petalos-boot-error
+TimeoutStartSec=infinity

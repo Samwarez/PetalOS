@@ -25,7 +25,13 @@ if cmd=='wg-quick':
 elif cmd=='portable-vpn-profile' and a[0]=='prepare':
  if os.environ.get('PROFILE_FAIL')=='1':sys.exit(1)
  (r/'run/portable-vpn/resolv.conf').write_text('nameserver 10.0.0.1\\n')
-elif cmd=='chronyc':(r/'clock-attempted').touch()
+elif cmd=='chronyc':
+ (r/'clock-attempted').touch()
+ if os.environ.get('CLOCK_FAIL')=='1':sys.exit(1)
+elif cmd=='portable-check-vpn':
+ if not a:
+  assert (r/'clock-attempted').exists()
+  if os.environ.get('TLS_FAIL')=='1':sys.exit(1)
 elif cmd=='portable-test-vpn-connection':
  assert (r/'clock-attempted').exists()
  if os.environ.get('TEST_FAIL')=='1':sys.exit(1)
@@ -58,6 +64,9 @@ elif cmd=='rm':
     assert run('connect') == 0 and report.exists()
     calls = (root / 'calls').read_text()
     assert calls.count('portable-test-vpn-connection') == 1
+    assert calls.index('portable-check-vpn --transport-only') < calls.index('chronyc waitsync')
+    assert calls.index('chronyc waitsync') < calls.index('portable-check-vpn \n')
+    assert calls.index('portable-check-vpn \n') < calls.index('portable-test-vpn-connection')
     assert calls.index('portable-test-vpn-connection') < calls.index('portable-vpn-profile commit')
     assert run('disconnect') == 0 and not report.exists() and not (root / 'link').exists()
     assert run('disconnect') == 0
@@ -69,6 +78,21 @@ elif cmd=='rm':
     assert not report.exists() and not (root / 'link').exists()
     assert 'portable-vpn-profile commit' not in (root / 'calls').read_text()
     print('PASS required post-connect failure rolls back, removes stale success and preserves saved selection')
+
+    report.write_text('stale public fixture')
+    (root / 'calls').write_text('')
+    assert run('connect', CLOCK_FAIL='1', TLS_FAIL='1') == 21
+    assert not report.exists() and not (root / 'link').exists()
+    calls = (root / 'calls').read_text()
+    assert 'portable-vpn-profile commit' not in calls
+    assert 'portable-test-vpn-connection' not in calls
+    assert 'portable-check-vpn \n' in calls
+    print('PASS clock plus TLS failure rolls back before automatic checks or saved-profile commit')
+
+    assert run('connect', CLOCK_FAIL='1') == 0
+    assert report.exists() and (root / 'link').exists()
+    assert run('disconnect') == 0
+    print('PASS unavailable time source retains a TLS-verified tunnel; the separate Tor clock gate remains required')
 
     report.write_text('stale public fixture')
     assert run('connect', PROFILE_FAIL='1') != 0

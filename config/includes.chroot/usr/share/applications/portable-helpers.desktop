@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=PetalOS Helpers
+Comment=Private storage, VPN, download mode and saved preferences
+Exec=/usr/local/bin/portable-helpers
+Icon=preferences-system
+Terminal=false
+Categories=System;Utility;

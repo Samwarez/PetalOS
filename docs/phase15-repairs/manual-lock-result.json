@@ -1,0 +1,11 @@
+{
+  "fixture": "tests/phase15-20261018/manual-lock.py",
+  "exit": 0,
+  "elapsed_seconds": 7.63,
+  "stderr": "",
+  "result": {
+    "manual_lock_succeeded": true,
+    "manual_lock_overrides_download_mode": true,
+    "graphical_locker_running": true
+  }
+}

@@ -1,0 +1,12 @@
+#!/bin/sh
+set -eu
+
+# Keep the Debian version guard: a security update requires rebuilding this
+# downstream repair, rather than silently installing an older executable.
+test "$(dpkg-query -W -f='${Version}' keepassxc-full)" = '2.7.10+dfsg1-1'
+cd /usr/local/share/portable/native-keepassxc
+sha256sum -c binaries.sha256
+test -x /usr/bin/keepassxc.portable-real
+install -o root -g root -m 0755 keepassxc /usr/bin/keepassxc.portable-real
+install -o root -g root -m 0755 keepassxc-cli /usr/bin/keepassxc-cli
+rm keepassxc keepassxc-cli

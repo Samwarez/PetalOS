@@ -1,0 +1,19 @@
+#!/usr/bin/python3
+"""Do not advertise or populate persistent Private Trash in GIO/GVFS."""
+from pathlib import Path
+
+def apply(root='/'):
+    path=Path(root)/'etc/fstab'
+    lines=path.read_text().splitlines() if path.exists() else []
+    expected='/dev/mapper/portable_data /mnt/private ext4 noauto,nodev,nosuid,noexec,noatime,x-gvfs-notrash 0 0'
+    matches=[line for line in lines if line.split() and not line.lstrip().startswith('#') and
+             len(line.split())>1 and line.split()[1]=='/mnt/private']
+    if matches:
+        assert matches==[expected], 'Unexpected Private fstab entry; review before building.'
+        return
+    lines+=['# Private Trash is copied into RAM by the reviewed Thunar helper.',expected]
+    path.parent.mkdir(parents=True,exist_ok=True)
+    path.write_text('\n'.join(lines)+'\n')
+
+
+if __name__=='__main__':apply()

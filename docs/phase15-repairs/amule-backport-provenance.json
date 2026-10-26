@@ -1,0 +1,70 @@
+{
+  "source": {
+    "files": {
+      "amule_2.3.3-3.2.debian.tar.xz": "8f8fe2b8bda5fb51ad945872523ba53fbc8fd9f8d81b493cc8ebd7d07237e779",
+      "amule_2.3.3-3.2.dsc": "c50cba6a62f2b7ee0eded419aa3e11e6e223a0a45f3aff51502fc77db5e65eff",
+      "amule_2.3.3.orig.tar.xz": "a647309642331f3e033fdf0196e7232cdc67f46739d12a0294be06885f70c8bd"
+    },
+    "version": "1:2.3.3-3.2",
+    "patch": {
+      "file": "amule-server-message.patch",
+      "sha256": "125bfee44aab186f7ffbf31a95fd19cea29e859ddce943daf3b458c02d88b410"
+    },
+    "package_version": "1:2.3.3-3.2+petalos1"
+  },
+  "debs": {
+    "amule-gnome-support_2.3.3-3.2+petalos1_all.deb": {
+      "sha256": "9b8bfbabc479bc66a31f800a0f12ac5c2b0e70f820b0e7bdc20f51a2ff7f5c04",
+      "package": "amule-gnome-support",
+      "version": "1:2.3.3-3.2+petalos1"
+    },
+    "amule-common_2.3.3-3.2+petalos1_all.deb": {
+      "sha256": "d9d1409e8f7d26f2e1161648628bd3a8698cbac5d99f4a8e782146627828518e",
+      "package": "amule-common",
+      "version": "1:2.3.3-3.2+petalos1"
+    },
+    "amule-dbgsym_2.3.3-3.2+petalos1_amd64.deb": {
+      "sha256": "a8c07f5775a1d0f5916c33f04325453522c9aaa55d2047da37fdc6f4242d7d55",
+      "package": "amule-dbgsym",
+      "version": "1:2.3.3-3.2+petalos1"
+    },
+    "amule-utils-gui-dbgsym_2.3.3-3.2+petalos1_amd64.deb": {
+      "sha256": "4d3799e44bf6fb79de1d6181aeb74c74801ae4e578768fc057cdb869b9238ffd",
+      "package": "amule-utils-gui-dbgsym",
+      "version": "1:2.3.3-3.2+petalos1"
+    },
+    "amule-daemon-dbgsym_2.3.3-3.2+petalos1_amd64.deb": {
+      "sha256": "2f6148fc4c4ec6145e0d01b1a82c8245fe51694fee36828ffbddd553da155b0d",
+      "package": "amule-daemon-dbgsym",
+      "version": "1:2.3.3-3.2+petalos1"
+    },
+    "amule-utils-dbgsym_2.3.3-3.2+petalos1_amd64.deb": {
+      "sha256": "cd04009bf408069c96f8e61f611a33d5579f4ca03fda7e3f2513b91ce7b627ab",
+      "package": "amule-utils-dbgsym",
+      "version": "1:2.3.3-3.2+petalos1"
+    },
+    "amule-daemon_2.3.3-3.2+petalos1_amd64.deb": {
+      "sha256": "dac3351b7e4838908146373cb19ebf2153dee86def5b9ec7d9d69daf9f130f62",
+      "package": "amule-daemon",
+      "version": "1:2.3.3-3.2+petalos1"
+    },
+    "amule-utils-gui_2.3.3-3.2+petalos1_amd64.deb": {
+      "sha256": "71383231caf8ed374ad7b4df6e94029cc3828aab795e68d526c71a65ff830f6c",
+      "package": "amule-utils-gui",
+      "version": "1:2.3.3-3.2+petalos1"
+    },
+    "amule-utils_2.3.3-3.2+petalos1_amd64.deb": {
+      "sha256": "4e182d7f5e056f2de8e8311bd8c94ea3fdfa2d762d30834cac4148c58788983d",
+      "package": "amule-utils",
+      "version": "1:2.3.3-3.2+petalos1"
+    },
+    "amule_2.3.3-3.2+petalos1_amd64.deb": {
+      "sha256": "bcbdd80491705d383cd805f2d397c6146ee017f22b3852b6aecf80ea1ab46eb0",
+      "package": "amule",
+      "version": "1:2.3.3-3.2+petalos1"
+    }
+  },
+  "Debian_build_completed_with_tests_enabled": true,
+  "architecture": "amd64",
+  "regression_scope": "bounded source regressions; installed-package workflow tests are separate"
+}

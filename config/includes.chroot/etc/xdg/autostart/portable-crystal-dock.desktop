@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=PetalOS Crystal Dock
+Exec=/usr/local/libexec/portable-crystal-dock
+TryExec=/usr/bin/crystal-dock
+Terminal=false
+OnlyShowIn=XFCE;
+X-GNOME-Autostart-enabled=true

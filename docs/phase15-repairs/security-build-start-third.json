@@ -1,0 +1,14 @@
+{
+  "public_tools_sha256": {
+    "README.md": "d80a6427e1c3920e216b26c7fa89f1a39d95734774b3a34c6423872c95889ea3",
+    "amule-server-message.patch": "125bfee44aab186f7ffbf31a95fd19cea29e859ddce943daf3b458c02d88b410",
+    "build.py": "82e833c370ecfee597f262b6f44ffdd752cf6829f279c28277b86b5ea0e57406",
+    "libxml2-qstring-overflow.patch": "602072e0dbd464f749a95d7c907be54e241f6cf8cb73b876fc96b2d7e9dd7426",
+    "polkit-cookie-bounds.patch": "a0f26f5c2c8bd30d47012010739bd3960642bca3322af9a7b04e4309942b1dcd",
+    "poppler-r6-password.patch": "42c0b43e30fe4b57d63c118d40e8855be603c38e0ea3cae7d52cbb76251b0737",
+    "regression.py": "fd86a9de926392e2f1d0c5382e5103cfc303e8014f2c2896368208c66a460274",
+    "sources.json": "2b6af4bd71f5fefc42b087d60ae0f33927967c4a4c8b9c1776bbd10aaee1174d"
+  },
+  "builder_pid": 77967,
+  "scope": "ordinary-user builds in disposable guest RAM"
+}

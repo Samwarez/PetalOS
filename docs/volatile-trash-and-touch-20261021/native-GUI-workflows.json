@@ -1,0 +1,28 @@
+{
+  "result": "passed",
+  "environment": "isolated user/PID/mount/network namespaces, disposable Debian trixie RAM builder, Xvfb and fresh D-Bus session",
+  "adapter": "public fake Private mount; production copy backend; boot/LUKS discovery is not tested here",
+  "checks": {
+    "GIO_Private_can_delete": true,
+    "Private_directory_trash_completed": true,
+    "Thunar_RAM_copy_matches": true,
+    "Thunar_directory_restore_cross_filesystems": true,
+    "Thunar_normal_trash_action_completed": true,
+    "actual_GTK_distance_20": true,
+    "actual_GTK_time_500": true,
+    "actual_GVFS_lists_RAM_copy": true,
+    "actual_GVFS_restore_across_filesystems": true,
+    "actual_Xfconf_DoubleClickDistance": true,
+    "actual_Xfconf_DoubleClickTime": true,
+    "default_GIO_Private_trash_blocked": true,
+    "deleted_RAM_Trash_reader_terminated": true,
+    "legacy_Private_Trash_not_listed": true,
+    "legacy_archive_untouched": true,
+    "native_RAM_limit_reports_NO_SPACE_and_preserves_original": true,
+    "native_copy_helper_invoked": true,
+    "ordinary_RAM_Trash_still_works": true,
+    "ordinary_RAM_restore_still_works": true
+  },
+  "hardware_card_untouched": true,
+  "native_binary_sha256": "5ed83ca8195406fdfa32ac6f78c445c9add4001d58773a610614212b2321dd8c"
+}

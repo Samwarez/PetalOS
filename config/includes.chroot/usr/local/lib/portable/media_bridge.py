@@ -43,11 +43,7 @@ class Request(socketserver.BaseRequestHandler):
             assert c.worker_alive(record) and record.get('phase') == 'ready'
             storage = record['storage']
             relative = relative_item(request['path'], storage)
-            import fcntl
-            import os
-            fd = os.open(c.BASE / 'broker.lock', os.O_RDWR | os.O_CREAT | os.O_NOFOLLOW, 0o600)
-            with os.fdopen(fd, 'r+b') as lease:
-                fcntl.flock(lease, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            with c.action_lock('offline-parole', timeout=0):
                 c.start('offline-parole', ['petalos-amule-media:' + quote(relative, safe='')])
             self.request.sendall(b'OK\n')
         except Exception:

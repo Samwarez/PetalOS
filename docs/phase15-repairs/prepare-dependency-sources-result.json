@@ -1,0 +1,40 @@
+{
+  "fixture": "tests/phase15-repairs/prepare-dependency-sources.py",
+  "exit": 0,
+  "elapsed_seconds": 14.76,
+  "stderr": "",
+  "result": {
+    "amule": {
+      "files": {
+        "amule_2.3.3-3.2.debian.tar.xz": "8f8fe2b8bda5fb51ad945872523ba53fbc8fd9f8d81b493cc8ebd7d07237e779",
+        "amule_2.3.3-3.2.dsc": "c50cba6a62f2b7ee0eded419aa3e11e6e223a0a45f3aff51502fc77db5e65eff",
+        "amule_2.3.3.orig.tar.xz": "a647309642331f3e033fdf0196e7232cdc67f46739d12a0294be06885f70c8bd"
+      },
+      "version": "1:2.3.3-3.2"
+    },
+    "libxml2": {
+      "files": {
+        "libxml2_2.12.7+dfsg+really2.9.14-2.1+deb13u3.debian.tar.xz": "3b6d265f482d6a8fbe3c056d2006fb3b563b4a838f7258b388ac5f0b29206921",
+        "libxml2_2.12.7+dfsg+really2.9.14-2.1+deb13u3.dsc": "04b1da890535b11e3db231f39114ee09e643badceff79441d749d0ca78efaaa5",
+        "libxml2_2.12.7+dfsg+really2.9.14.orig.tar.xz": "4fe913dec8b1ab89d13b489b419a8203176ea39e931eaa0d25b17eafb9c279e9"
+      },
+      "version": "2.12.7+dfsg+really2.9.14-2.1+deb13u3"
+    },
+    "policykit-1": {
+      "files": {
+        "policykit-1_126-2.debian.tar.xz": "5b2b8c2b1b2e757e71fd740028be0bb3cc4cf532f826a0a8c0ea7c0ea1d4cfcc",
+        "policykit-1_126-2.dsc": "70d429b75e180af1cb69f452d3b42fd641c746eeed17686e1fe4075df6cee325",
+        "policykit-1_126.orig.tar.gz": "2814a7281989f6baa9e57bd33bbc5e148827e2721ccef22aaf28ab2b376068e8"
+      },
+      "version": "126-2"
+    },
+    "poppler": {
+      "files": {
+        "poppler_25.03.0-5+deb13u4.debian.tar.xz": "2605b5d7e6ce17a307d067048386deedfc41fdac6f75f81ad76050f517fc0de4",
+        "poppler_25.03.0-5+deb13u4.dsc": "b895e1e28568a486523f93dd5a8707ecb16767c5f134a6e23510b0597114c628",
+        "poppler_25.03.0.orig.tar.xz": "97da4ff88517a6bbd729529f195f85c8d7a0c3bb4a3d57cb0c685cbb052fe837"
+      },
+      "version": "25.03.0-5+deb13u4"
+    }
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "fixture": "tests/phase15-20261018/av-pipeline.py",
+  "VM": "20261019-220338-142131",
+  "exit": 0,
+  "seconds": 22.8,
+  "stdout": "{\"clock\": \"GstPulseSinkClock\", \"clock_tracks_real_time\": true, \"completed\": true, \"dropped\": 0, \"elapsed\": 21.012, \"native_window_mapped\": true, \"position_does_not_race\": true, \"positions\": [0.983, 1.982, 2.982, 3.982, 4.983, 5.983, 6.983, 7.984, 8.984, 9.984, 10.985, 11.985, 12.985, 13.985, 14.986, 15.986, 16.986, 17.986, 18.987, 19.987, 20.0], \"real_role_uid\": true, \"rendered\": 600, \"synthetic_window_app_ids\": [\"petalos-av-fixture\"]}\n",
+  "stderr": ""
+}

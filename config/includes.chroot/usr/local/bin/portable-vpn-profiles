@@ -72,7 +72,8 @@ def main():
     add = Gtk.Button(label='Add Profile')
     connect = Gtk.Button(label='Connect / Switch')
     disconnect = Gtk.Button(label='Disconnect')
-    for button in (add, connect, disconnect):
+    clock = Gtk.Button(label='Set clock…')
+    for button in (add, connect, disconnect, clock):
         buttons.add(button)
     initial = ('The legacy configuration could not be migrated. Add a validated profile.'
                if migration_warning else 'Choose a profile to connect.')
@@ -178,13 +179,17 @@ def main():
         if action == 'switch':
             command.append(name)
 
-        def finished(success, report, tests_failed):
+        def finished(success, report, tests_failed, clock_failed):
             nonlocal busy
             busy = False
             spinner.stop()
             buttons.set_sensitive(True)
             picker.set_sensitive(True)
-            if tests_failed:
+            if clock_failed:
+                text = ('Clock synchronization failed; the tunnel was disconnected. If the date or time is wrong, '
+                        'use Set clock before retrying. A clock older than the last connection can prevent '
+                        'WireGuard from establishing a tunnel. Otherwise check the network and VPN profile.')
+            elif tests_failed:
                 text = 'Automatic VPN tests failed. The connection was rejected and the firewall remains active. Retry Disconnect before reconnecting.'
             elif not success:
                 text = 'VPN action failed or authorization was cancelled. The firewall remains active. Check your profile and network connection before retrying.'
@@ -202,21 +207,25 @@ def main():
             success = False
             report = None
             tests_failed = False
+            clock_failed = False
             try:
                 result = subprocess.run(command, env=environment, stdin=subprocess.DEVNULL,
                                         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
                 success = result.returncode == 0
                 tests_failed = result.returncode == 20
+                clock_failed = result.returncode == 21
                 if success and action == 'switch':
                     report = current_report()
             except Exception:
                 pass
-            GLib.idle_add(finished, success, report, tests_failed)
+            GLib.idle_add(finished, success, report, tests_failed, clock_failed)
         threading.Thread(target=worker, daemon=True).start()
 
     add.connect('clicked', import_profile)
     connect.connect('clicked', lambda _: perform('switch'))
     disconnect.connect('clicked', lambda _: perform('disconnect'))
+    clock.connect('clicked', lambda _: subprocess.Popen(['/usr/local/bin/portable-clock'],
+        stdin=subprocess.DEVNULL,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL))
     window.connect('delete-event', lambda *_: busy)
     window.connect('destroy', Gtk.main_quit)
     refresh()

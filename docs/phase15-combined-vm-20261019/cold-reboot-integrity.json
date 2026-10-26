@@ -1,0 +1,9 @@
+{
+  "fixture": "tests/combined-vm-boot.py",
+  "VM": "20261019-220338-142131",
+  "fixture_sha256": "c029df81b9a8d6dcd7f3c994c4dc45c6d5af4d1077af603e90687d63981ba02b",
+  "exit": 1,
+  "seconds": 2.19,
+  "stdout": "{\"checks\": {\"public_files_match_built_image\": true, \"generation_boot_selected\": true, \"live_medium_is_RAM\": true, \"only_selected_generation_in_RAM\": true, \"SYSTEM_credentials_not_copied_into_live_RAM_medium\": true, \"SYSTEM_settings_not_copied_into_live_RAM_medium\": true, \"SYSTEM_state_ready\": true, \"Private_closed_at_boot\": true, \"no_swap\": true, \"RAM_zeroing_options\": true, \"Secure_Boot_enabled\": true, \"audit_initrd_marker_absent\": true, \"no_tunnel_at_desktop_boot\": true, \"hosts_has_only_expected_live_config_change\": true, \"expected_uplink_carrier_state\": true, \"pre_VPN_network_gate_denied\": true, \"Documents_is_tmpfs\": true, \"Downloads_is_tmpfs\": true, \"content_ready_before_desktop\": true, \"no_failed_system_units\": true, \"Wayland_desktop_running\": false}, \"public_files_checked\": 218, \"mismatched_public_paths\": []}\n",
+  "stderr": "Traceback (most recent call last):\n  File \"<string>\", line 58, in <module>\n    assert all(checks.values())\n           ~~~^^^^^^^^^^^^^^^^^\nAssertionError\n"
+}

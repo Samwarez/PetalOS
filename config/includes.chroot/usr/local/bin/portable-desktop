@@ -5,6 +5,7 @@ import os
 import subprocess
 import sys
 import threading
+import time
 from urllib.parse import urlsplit
 
 ACTIONS = {
@@ -38,6 +39,27 @@ ERRORS = {
     'amule': 'aMule was not started. Connect VPN and close any existing aMule instance before retrying. Private is optional.',
 }
 
+CANCELLABLE = {'tor', 'sab-open', 'transmission', 'pan', 'amule'}
+
+
+def run_action(command, environment, cancelled):
+    """Forward cancellation through sudo, allowing the broker to reap its worker."""
+    process = subprocess.Popen(command, env=environment, stdin=subprocess.DEVNULL,
+                               stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    deadline = time.monotonic() + 420
+    signalled = False
+    while True:
+        try:
+            return process.wait(timeout=0.2)
+        except subprocess.TimeoutExpired:
+            if not signalled and (cancelled.is_set() or time.monotonic() >= deadline):
+                process.terminate()
+                signalled = True
+                deadline = time.monotonic() + 30
+            elif signalled and time.monotonic() >= deadline:
+                # Do not SIGKILL the broker halfway through storage cleanup.
+                raise RuntimeError('Application cleanup has not completed.')
+
 
 def main():
     import gi
@@ -67,11 +89,25 @@ def main():
     window = Gtk.Window(title=title)
     box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
     box.set_border_width(20)
-    box.add(Gtk.Label(label=title + '…'))
+    label = Gtk.Label(label=title + '…')
+    box.add(label)
     spinner = Gtk.Spinner()
     box.add(spinner)
     window.add(box)
-    window.connect('delete-event', lambda *_: True)
+    cancelled = threading.Event()
+    cancel_button = None
+    def cancel(*_):
+        cancelled.set()
+        label.set_text('Stopping application startup…')
+        cancel_button.set_sensitive(False)
+        return True
+    if action in CANCELLABLE:
+        cancel_button = Gtk.Button(label='Cancel startup')
+        cancel_button.connect('clicked', cancel)
+        box.add(cancel_button)
+        window.connect('delete-event', cancel)
+    else:
+        window.connect('delete-event', lambda *_: True)
     window.connect('destroy', Gtk.main_quit)
     outcome = 1
 
@@ -79,9 +115,13 @@ def main():
         return subprocess.Popen(command, stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL,
                          stderr=subprocess.DEVNULL, **kwargs)
 
-    def completed(success):
+    def completed(success, stopped=False):
         nonlocal outcome
         spinner.stop()
+        if stopped:
+            outcome = 130
+            window.destroy()
+            return False
         if success:
             try:
                 if action == 'private':
@@ -110,12 +150,18 @@ def main():
 
     def worker():
         success = False
+        stopped = False
         try:
-            success = subprocess.run([*command, *extra], env=environment, stdin=subprocess.DEVNULL,
-                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode == 0
+            if action in CANCELLABLE:
+                result = run_action([*command, *extra], environment, cancelled)
+                success = result == 0
+                stopped = cancelled.is_set() and not success
+            else:
+                success = subprocess.run([*command, *extra], env=environment, stdin=subprocess.DEVNULL,
+                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode == 0
         except Exception:
             pass
-        GLib.idle_add(completed, success)
+        GLib.idle_add(completed, success, stopped)
     window.show_all()
     spinner.start()
     threading.Thread(target=worker, daemon=True).start()

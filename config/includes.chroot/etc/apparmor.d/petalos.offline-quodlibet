@@ -2,7 +2,8 @@
 
 profile petalos_offline_quodlibet flags=(attach_disconnected,mediate_deleted) {
   #include <abstractions/petalos-offline-common>
-  owner /mnt/ram/{,**} rwkl,
+  # Only this role's delegated content; desktop-owned files must be editable.
+  /mnt/ram/Documents/quodlibet/{,**} rwkl,
   /mnt/private/Documents/quodlibet/{,**} rwkl,
   deny network inet,
 }

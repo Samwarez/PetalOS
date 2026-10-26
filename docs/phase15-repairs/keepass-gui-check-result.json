@@ -1,0 +1,11 @@
+{
+  "fixture": "tests/phase15-repairs/keepass-gui-check.py",
+  "exit": 0,
+  "elapsed_seconds": 1.27,
+  "stderr": "",
+  "result": {
+    "original_database_readable": true,
+    "original_database_unchanged": true,
+    "space_freed_for_gui_retry": true
+  }
+}

@@ -1,0 +1,124 @@
+{
+  "source": {
+    "files": {
+      "poppler_25.03.0-5+deb13u4.debian.tar.xz": "2605b5d7e6ce17a307d067048386deedfc41fdac6f75f81ad76050f517fc0de4",
+      "poppler_25.03.0-5+deb13u4.dsc": "b895e1e28568a486523f93dd5a8707ecb16767c5f134a6e23510b0597114c628",
+      "poppler_25.03.0.orig.tar.xz": "97da4ff88517a6bbd729529f195f85c8d7a0c3bb4a3d57cb0c685cbb052fe837"
+    },
+    "version": "25.03.0-5+deb13u4",
+    "patch": {
+      "file": "poppler-r6-password.patch",
+      "sha256": "42c0b43e30fe4b57d63c118d40e8855be603c38e0ea3cae7d52cbb76251b0737"
+    },
+    "package_version": "25.03.0-5+deb13u4+petalos1"
+  },
+  "debs": {
+    "libpoppler-glib8t64_25.03.0-5+deb13u4+petalos1_amd64.deb": {
+      "sha256": "71ad2e49f3cf1df94d4eba0cfc8b52744963a4a082daf84ef9acfd892ac90265",
+      "package": "libpoppler-glib8t64",
+      "version": "25.03.0-5+deb13u4+petalos1"
+    },
+    "libpoppler-private-dev_25.03.0-5+deb13u4+petalos1_amd64.deb": {
+      "sha256": "4f3f153769f74a095babbdec56bda5529a860b3cd139b116607cb88b4829fc36",
+      "package": "libpoppler-private-dev",
+      "version": "25.03.0-5+deb13u4+petalos1"
+    },
+    "libpoppler-dev_25.03.0-5+deb13u4+petalos1_amd64.deb": {
+      "sha256": "7164cd2a32526f1cf0ad83cff7b8d8f8e65fe91d000f58398f46fe116af6cb49",
+      "package": "libpoppler-dev",
+      "version": "25.03.0-5+deb13u4+petalos1"
+    },
+    "libpoppler-qt6-dev_25.03.0-5+deb13u4+petalos1_amd64.deb": {
+      "sha256": "54a65cc65ee7222b5089354618b42ef32f164de8a0a6ad3646f38391921c2d72",
+      "package": "libpoppler-qt6-dev",
+      "version": "25.03.0-5+deb13u4+petalos1"
+    },
+    "libpoppler-qt6-3t64-dbgsym_25.03.0-5+deb13u4+petalos1_amd64.deb": {
+      "sha256": "ac4a19b785063f6546ca4586a3b770733bc474805ccece958cd4969b311b2f6f",
+      "package": "libpoppler-qt6-3t64-dbgsym",
+      "version": "25.03.0-5+deb13u4+petalos1"
+    },
+    "libpoppler147-dbgsym_25.03.0-5+deb13u4+petalos1_amd64.deb": {
+      "sha256": "6175c4c14ee4cb0f740affc96400967366ca1957f44a53358a46bcc361fdca8c",
+      "package": "libpoppler147-dbgsym",
+      "version": "25.03.0-5+deb13u4+petalos1"
+    },
+    "libpoppler-qt6-3t64_25.03.0-5+deb13u4+petalos1_amd64.deb": {
+      "sha256": "d2464ab3a72a0ba403ecb459bc3491d85e3ebba67a0ba2138bfbd3aba5e979dd",
+      "package": "libpoppler-qt6-3t64",
+      "version": "25.03.0-5+deb13u4+petalos1"
+    },
+    "libpoppler-qt5-1t64_25.03.0-5+deb13u4+petalos1_amd64.deb": {
+      "sha256": "ef4326ca5f56a862f7204fb794f0a1a9f6af695af4a6c3f820a93b3be2d87fdd",
+      "package": "libpoppler-qt5-1t64",
+      "version": "25.03.0-5+deb13u4+petalos1"
+    },
+    "libpoppler-qt5-dev_25.03.0-5+deb13u4+petalos1_amd64.deb": {
+      "sha256": "4b9827049a31506c8847bb464b53829328af3964c17f55943e2f4f6055f0a793",
+      "package": "libpoppler-qt5-dev",
+      "version": "25.03.0-5+deb13u4+petalos1"
+    },
+    "gir1.2-poppler-0.18_25.03.0-5+deb13u4+petalos1_amd64.deb": {
+      "sha256": "700dded460d054b2b186296f2c1db51f05a73a69c1e345ef69aa9fe97c2c0ffd",
+      "package": "gir1.2-poppler-0.18",
+      "version": "25.03.0-5+deb13u4+petalos1"
+    },
+    "libpoppler-glib-doc_25.03.0-5+deb13u4+petalos1_all.deb": {
+      "sha256": "8293638fc71ece78ff0e44b8f30fcd6725be8288efd1dbe589041a14fabc8841",
+      "package": "libpoppler-glib-doc",
+      "version": "25.03.0-5+deb13u4+petalos1"
+    },
+    "poppler-utils-dbgsym_25.03.0-5+deb13u4+petalos1_amd64.deb": {
+      "sha256": "2d3a886cae72b9345c25720dc85c2da959fbc768415eab7f073cd618deff3966",
+      "package": "poppler-utils-dbgsym",
+      "version": "25.03.0-5+deb13u4+petalos1"
+    },
+    "libpoppler-glib-dev_25.03.0-5+deb13u4+petalos1_amd64.deb": {
+      "sha256": "38283152bdb89a3e5ac1461dc8536e4e90be9cf77510eaa54df9147376d79a2f",
+      "package": "libpoppler-glib-dev",
+      "version": "25.03.0-5+deb13u4+petalos1"
+    },
+    "poppler-utils_25.03.0-5+deb13u4+petalos1_amd64.deb": {
+      "sha256": "c8303848f3acd5ac423c83afd26dd7af80d832341b83207c509b43b1204a8da8",
+      "package": "poppler-utils",
+      "version": "25.03.0-5+deb13u4+petalos1"
+    },
+    "libpoppler-cpp-dev_25.03.0-5+deb13u4+petalos1_amd64.deb": {
+      "sha256": "73a31e8e884e66ecd3bb4c5adb2301471a21b9005d0ed11c46dcc63c8cdacac2",
+      "package": "libpoppler-cpp-dev",
+      "version": "25.03.0-5+deb13u4+petalos1"
+    },
+    "libpoppler-cpp2-dbgsym_25.03.0-5+deb13u4+petalos1_amd64.deb": {
+      "sha256": "0170a24f6e40e27fe83225555b779dee131d633e393c533d8b61d10863bf4a76",
+      "package": "libpoppler-cpp2-dbgsym",
+      "version": "25.03.0-5+deb13u4+petalos1"
+    },
+    "libpoppler-cpp2_25.03.0-5+deb13u4+petalos1_amd64.deb": {
+      "sha256": "9e1d0416bccd1f89ee80148074a1d47b29959bfd3ecd6a05a4f34c4d5ad832fd",
+      "package": "libpoppler-cpp2",
+      "version": "25.03.0-5+deb13u4+petalos1"
+    },
+    "libpoppler-qt5-1t64-dbgsym_25.03.0-5+deb13u4+petalos1_amd64.deb": {
+      "sha256": "d62c349a2df7d5aab85367b4ffa5d8342327db1a18edbd8ebaf0e159a069659d",
+      "package": "libpoppler-qt5-1t64-dbgsym",
+      "version": "25.03.0-5+deb13u4+petalos1"
+    },
+    "libpoppler147_25.03.0-5+deb13u4+petalos1_amd64.deb": {
+      "sha256": "3f176e01901682d8c365d1ff927cd2f4a3c30d74b66a2c7c56504dd693b14628",
+      "package": "libpoppler147",
+      "version": "25.03.0-5+deb13u4+petalos1"
+    },
+    "libpoppler-glib8t64-dbgsym_25.03.0-5+deb13u4+petalos1_amd64.deb": {
+      "sha256": "4dc6123c8b2974c7dc8ef0a582cad12837484e58c16e71ad7ac23b62b7e66470",
+      "package": "libpoppler-glib8t64-dbgsym",
+      "version": "25.03.0-5+deb13u4+petalos1"
+    }
+  },
+  "Debian_build_completed_with_tests_enabled": true,
+  "architecture": "amd64",
+  "build_environment": {
+    "GIO_USE_VFS": "local",
+    "DEB_BUILD_OPTIONS": "parallel=4"
+  },
+  "regression_scope": "bounded source regressions; installed-package workflow tests are separate"
+}

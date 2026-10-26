@@ -1,0 +1,8 @@
+{
+  "fixture": "tests/combined-vm-persistence-stage.py",
+  "VM": "20261019-220338-142131",
+  "exit": 1,
+  "seconds": 3.13,
+  "stdout": "{\"Transmission_numeric_preference_exported\": true, \"aMule_numeric_preference_exported\": true, \"aMule_numeric_server_endpoint_exported\": false, \"history_canaries_excluded\": true}\n",
+  "stderr": "Traceback (most recent call last):\n  File \"<string>\", line 43, in <module>\n    assert all(checks.values())\n           ~~~^^^^^^^^^^^^^^^^^\nAssertionError\n"
+}

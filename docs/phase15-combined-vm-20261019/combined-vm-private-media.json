@@ -1,0 +1,8 @@
+{
+  "fixture": "tests/combined-vm-private-media.py",
+  "VM": "20261019-220338-142131",
+  "exit": 0,
+  "seconds": 7.59,
+  "stdout": "{\"actual_preview_helper_succeeded\": true, \"Parole_ready_with_selected_Private_file\": true, \"selected_media_unchanged\": true}\n",
+  "stderr": ""
+}

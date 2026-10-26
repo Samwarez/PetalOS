@@ -1,0 +1,10 @@
+{
+  "fixture": "tests/phase15-repairs/keepass-gui-finish.py",
+  "exit": 0,
+  "elapsed_seconds": 1.58,
+  "stderr": "",
+  "result": {
+    "gui_saved_entry_reopened": true,
+    "synthetic_volume_unmounted": true
+  }
+}

@@ -9,9 +9,33 @@ Private Files: encrypted personal files, downloads and activity-related app stat
 System Settings: encrypted VPN profiles, signed Tor Browser archives and selected
 desktop/app preferences. These remain available while Private is locked.
 
+On new layout 2 media, OS and System Settings have separate encrypted partitions
+and independent encryption keys. One SYSTEM passphrase prompt unlocks both at
+boot. The OS is read-only and runs from RAM; updates preserve the entire System
+Settings and Private partitions. Older cards require a separate migration.
+Private still requires its own passphrase; administration uses a third credential.
+
 Save Desktop Settings preserves supported desktop preferences. Save App
 Preferences preserves only approved preferences and aMule's server list.
 The OS supplies defaults when no saved preferences are available.
+
+Crystal Dock is the bottom launcher/task dock. Right-click it to change its
+appearance, then use Save Desktop Settings to preserve the layout. PetalOS
+Helpers groups the storage, VPN and preference shortcuts. The XFCE top bar
+remains available during the first trial. Start Crystal Dock in Applications
+can restore it if it was closed. Use Thunar for Move to Trash; the dock's Trash
+icon opens or empties the existing RAM Trash.
+
+Wallpapers: System Settings/Wallpapers. The supplied library is added there
+without replacing existing files. The default is 04-petal-drift.png; saved
+desktop wallpaper and solid-color/gradient choices take precedence.
+At boot, Esc shows the underlying log. A boot-error picture may appear beside
+recent log lines; Space then returns to the boot console.
+
+Files moved to Trash from Private are copied into RAM. Trash and its original
+path metadata disappear on shutdown and when Private is locked, including idle
+and lid/suspend locking. Restore needed files before locking. Large items can
+exceed the RAM Trash limits; a failed copy keeps the original file.
 
 VPN profiles: System Settings/Network/Profiles
 Use the VPN profile manager to import and select a profile. Connect VPN and
@@ -37,4 +61,5 @@ This does not confine every process or guarantee anonymity.
 
 PetalOS is built from Debian trixie packages. Upstream package attribution,
 licenses, archive keys, package sources, and compatibility identifiers remain
-accurate. Application updates are manual; Tor distributions must be signed.
+accurate. OS and bundled-app changes come through verified builds installed
+offline, not a live updater. Tor payloads must be signature-verified.

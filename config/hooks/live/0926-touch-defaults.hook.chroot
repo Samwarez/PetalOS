@@ -1,0 +1,33 @@
+#!/usr/bin/python3
+"""Touch-friendly defaults; preserve vendor settings and user overrides."""
+from pathlib import Path
+import configparser
+import xml.etree.ElementTree as ET
+
+
+def apply(root):
+    root=Path(root)
+    for name in ('etc/gtk-3.0/settings.ini','etc/xdg/gtk-3.0/settings.ini'):
+        path=root/name
+        settings=configparser.ConfigParser(interpolation=None)
+        settings.optionxform=str
+        if path.exists():settings.read(path)
+        if not settings.has_section('Settings'):settings.add_section('Settings')
+        settings['Settings']['gtk-double-click-distance']='20'
+        settings['Settings']['gtk-double-click-time']='500'
+        path.parent.mkdir(parents=True,exist_ok=True)
+        with path.open('w') as output:settings.write(output)
+    path=root/'etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml'
+    channel=ET.parse(path).getroot() if path.exists() else ET.Element('channel',name='xsettings',version='1.0')
+    assert channel.tag=='channel' and channel.get('name')=='xsettings'
+    net=channel.find("property[@name='Net']")
+    if net is None:net=ET.SubElement(channel,'property',name='Net',type='empty')
+    for name,value in (('DoubleClickDistance','20'),('DoubleClickTime','500')):
+        prop=net.find("property[@name='"+name+"']")
+        if prop is None:prop=ET.SubElement(net,'property',name=name)
+        prop.set('type','int');prop.set('value',value)
+    path.parent.mkdir(parents=True,exist_ok=True)
+    ET.ElementTree(channel).write(path,encoding='UTF-8',xml_declaration=True)
+
+
+if __name__=='__main__':apply('/')

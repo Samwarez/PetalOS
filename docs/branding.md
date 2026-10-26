@@ -50,6 +50,21 @@ magnification, or replacing the dock/compositor. These are planned visual
 changes for Phase 2, after the functional/stability work; do not add them to
 the current combined test build.
 
+Phase 2 started on 2026-10-23 with the supplied wallpaper library, GRUB artwork
+and boot animation sequences. The implementation and component evidence are
+recorded in [the phase-two boot/wallpaper report](phase2-branding-20261023/README.md).
+The first wallpaper/boot change does not alter the guarded launchers or
+application sandboxes. Sam subsequently selected Crystal Dock as the bottom
+panel replacement. The XFCE top bar remains for the first trial; its removal
+will be decided after hands-on testing. See [the Crystal Dock report](crystal-dock-20261023/README.md).
+
+The [custom icon checklist](phase2-icon-inventory.md) inventories the completed
+Phase 2 preview's launchers, startup bars, storage places and status variants;
+the companion CSV/JSON retain all installed desktop-entry references. Sam wants
+battery and network indicators in the **bottom Crystal Dock**. Their integration
+is pending; the current preview has them disabled. The checklist also records
+the blank VPN task icon and Tor's missing minimize control as integration issues.
+
 RC1 label checks passed on 11 previously generated boot configuration files:
 all non-presentation lines remained byte-for-byte equivalent, and reapplying the
 branding hook did not duplicate the RC1 suffix. These are pre-build checks;

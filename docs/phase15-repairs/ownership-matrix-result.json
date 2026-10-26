@@ -1,0 +1,128 @@
+{
+  "fixture": "tests/phase15-20261018/ownership-matrix.py",
+  "exit": 0,
+  "elapsed_seconds": 4.93,
+  "stderr": "",
+  "result": {
+    "atril": {
+      "Private": {
+        "read": true,
+        "write": true
+      },
+      "RAM": {
+        "read": true,
+        "write": true
+      }
+    },
+    "geany": {
+      "Private": {
+        "read": true,
+        "write": true
+      },
+      "RAM": {
+        "read": true,
+        "write": true
+      }
+    },
+    "gthumb": {
+      "Private": {
+        "read": true,
+        "write": true
+      },
+      "RAM": {
+        "read": true,
+        "write": true
+      }
+    },
+    "html": {
+      "Private": {
+        "read": true,
+        "write": true
+      },
+      "RAM": {
+        "read": true,
+        "write": true
+      }
+    },
+    "keepassxc": {
+      "Private": {
+        "read": true,
+        "write": true
+      },
+      "RAM": {
+        "read": true,
+        "write": true
+      }
+    },
+    "lazpaint": {
+      "Private": {
+        "read": true,
+        "write": true
+      },
+      "RAM": {
+        "read": true,
+        "write": true
+      }
+    },
+    "libreoffice": {
+      "Private": {
+        "read": true,
+        "write": true
+      },
+      "RAM": {
+        "read": true,
+        "write": true
+      }
+    },
+    "mousepad": {
+      "Private": {
+        "read": true,
+        "write": true
+      },
+      "RAM": {
+        "read": true,
+        "write": true
+      }
+    },
+    "parole": {
+      "Private": {
+        "read": true,
+        "write": true
+      },
+      "RAM": {
+        "read": true,
+        "write": true
+      }
+    },
+    "quodlibet": {
+      "Private": {
+        "read": true,
+        "write": true
+      },
+      "RAM": {
+        "read": true,
+        "write": true
+      }
+    },
+    "ristretto": {
+      "Private": {
+        "read": true,
+        "write": true
+      },
+      "RAM": {
+        "read": true,
+        "write": true
+      }
+    },
+    "vim": {
+      "Private": {
+        "read": true,
+        "write": true
+      },
+      "RAM": {
+        "read": true,
+        "write": true
+      }
+    }
+  }
+}

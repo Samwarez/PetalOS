@@ -2,7 +2,8 @@
 
 profile petalos_offline_vim flags=(attach_disconnected,mediate_deleted) {
   #include <abstractions/petalos-offline-common>
-  owner /mnt/ram/{,**} rwkl,
+  # Only this role's delegated content; desktop-owned files must be editable.
+  /mnt/ram/Documents/vim/{,**} rwkl,
   /mnt/private/Documents/vim/{,**} rwkl,
   /dev/ptmx rw,
   /dev/pts/{,**} rw,

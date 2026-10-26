@@ -1,0 +1,8 @@
+{
+  "fixture": "tests/combined-vm-start-apps.py",
+  "VM": "20261019-220338-142131",
+  "exit": 0,
+  "seconds": 6.28,
+  "stdout": "{\"transmission\": {\"approved_launch_succeeded\": true, \"seconds\": 1.17, \"ready\": true, \"worker_alive\": true, \"main_application_profile_enforced\": true, \"namespace_helper_processes_without_AppArmor_label\": 6}, \"pan\": {\"approved_launch_succeeded\": true, \"seconds\": 1.03, \"ready\": true, \"worker_alive\": true, \"main_application_profile_enforced\": true, \"namespace_helper_processes_without_AppArmor_label\": 6}, \"amule\": {\"approved_launch_succeeded\": true, \"seconds\": 1.03, \"ready\": true, \"worker_alive\": true, \"main_application_profile_enforced\": true, \"namespace_helper_processes_without_AppArmor_label\": 9}, \"sabnzbd\": {\"approved_launch_succeeded\": true, \"seconds\": 1.04, \"ready\": true, \"worker_alive\": true, \"main_application_profile_enforced\": true, \"namespace_helper_processes_without_AppArmor_label\": 0}, \"tor\": {\"approved_launch_succeeded\": true, \"seconds\": 0.98, \"ready\": true, \"worker_alive\": true, \"main_application_profile_enforced\": true, \"namespace_helper_processes_without_AppArmor_label\": 0}, \"sab-viewer\": {\"ready\": true, \"worker_alive\": true, \"main_application_profile_enforced\": true, \"namespace_helper_processes_without_AppArmor_label\": 6}, \"browser\": {\"ready\": true, \"worker_alive\": true, \"main_application_profile_enforced\": true, \"namespace_helper_processes_without_AppArmor_label\": 10}}\n",
+  "stderr": ""
+}

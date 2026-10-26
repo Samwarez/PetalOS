@@ -1,0 +1,85 @@
+{
+  "date": "2026-10-23",
+  "base_git_revision": "543cf7ef2dd49eb0903fddc757fff2cff774502f",
+  "uncommitted_source": true,
+  "component": {
+    "version": "2.16",
+    "source_sha256": "920b8a36c1ee1eb5a66f85c98c44bec1b2d7f8f14e38aa2f96a0b57781091832",
+    "patch_sha256": "c15976c2f7c05c12ba0755e82ede01af1e287f63c2399663104a823f3d1e4ae4",
+    "builder_sha256": "96c0c32c50286673bf5f1366b62f693eba15e95959fca81d2310e759735ef7f6",
+    "binary_sha256": "1a3e51f31d7e5c7e774ce15012f8e584b77128bc2a8ef15767eaebd4a857739c",
+    "ctest": "passed",
+    "build_flags": {
+      "CFLAGS": "-g -O2 -Werror=implicit-function-declaration -ffile-prefix-map=/build=. -fstack-protector-strong -fstack-clash-protection -Wformat -Werror=format-security -fcf-protection",
+      "CPPFLAGS": "-Wdate-time -D_FORTIFY_SOURCE=2",
+      "CXXFLAGS": "-g -O2 -ffile-prefix-map=/build=. -fstack-protector-strong -fstack-clash-protection -Wformat -Werror=format-security -fcf-protection",
+      "LDFLAGS": "-Wl,-z,relro -Wl,-z,now"
+    },
+    "runtime_versions": {
+      "libqt6gui6": "6.8.2+dfsg-9+deb13u2",
+      "liblayershellqtinterface6": "6.3.4-1",
+      "qt6-wayland": "6.8.2-4",
+      "layer-shell-qt": "6.3.4-1"
+    }
+  },
+  "native_fixture": {
+    "native_launch_alive": true,
+    "preset_without_welcome": true,
+    "single_instance_refused": true,
+    "helper_window_tracked": true,
+    "terminal_launcher": true,
+    "file_manager_launcher": true,
+    "Tor_guarded_launcher": true,
+    "guarded_lock_action": true,
+    "launcher_requests": [
+      "exo-open --launch TerminalEmulator",
+      "exo-open --launch FileManager",
+      "portable-desktop tor",
+      "portable-lock "
+    ],
+    "restart_after_crash": true,
+    "custom_preferences_survive_restart": true,
+    "no_internet_socket_calls": true
+  },
+  "regressions": [
+    {
+      "command": [
+        "/usr/bin/python3",
+        "-B",
+        "tests/check-crystal-dock.py"
+      ],
+      "exit": 0,
+      "stdout": "PASS Crystal appearance/panel roundtrip excludes unrelated files and rejects unsafe names\nPASS stock bottom dock migrates once; top/custom layouts and shared launcher records survive\nPASS fresh defaults retain the top status panel and start Crystal Dock separately\n"
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "-B",
+        "tests/check-desktop-settings.py"
+      ],
+      "exit": 0,
+      "stdout": "PASS selective desktop settings roundtrip\nPASS Trash contents and deletion metadata are not saved/restored; existing Trash is untouched\nPASS absolute, traversal, unrelated, symlink and device entries rejected\nPASS legacy migration drops file-chooser and unrelated app state\nPASS daemon/write failures preserve the prior archive and clean temporary output\nPASS typed live XML preserves arrays/booleans/nesting and rejects invalid values\nAll selective desktop settings checks passed.\nPASS old stock touch defaults migrate once; custom timing/distance and subsequent user overrides survive\n"
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "-B",
+        "tests/private-storage-controller.py"
+      ],
+      "exit": 0,
+      "stdout": "PASS wrong passphrase preserves closed state\nPASS wrong passphrase does not close an existing volume\nPASS failed Private unlock preserves first-boot SYSTEM availability\nPASS wrong passphrase preserves open state\nPASS wrong passphrase does not close an existing volume\nPASS failed Private unlock preserves first-boot SYSTEM availability\nPASS typed unlock error preserves original failure\nPASS typed error preserves existing volume and SYSTEM\nPASS typed unlock error preserves original failure\nPASS typed error preserves existing volume and SYSTEM\nPASS typed unlock error preserves original failure\nPASS typed error preserves existing volume and SYSTEM\nPASS typed unlock error preserves original failure\nPASS typed error preserves existing volume and SYSTEM\nPASS SYSTEM screen authentication accepts valid secret\nPASS screen authentication never opens Private\nPASS SYSTEM screen authentication rejects bad secret\nPASS screen authentication never opens Private\nPASS new copies are blocked, readers drained, Trash cleared and late readers drained before Private closure\nPASS failed Trash cleanup evicts keys and powers off\nPASS busy volume evicts keys before shutdown\nPASS repeated closed-volume lock succeeds\nPASS download mode inhibits idle lock\nPASS manual lock overrides and clears download mode\nPASS concurrent lock request never enters shutdown path\nPASS sleep hook closes storage without a desktop service\nPASS resume never automatically unlocks Private\nPASS unresolved concurrent unlock at sleep fails closed\nAll synthetic storage and sleep-hook checks passed.\nPASS RAM Trash reader is identified independently of the Private block device\nPASS deleted-but-open RAM Trash reader is still identified\nPASS unrelated RAM handle is not a Private reader\n"
+    }
+  ],
+  "full_build_inputs": "passed",
+  "full_new_OS_boot": false,
+  "physical_card_writes": false,
+  "source_sha256": {
+    "local/crystal-dock/build.py": "96c0c32c50286673bf5f1366b62f693eba15e95959fca81d2310e759735ef7f6",
+    "local/crystal-dock/petalos-integration.patch": "c15976c2f7c05c12ba0755e82ede01af1e287f63c2399663104a823f3d1e4ae4",
+    "config/includes.chroot/usr/local/lib/portable/desktop_settings.py": "30ba9f2b1c8f732024e97fe1e9aa2ec94080e96989b13b369eb57cbe2a88c9e3",
+    "config/includes.chroot/usr/local/libexec/portable-crystal-dock": "ab6d5d2b991be9235ce293756accdd4ea887e4e55eda8abcbfbc44ee0966f7b1",
+    "config/includes.chroot/usr/local/bin/portable-helpers": "120f2546d7114e677344e0699ec76a2ffdc846649b0345442b7b9bd42338b722",
+    "tests/crystal-dock-fixture.py": "d8c6fe0c85e8d2f91277864799b956d21f91183d5136ac6c9bd16ed07fe2c05c",
+    "tests/check-crystal-dock.py": "0e8fa69ead63a4f1684264322ff30ddc5891c535545706dd7cb4bae3e0d5e317"
+  }
+}

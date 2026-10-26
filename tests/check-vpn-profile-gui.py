@@ -4,11 +4,8 @@
 Requires a native desktop or test display. Never invokes sudo, mounts or networking.
 """
 from pathlib import Path
-import contextlib
 import base64
-import io
 import os
-import secrets
 import subprocess
 import sys
 import tempfile
@@ -37,18 +34,11 @@ real_show = Gtk.Widget.show_all
 real_filename = Gtk.FileChooserDialog.get_filename
 Gtk.Widget.show_all = lambda self: None
 messages = []
-secret = secrets.token_urlsafe(16)
-accept = False
 scenario = ''
 incoming = None
 
 
 def dialog_run(self):
-    if self.get_title() == 'Authorize VPN action':
-        entries = [w for w in self.get_content_area().get_children() if isinstance(w, Gtk.Entry)]
-        assert len(entries) == 1 and not entries[0].get_visibility()
-        entries[0].set_text(secret)
-        return Gtk.ResponseType.OK if accept else Gtk.ResponseType.CANCEL
     if self.get_title() == 'Choose a WireGuard configuration':
         return Gtk.ResponseType.CANCEL if scenario == 'import-cancel' else Gtk.ResponseType.OK
     if self.get_title() == 'Name the profile':
@@ -63,14 +53,21 @@ def dialog_run(self):
 Gtk.Dialog.run = dialog_run
 Gtk.FileChooserDialog.get_filename = lambda self: str(incoming)
 try:
-    for accept in (False, True):
-        sys.argv = ['portable-vpn-profiles', '--askpass']
-        captured = io.StringIO()
-        with contextlib.redirect_stdout(captured):
-            result = namespace['main']()
-        assert result == (0 if accept else 1)
-        assert captured.getvalue() == (secret + '\n' if accept else '')
-    print('PASS: graphical password hidden, accepted only through stdout pipe, cancellation sends nothing')
+    # The real shared dialog's hidden-entry/cancellation protocol is covered
+    # by check-credential-prompts.py. Verify this GUI delegates to that path.
+    class DelegatedPrompt(Exception):pass
+    real_execv=os.execv
+    def execv(path,arguments):
+        assert path=='/usr/local/bin/portable-dialog'
+        assert arguments==[path,'--sudo-password']
+        raise DelegatedPrompt()
+    try:
+        os.execv=execv;sys.argv=['portable-vpn-profiles','--askpass']
+        try:namespace['main']()
+        except DelegatedPrompt:pass
+        else:raise AssertionError('Shared administrator prompt was not executed')
+    finally:os.execv=real_execv
+    print('PASS: VPN authentication delegates to the shared administrator prompt')
     for scenario in ('connect', 'failure', 'disconnect', 'import', 'import-cancel', 'import-invalid', 'import-duplicate'):
         with tempfile.TemporaryDirectory(prefix='petalos-gui-', dir='/dev/shm') as temporary:
             network = Path(temporary) / 'Network'

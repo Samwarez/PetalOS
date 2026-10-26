@@ -1,0 +1,8 @@
+{
+  "fixture": "tests/combined-vm-start-apps.py",
+  "VM": "20261019-220338-142131",
+  "exit": 1,
+  "seconds": 70.61,
+  "stdout": "",
+  "stderr": "Traceback (most recent call last):\n  File \"<string>\", line 34, in <module>\n    assert all(result.values())\n           ~~~^^^^^^^^^^^^^^^^^\nAssertionError\n"
+}

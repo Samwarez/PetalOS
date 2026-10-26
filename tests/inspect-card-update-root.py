@@ -1,6 +1,9 @@
 #!/usr/bin/python3 -I
 """Read only public boot layout for the identity-pinned RC1 card."""
 from pathlib import Path
+RC1_RELEASE = Path('/home/sam/portable-live/releases/20261016-220759-383148')
+if not (RC1_RELEASE / 'manifest.json').is_file():
+    raise SystemExit('Historical RC1 comparison release has been retired. Card inspection was not started; do not substitute a newer release for its pinned checks. See docs/retired-fixtures-20261024.md.')
 import importlib.util
 import os
 import subprocess
@@ -48,7 +51,7 @@ try:
     print('EFI executable count: '+str(sum(p.is_file() and p.suffix.lower()=='.efi' for p in boot.rglob('*'))),flush=True)
     for name in ('system','boot'):
         v=os.statvfs(work/name);print(name+' available bytes: '+str(v.f_bavail*v.f_frsize),flush=True)
-    release=Path('/home/sam/portable-live/releases/20261016-220759-383148')
+    release=RC1_RELEASE
     manifest=json.loads((release/'manifest.json').read_text())
     print('Reading RC1 OS payloads from card.',flush=True)
     for name in ('filesystem.squashfs','vmlinuz','initrd.img'):

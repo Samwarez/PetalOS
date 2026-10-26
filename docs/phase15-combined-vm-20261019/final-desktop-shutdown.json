@@ -1,0 +1,9 @@
+{
+  "fixture": "tests/combined-vm-desktop-poweroff.py",
+  "VM": "20261019-220338-142131",
+  "fixture_sha256": "0be50fd7a9d5f10e7f82bd2482106fdf676805459844a7275eb5d52e958b7a92",
+  "exit": 0,
+  "seconds": 0.96,
+  "stdout": "{\"normal_XFCE_desktop_shutdown_requested\": true}\n",
+  "stderr": ""
+}

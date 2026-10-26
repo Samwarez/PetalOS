@@ -1,0 +1,9 @@
+{
+  "fixture": "tests/combined-vm-final-health.py",
+  "VM": "20261019-220338-142131",
+  "fixture_sha256": "00e770a6968542a6c19332b5c628b5c88bdd1bbd58d647828afe0770b1474efc",
+  "exit": 0,
+  "seconds": 1.94,
+  "stdout": "{\"checks\": {\"Private_closed\": true, \"SYSTEM_state_ready\": true, \"no_swap\": true, \"root_is_volatile_overlay\": true, \"home_is_volatile\": true, \"no_failed_system_units\": true, \"all_app_workers_stopped\": true, \"full_SYSTEM_view_rejects_even_root_write\": true, \"desktop_cannot_open_raw_disk_or_full_SYSTEM_view\": true, \"no_kernel_OOM_or_panic\": true, \"journal_is_volatile\": true, \"all_firewall_default_policies_drop\": true, \"temporary_Tor_block_table_removed\": true}, \"available_RAM_MiB\": 13535, \"package_versions\": {\"amule\": \"1:2.3.3-3.2+petalos1\", \"polkitd\": \"126-2+petalos1\", \"libxml2\": \"2.12.7+dfsg+really2.9.14-2.1+deb13u3+petalos1\", \"libpoppler147\": \"25.03.0-5+deb13u4+petalos1\", \"keepassxc-full\": \"2.7.10+dfsg1-1\"}}\n",
+  "stderr": ""
+}

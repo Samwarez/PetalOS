@@ -1,0 +1,10 @@
+{
+  "fixture": "tests/phase15-20261018/desktop-poweroff.py",
+  "exit": 0,
+  "elapsed_seconds": 1.0,
+  "stderr": "",
+  "result": {
+    "normal_XFCE_session_poweroff_requested": true,
+    "Private_was_closed": true
+  }
+}

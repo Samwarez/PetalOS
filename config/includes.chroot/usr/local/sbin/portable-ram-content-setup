@@ -1,0 +1,50 @@
+#!/usr/bin/python3 -I
+"""Create shared RAM content before the desktop; never cover existing files."""
+import os
+from pathlib import Path
+import subprocess
+import sys
+sys.path.insert(0, '/usr/local/lib/portable')
+from compartments import protected, ram_ready
+
+assert os.geteuid() == 0 and not sys.argv[1:]
+ram_ready()
+root = protected(Path('/run/portable-user-content'))
+home = Path('/home/Petal')
+assert not home.is_symlink() and home.stat().st_uid == 1000
+categories = ('Documents', 'Downloads')
+
+def mounted(path):
+    return subprocess.run(['mountpoint', '-q', str(path)]).returncode == 0
+
+if mounted(root):
+    assert subprocess.check_output(['findmnt', '-n', '-o', 'FSTYPE', '--mountpoint', str(root)]).strip() == b'tmpfs'
+    for name in categories:
+        source, target = root/name, home/name
+        assert mounted(target) and not target.is_symlink()
+        assert (source.stat().st_dev, source.stat().st_ino) == (target.stat().st_dev, target.stat().st_ino)
+    raise SystemExit(0)
+
+assert not list(root.iterdir())
+for name in categories:
+    target = home/name
+    if not target.exists():
+        target.mkdir(mode=0o700)
+        os.chown(target, 1000, 1000)
+    assert not target.is_symlink() and target.is_dir() and target.stat().st_uid == 1000
+    assert not mounted(target) and not list(target.iterdir()), 'RAM content setup must run before files are created.'
+
+done = []
+try:
+    subprocess.run(['mount', '-t', 'tmpfs', '-o', 'nodev,nosuid,mode=0700,size=50%,x-gvfs-hide',
+                    'petalos-ram-content', str(root)], check=True)
+    done.append(root)
+    for name in categories:
+        source = root/name
+        source.mkdir(mode=0o700); os.chown(source, 1000, 1000)
+        subprocess.run(['mount', '--bind', '-o', 'x-gvfs-hide', str(source), str(home/name)], check=True)
+        done.append(home/name)
+except BaseException:
+    for path in reversed(done):
+        subprocess.run(['umount', str(path)], check=True)
+    raise

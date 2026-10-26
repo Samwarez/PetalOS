@@ -10,6 +10,7 @@
 
 profile petalos_browser @{petalos_browser_executable} {
   #include <abstractions/audio>
+  #include <abstractions/petalos-no-persistent-trash>
   #include <abstractions/dri-enumerate>
   #include <abstractions/gnome>
   #include <abstractions/ibus>

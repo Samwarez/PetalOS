@@ -17,6 +17,7 @@ import subprocess
 import tarfile
 import time
 import traceback
+from contextlib import contextmanager
 from urllib.parse import urlsplit, unquote
 
 BASE = Path('/run/portable-compartments')
@@ -68,7 +69,39 @@ def protected(path, directory=True, uid=0, mode=0o700):
     return path
 
 
+@contextmanager
+def action_lock(app, *, timeout=3):
+    """Serialize one role family; unrelated apps never share a startup lock."""
+    assert os.geteuid() == 0 and (app in ROLES or app == 'identities')
+    family = {'browser': 'tor', 'sab-viewer': 'sabnzbd'}.get(app, app)
+    protected(BASE)
+    fd = os.open(BASE / ('action-' + family + '.lock'),
+                 os.O_RDWR | os.O_CREAT | os.O_NOFOLLOW, 0o600)
+    try:
+        info = os.fstat(fd)
+        if not stat.S_ISREG(info.st_mode) or info.st_uid != 0 or info.st_nlink != 1 or info.st_mode & 0o077:
+            raise CompartmentError('Unexpected application lock.')
+        deadline = time.monotonic() + timeout
+        while True:
+            try:
+                fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                break
+            except BlockingIOError:
+                if time.monotonic() >= deadline:
+                    raise CompartmentError('Another action for this application is still running. Retry shortly.')
+                time.sleep(0.05)
+        yield
+    finally:
+        os.close(fd)
+
+
 def roles():
+    # Account creation is short and global; readiness waits are per role.
+    with action_lock('identities', timeout=10):
+        _roles()
+
+
+def _roles():
     assert os.geteuid() == 0
     for name, uid in ROLES.items():
         login = 'petal-' + name
@@ -134,6 +167,8 @@ def ram_folder(app, category):
     ram_ready()
     assert category in ('Documents', 'Downloads')
     parent = Path('/home/Petal') / category
+    if subprocess.check_output(['/usr/bin/findmnt', '-n', '-o', 'FSTYPE', '--mountpoint', str(parent)]).strip() != b'tmpfs':
+        raise CompartmentError('Temporary content storage is not ready.')
     name = OFFLINE[app][0] if app in OFFLINE else ('TorBrowser' if app == 'browser' else app)
     home_fd = os.open('/home/Petal', os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
     parent_fd = folder_fd = None
@@ -158,7 +193,7 @@ def ram_folder(app, category):
         folder_fd = os.open(name, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW, dir_fd=parent_fd)
         if created:
             os.fchown(folder_fd, 1000, 1000)
-        grant(parent / name, ROLES[app], directory_fd=folder_fd)
+        grant(parent / name, ROLES[app], directory_fd=folder_fd, content=True)
         return parent / name
     finally:
         for fd in (folder_fd, parent_fd, home_fd):
@@ -207,11 +242,11 @@ def storage_setup(app):
         private_content_parent('Downloads')
     if app in ('transmission', 'pan', 'amule', 'sabnzbd'):
         for base in ('AppState', 'Downloads'):
-            grant(PRIVATE / base / app, ROLES[app])
+            grant(PRIVATE / base / app, ROLES[app], content=base == 'Downloads')
     elif app == 'browser':
-        grant(PRIVATE / 'Downloads/TorBrowser', ROLES[app])
+        grant(PRIVATE / 'Downloads/TorBrowser', ROLES[app], content=True)
     elif app in OFFLINE:
-        grant(PRIVATE / 'Documents' / OFFLINE[app][0], ROLES[app])
+        grant(PRIVATE / 'Documents' / OFFLINE[app][0], ROLES[app], content=True)
 
 
 def ram_ready():
@@ -273,7 +308,7 @@ def worker_alive(record):
         return False
 
 
-def grant(directory, uid, *, directory_fd=None):
+def grant(directory, uid, *, directory_fd=None, content=False):
     # Only this application's directories are delegated, not Private's root.
     # Physical traversal skips symlinks; no file contents are inspected.
     if directory_fd is None:
@@ -291,6 +326,12 @@ def grant(directory, uid, *, directory_fd=None):
             raise CompartmentError('Unexpected application storage object.')
         if time.monotonic() > deadline:
             raise CompartmentError('Application storage permission update timed out.')
+        if content:
+            # User content has one underlying desktop owner. The per-process
+            # idmapped view presents that owner as the application's own UID,
+            # so newly created 0600 files are usable on both sides. AppState
+            # and hidden app homes do not receive this ownership translation.
+            os.fchown(fd, 1000, 1000)
         acl = 'u:' + str(uid) + ':rwX,u:1000:rwX'
         if is_directory:
             acl += ',d:u:' + str(uid) + ':rwx,d:u:1000:rwx'
@@ -346,6 +387,13 @@ def home(app):
             directory.mkdir(mode=0o700)
             shutil.copyfile(Path('/etc/skel/.config') / name / filename, directory / filename)
         (configuration / 'user-dirs.dirs').write_text('XDG_DOWNLOAD_DIR="' + download + '"\n')
+        # Qt's widget file chooser has its own sidebar, independent of GTK's
+        # bookmarks. These are existing delegated paths, not extra file grants.
+        shortcuts = [virtual_home(app) + ('/Documents' if app in OFFLINE else '/Downloads')]
+        if available:
+            shortcuts.insert(0, virtual_home(app) + '/Private')
+        (configuration / 'QtProject.conf').write_text(
+            '[FileDialog]\nsidebarWidth=180\nshortcuts=' + ', '.join('file://' + path for path in shortcuts) + '\n')
         for toolkit in ('gtk-3.0', 'gtk-4.0'):
             directory = configuration / toolkit
             directory.mkdir(mode=0o700)
@@ -559,7 +607,7 @@ def sandbox(app, command, *, extra_binds=(), wayland=None, environment=None, ope
     uid = ROLES[app]
     target_home = virtual_home(app)
     runtime = protected(BASE / app / 'runtime', uid=uid)
-    options = ['bwrap', '--die-with-parent', '--ro-bind', '/', '/', '--unshare-pid', '--unshare-ipc',
+    options = ['/usr/bin/bwrap', '--die-with-parent', '--ro-bind', '/', '/', '--unshare-pid', '--unshare-ipc',
                '--proc', '/proc', '--dev', '/dev', '--chmod', '1777', '/dev/shm',
                '--perms', '1777', '--tmpfs', '/tmp', '--tmpfs', '/run',
                '--tmpfs', '/home', '--tmpfs', '/root', '--tmpfs', '/mnt', '--tmpfs', '/media',
@@ -619,9 +667,6 @@ def sandbox(app, command, *, extra_binds=(), wayland=None, environment=None, ope
         for base in ('AppState', 'Downloads'):
             options += ['--dir', '/mnt/private/' + base, '--chmod', '0755', '/mnt/private/' + base]
             options += ['--bind', str(PRIVATE / base / app), '/mnt/private/' + base + '/' + app]
-        imports = BASE / app / 'imports'
-        if imports.exists():
-            options += ['--ro-bind', str(imports), '/run/petalos-imports']
     elif available and app == 'browser':
         options += ['--dir', '/mnt/private/Downloads', '--chmod', '0755', '/mnt/private/Downloads']
         options += ['--bind', str(PRIVATE / 'Downloads/TorBrowser'), '/mnt/private/Downloads/TorBrowser']
@@ -635,6 +680,11 @@ def sandbox(app, command, *, extra_binds=(), wayland=None, environment=None, ope
         options += ['--bind', str(PRIVATE), '/mnt/private']
         for sensitive in ('Network', 'PortableSettings', 'AppState', 'Applications'):
             options += ['--tmpfs', '/mnt/private/' + sensitive]
+    # Imports are copied into bounded RAM storage independently of Private.
+    if app in ('transmission', 'pan', 'amule', 'sabnzbd'):
+        imports = BASE / app / 'imports'
+        if imports.exists():
+            options += ['--ro-bind', str(imports), '/run/petalos-imports']
     if wayland is not None:
         # Bind only the committed security-context listener, never the parent
         # runtime directory or the compositor's unrestricted display socket.
@@ -659,7 +709,8 @@ def sandbox(app, command, *, extra_binds=(), wayland=None, environment=None, ope
         assert app == 'offline-parole'
         inner = ['/usr/bin/python3', '-I', '/usr/local/lib/portable/media_fd_exec.py',
                  *opened_media, '--', *inner]
-    return options + ['--', *inner]
+    return ['/usr/bin/python3', '-I', '/usr/local/lib/portable/content_mounts.py', app,
+            *options, '--', *inner]
 
 
 def start_process(command, *, environment=None, pass_fds=(), umask=0o077):
@@ -700,7 +751,7 @@ def desktop_audio(command):
     return result.stdout.strip()
 
 
-def gui_ready(app, display, processes):
+def gui_ready(app, display, processes, *, cancelled=lambda: False):
     expected = {'transmission': {'transmission', 'transmission-gtk', 'com.transmissionbt.transmission'},
                 'pan': {'pan'}, 'amule': {'amule'},
                 'browser': {'torbrowser', 'Tor Browser', 'org.torproject.torbrowser', 'Navigator', 'firefox'},
@@ -718,6 +769,8 @@ def gui_ready(app, display, processes):
                          'vim': {'xfce4-terminal', 'org.xfce.Terminal'}}.get(name, set()))
     connection = display['connection']
     for _ in range(600):
+        if cancelled():
+            raise CompartmentError('Application startup was cancelled.')
         if any(process.poll() is not None for process in processes):
             raise CompartmentError('An application component exited during startup.')
         connection.roundtrip()
@@ -813,7 +866,7 @@ def prepare(app):
                 extra_binds=[(marker, '/run/petalos-compartment.json', False)]), timeout=30)
     if private_available():
         for base in ('AppState', 'Downloads'):
-            grant(PRIVATE / base / app, ROLES[app])
+            grant(PRIVATE / base / app, ROLES[app], content=base == 'Downloads')
 
 
 def start(app, arguments=()):
@@ -840,15 +893,26 @@ def start(app, arguments=()):
     file_record(directory / 'request.json', request)
     child = start_process(['/usr/bin/python3', '-I', '/usr/local/sbin/portable-compartment', '--worker', app, token],
                           environment={'PATH': '/usr/sbin:/usr/bin:/sbin:/bin', 'HOME': '/root', 'LC_ALL': 'C.UTF-8'})
-    for _ in range(1800):
-        record = read_record(app)
-        if record.get('token') == token and record.get('phase') == 'ready' and worker_alive(record):
-            return record
-        if child.poll() is not None or (record.get('token') == token and record.get('phase') == 'failed'):
-            raise CompartmentError('The application compartment failed to start.')
-        time.sleep(0.1)
-    child.terminate()
-    raise CompartmentError('The application compartment did not become ready.')
+    try:
+        for _ in range(1800):
+            record = read_record(app)
+            if record.get('token') == token and record.get('phase') == 'ready' and worker_alive(record):
+                return record
+            if child.poll() is not None or (record.get('token') == token and record.get('phase') == 'failed'):
+                raise CompartmentError('The application compartment failed to start.')
+            time.sleep(0.1)
+        raise CompartmentError('The application compartment did not become ready.')
+    except BaseException:
+        # The caller may be cancelled while the worker is preparing a GUI or
+        # bootstrapping Tor. Reap that exact child before releasing its lock.
+        if child.poll() is None:
+            child.terminate()
+            try:
+                child.wait(timeout=12)
+            except subprocess.TimeoutExpired:
+                child.kill(); child.wait(timeout=5)
+                reset_ram(app)
+        raise
 
 
 def supervise(app, token):
@@ -1020,7 +1084,7 @@ def supervise(app, token):
             delegated_fds.clear()
             processes.append(process)
             if display is not None:
-                gui_ready(app, display, processes)
+                gui_ready(app, display, processes, cancelled=lambda: stopped)
             else:
                 for _ in range(50):
                     if process.poll() is not None:
@@ -1076,10 +1140,10 @@ def supervise(app, token):
         if mounted:
             if app in ('transmission', 'pan', 'amule', 'sabnzbd'):
                 for base in ('AppState', 'Downloads'):
-                    grant(PRIVATE / base / app, ROLES[app])
+                    grant(PRIVATE / base / app, ROLES[app], content=base == 'Downloads')
             elif app in OFFLINE:
-                grant(PRIVATE / 'Documents' / OFFLINE[app][0], ROLES[app])
+                grant(PRIVATE / 'Documents' / OFFLINE[app][0], ROLES[app], content=True)
             elif app == 'browser':
-                grant(PRIVATE / 'Downloads/TorBrowser', ROLES[app])
+                grant(PRIVATE / 'Downloads/TorBrowser', ROLES[app], content=True)
         if state['phase'] != 'failed':
             update('stopped')

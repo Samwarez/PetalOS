@@ -1,0 +1,8 @@
+{
+  "fixture": "tests/phase15-repairs/mapped-content-lock.py",
+  "VM": "20261019-220338-142131",
+  "exit": 0,
+  "seconds": 9.74,
+  "stdout": "{\"manual_lock_succeeded\": true, \"Private_mapping_closed\": true, \"SYSTEM_state_remains_ready\": true, \"application_workers_gone\": true, \"mapped_Private_views_gone\": true}\n",
+  "stderr": ""
+}

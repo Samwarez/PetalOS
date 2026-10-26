@@ -1,0 +1,17 @@
+#!/bin/sh
+set -eu
+[ "$(id -u)" -eq 1000 ] && [ "${XDG_SESSION_TYPE:-}" = wayland ] || exit 1
+unset DISPLAY XAUTHORITY
+export QT_QPA_PLATFORM=wayland
+export XDG_CONFIG_DIRS="${XDG_CONFIG_DIRS:-/etc/xdg}"
+mkdir -p -m 700 "${XDG_CONFIG_HOME:-$HOME/.config}"
+# Keep XFCE identity for app launchers and desktop integration. The maintained
+# Crystal Dock patch selects Labwc's implementation for this XFCE session.
+if /usr/bin/pgrep -u 1000 -x crystal-dock >/dev/null 2>&1; then exit 0; fi
+status=0
+/usr/bin/crystal-dock >/dev/null 2>&1 || status=$?
+if [ "$status" -ne 0 ]; then
+    /usr/bin/notify-send -a PetalOS -u critical 'Crystal Dock could not start' \
+        'Use the top Applications menu to start it again.' >/dev/null 2>&1 || true
+fi
+exit "$status"

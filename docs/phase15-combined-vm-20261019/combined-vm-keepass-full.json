@@ -1,0 +1,8 @@
+{
+  "fixture": "tests/combined-vm-keepass-full.py",
+  "VM": "20261019-220338-142131",
+  "exit": 0,
+  "seconds": 3.66,
+  "stdout": "{\"full_store_update_reports_failure\": true, \"original_database_unchanged\": true, \"original_database_readable\": true, \"retry_after_freeing_space_succeeds\": true, \"retried_change_persisted\": true}\n",
+  "stderr": ""
+}

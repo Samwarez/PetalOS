@@ -1,0 +1,96 @@
+{
+  "passed": true,
+  "fresh": {
+    "stage": "installer-fresh",
+    "checks": {
+      "target_is_removable_usb": true,
+      "readonly_source_refused_as_target": true,
+      "stale_confirmation_refused_before_partitioning": true,
+      "fresh_install_completed": true,
+      "all_five_partitions_created": true,
+      "no_installer_mappings_left": true,
+      "layout_two_identified": true,
+      "production_argon2id_os": true,
+      "production_argon2id_system": true,
+      "production_argon2id_private": true,
+      "admin_hash_only_in_settings": true,
+      "fresh_resources_closed_after_preload": true,
+      "wipe_interruption_reports_completed_key_removal": true,
+      "interrupted_wipe_leaves_no_maps": true,
+      "wipe_retry_finishes_random_readback": true
+    },
+    "passed": true
+  },
+  "update": {
+    "stage": "installer-update",
+    "checks": {
+      "target_is_removable_usb": true,
+      "readonly_source_refused_as_target": true,
+      "os_update_completed": true,
+      "update_never_opened_persistent_volumes": true,
+      "update_resources_closed": true,
+      "firmware_probe_installed_without_password_files": true
+    },
+    "passed": true
+  },
+  "firmware": {
+    "stage": "firmware",
+    "passed": true,
+    "checks": {
+      "signed_uefi_boot": true,
+      "os_unlocked": true,
+      "settings_unlocked": true,
+      "private_closed": true,
+      "os_readonly": true
+    },
+    "system_prompt_count": 1
+  },
+  "persistent_partitions_byte_identical": true,
+  "scope": "Installed package core on virtual USB, real Argon2id, signed EFI chain and one-prompt unlock",
+  "limits": [
+    "Synthetic OS payloads, not desktop acceptance",
+    "Firmware probe appended only after installed artifact verification",
+    "No physical card or pre-existing images modified"
+  ],
+  "fixture_notes": [
+    "Disks and artifacts newly allocated for this installer task; RAM-backed /tmp used after home filesystem ran out of space.",
+    "Initial firmware probe could not read SecureBoot via efivarfs. Corrected probe uses byte-offset EFI read with the signed kernel EFI lockdown report as fallback; complete install/update/firmware sequence rerun successfully.",
+    "The installer VM uses production low-memory Argon2id provisioning; only the separate tiny wipe fixture uses fast test-only PBKDF2.",
+    "The final package additionally has build-selection race refusal, zero-capacity reader refusal and normalized package-root permissions, verified by the local regression/package checks."
+  ],
+  "final_package": {
+    "path": "/home/sam/portable-live/installer-dist/petalos-installer_0.2.0_all.deb",
+    "sha256": "9bab55cb37f56a17b1a0a1d007b339359994b7ec5954b14ceb39dadb3311a25d",
+    "version": "0.2.0"
+  },
+  "local_validation": {
+    "installer_tests_passed": 30,
+    "layout2_generation_fault_suite_passed": true,
+    "ast_and_gtk_css_passed": true,
+    "packaged_cli_launch_passed": true,
+    "package_permissions_and_polkit_xml_passed": true,
+    "old_build_export_refused_before_writes": true,
+    "disposable_credentials_absent_from_source_and_package": true
+  },
+  "vm_source_sha256": {
+    "backend.py": "e3cea53cd6cac5092bc0b6010d1a1831676e4a57d94301fd65be0016093f0f64",
+    "petal_installer/__init__.py": "c0884f1b206d0ea0c036f6f6d9eca09acb593101e1a7fadd0efe0b2eeb5dbdd8",
+    "petal_installer/__main__.py": "935a1c1166b0c1ea35a82256345000bf2c73ded718d77773bc27a71ecce28f7d",
+    "petal_installer/bridge.py": "fadb83f5ca41b05d04dccebc53596d2b859bfce2dd0f7f9e54875091b372f0ea",
+    "petal_installer/bundles.py": "92713816ddfdca6b5ae69d82f4bb62ca0a12cd6346961885ed8e3942d4fc54c3",
+    "petal_installer/cli.py": "bd1c438dabe179e01690430077b85eb8c60e8e91d6b22422fc83b674d7c1331c",
+    "petal_installer/engine.py": "1fe69dd979ce85cc53d31ff1f54025978e9c98749f70169fcae58a79602c96ce",
+    "petal_installer/gui.py": "44c46a3e3912c2a82ecfce46dfbcc7cded335da5dd7859ce6654926854b1b0ed",
+    "petal_installer/image_wipe.py": "38aa40de357906f1183a9ed309baa810d489e85e117edf6ff6e78609fda79f2b",
+    "petal_installer/layout2.py": "b92480f58c28d340a8410e86881ec4fa3bddadd9f4e9f1ac91e082166adcc792",
+    "petal_installer/linux.py": "470f370a8119a4b8a50c4d4c1947841f4f5ba31bc1021b8173793aae6f7b65cd",
+    "petal_installer/plans.py": "f6d86b30089d20f829fbe9f8a6ab4f32c7eb00a885d69ba8500723e9b33dcdef",
+    "petal_installer/recovery.py": "dc504d73799e270c6b39402d1342991c8430a2cf960008f09084b9fcbf770c20",
+    "petal_installer/releases.py": "c84d99846408c1c8b04efd87743fb65f92d9c6041b4a9e00d96448d4f368f595",
+    "petal_installer/shared/boot_branding.py": "6d6180398e191600ce570f19499280a012f63e4e4e7a59714a565812b47d612c",
+    "petal_installer/shared/release_generations.py": "18a1970babee1781533c91863914e697a24a6c05621f7195caaa0a98d3e2e5c6",
+    "petal_installer/shared/vpn_profiles.py": "745bf0515fed52f3b6d4f7677bb7ca5372328b745b2105ce14df312eada26b9f",
+    "petal_installer/store.py": "ce59fafad7c76d846f45f6973bd82caf3add719ca27105551e0c4e7fbe81cc9f",
+    "petal_installer/target.py": "73f547678a2e1cc9a8282a539853156951c32a89e1432d8b811b366167069a82"
+  }
+}

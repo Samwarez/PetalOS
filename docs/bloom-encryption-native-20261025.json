@@ -1,0 +1,54 @@
+{
+  "passed": true,
+  "scope": "Real cryptsetup/Argon2id and LUKS2 headers in fresh regular files; no physical media or open mappings.",
+  "tiers": {
+    "fast": {
+      "calibration": {
+        "profile": "fast",
+        "iterations": 14,
+        "memory_kib": 65536,
+        "parallel": 1,
+        "target_unlock_ms": 1000
+      },
+      "checks": {
+        "os_actual_header_matches": true,
+        "correct_passphrase_accepted": true,
+        "wrong_passphrase_refused": true,
+        "system_actual_header_matches": true,
+        "private_actual_header_matches": true
+      }
+    },
+    "balanced": {
+      "calibration": {
+        "profile": "balanced",
+        "iterations": 4,
+        "memory_kib": 524288,
+        "parallel": 4,
+        "target_unlock_ms": 2000
+      },
+      "checks": {
+        "os_actual_header_matches": true,
+        "correct_passphrase_accepted": true,
+        "wrong_passphrase_refused": true,
+        "system_actual_header_matches": true,
+        "private_actual_header_matches": true
+      }
+    },
+    "paranoid": {
+      "calibration": {
+        "profile": "paranoid",
+        "iterations": 4,
+        "memory_kib": 2097152,
+        "parallel": 4,
+        "target_unlock_ms": 5000
+      },
+      "checks": {
+        "os_actual_header_matches": true,
+        "correct_passphrase_accepted": true,
+        "wrong_passphrase_refused": true,
+        "system_actual_header_matches": true,
+        "private_actual_header_matches": true
+      }
+    }
+  }
+}

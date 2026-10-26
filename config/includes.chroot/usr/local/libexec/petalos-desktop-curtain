@@ -1,0 +1,47 @@
+#!/usr/bin/python3
+"""Continue the Wait animation through Plymouth's mandatory DRM handoff.
+
+Presentation only; never an authentication or lock screen. Does not prevent
+desktop startup, collect input, or write persistent state.
+"""
+from pathlib import Path
+import os
+import time
+import gi
+gi.require_version('Gtk','3.0')
+from gi.repository import Gtk,Gdk,GdkPixbuf,GLib
+
+if os.getuid()!=1000 or os.environ.get('XDG_SESSION_TYPE')!='wayland':raise SystemExit(0)
+started=time.monotonic()
+window=Gtk.Window(title='PetalOS — preparing desktop')
+window.set_decorated(False);window.fullscreen()
+window.set_skip_taskbar_hint(True);window.set_skip_pager_hint(True)
+box=Gtk.Box(orientation=Gtk.Orientation.VERTICAL,spacing=12)
+box.set_valign(Gtk.Align.CENTER);box.set_halign(Gtk.Align.CENTER)
+image=Gtk.Image();box.pack_start(image,False,False,0)
+label=Gtk.Label(label='Preparing your desktop');box.pack_start(label,False,False,0)
+window.add(box)
+provider=Gtk.CssProvider();provider.load_from_data(b'window { background: black; color: #ff99cc; }')
+Gtk.StyleContext.add_provider_for_screen(Gdk.Screen.get_default(),provider,Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
+screen=Gdk.Display.get_default().get_primary_monitor() or Gdk.Display.get_default().get_monitor(0)
+size=max(96,min(512,screen.get_geometry().height-150))
+frames=[GdkPixbuf.Pixbuf.new_from_file_at_scale('/usr/share/plymouth/themes/petalos/wait-'+str(i)+'.png',size,size,True) for i in range(6)]
+ready=0
+def draw():
+    image.set_from_pixbuf(frames[int((time.monotonic()-started)/.25)%6]);return True
+def check():
+    global ready
+    names=set()
+    for process in Path('/proc').iterdir():
+        if not process.name.isdecimal():continue
+        try:
+            if process.stat().st_uid==1000:names.add(Path(os.readlink(process/'exe')).name)
+        except OSError:pass
+    ready=ready+1 if {'xfdesktop','xfce4-panel','crystal-dock','swaybg'}<=names else 0
+    if ready>=2 or time.monotonic()-started>=60:
+        Gtk.main_quit();return False
+    return True
+window.connect('destroy',lambda *_:Gtk.main_quit())
+window.connect('key-press-event',lambda _,event:Gtk.main_quit() if event.keyval==Gdk.KEY_Escape else False)
+draw();GLib.timeout_add(250,draw);GLib.timeout_add_seconds(1,check)
+window.show_all();Gtk.main()

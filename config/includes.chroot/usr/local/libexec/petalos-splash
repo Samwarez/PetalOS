@@ -1,0 +1,21 @@
+#!/bin/sh
+# Presentation only: fixed states, no credentials, devices or arbitrary commands.
+case "$1" in
+    startup|idle|fail|success|ram|wait|error) ;;
+    *) exit 1 ;;
+esac
+command -v plymouth >/dev/null 2>&1 || exit 0
+plymouth --ping >/dev/null 2>&1 || exit 0
+plymouth display-message --text="petalos:$1" >/dev/null 2>&1 || true
+if [ "$1" = error ]; then
+    # These files are RAM-only. Never include password input or shell tracing.
+    if [ -d /run/systemd/system ] && command -v journalctl >/dev/null 2>&1; then
+        output=$(journalctl -b -n 22 --no-pager -o cat 2>/dev/null | cut -c 1-160)
+    elif [ -f /boot.log ]; then
+        output=$(tail -n 22 /boot.log | cut -c 1-160)
+    else
+        output=$(dmesg | tail -n 22 | cut -c 1-160)
+    fi
+    [ -n "$output" ] || output='No boot log is available. Press Space for the boot console.'
+    plymouth display-message --text="petalos:error-log:$output" >/dev/null 2>&1 || true
+fi

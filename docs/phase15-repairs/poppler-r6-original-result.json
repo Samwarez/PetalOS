@@ -1,0 +1,37 @@
+{
+  "fixture": "tests/phase15-repairs/poppler-r6.py",
+  "exit": 0,
+  "elapsed_seconds": 2.47,
+  "stderr": "",
+  "result": {
+    "package_version": "25.03.0-5+deb13u4",
+    "cases": {
+      "correct_127": {
+        "exit": 0,
+        "one_page_reported": true,
+        "crashed": false,
+        "public_fixture_stderr": ""
+      },
+      "correct_truncated_128": {
+        "exit": -6,
+        "one_page_reported": false,
+        "crashed": true,
+        "public_fixture_stderr": "*** stack smashing detected ***: terminated\n"
+      },
+      "correct_truncated_1024": {
+        "exit": -11,
+        "one_page_reported": false,
+        "crashed": true,
+        "public_fixture_stderr": ""
+      },
+      "incorrect_short": {
+        "exit": 1,
+        "one_page_reported": false,
+        "crashed": false,
+        "public_fixture_stderr": "\", line 1, in <module>\n    import gi,sys;gi.require_version('Poppler','0.18');from gi.repository import Poppler;d=Poppler.Document.new_from_file('file:///mnt/ram/Documents/atril/public-r6-encrypted.pdf',sys.argv[1]);print(d.get_n_pages())\n                                                                                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\ngi.repository.GLib.GError: poppler-quark: Document is encrypted (1)\n"
+      }
+    },
+    "under_actual_Atril_role": true,
+    "synthetic_document_only": true
+  }
+}

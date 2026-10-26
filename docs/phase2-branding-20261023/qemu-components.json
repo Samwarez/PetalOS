@@ -1,0 +1,72 @@
+{
+  "date": "2026-10-23",
+  "scope": "disposable QEMU presentation/authentication fixture, prior release kernel/userspace, modified initramfs; not a new full PetalOS boot",
+  "network_devices": 0,
+  "fixture_KDF": "PBKDF2 at 10 ms for control-flow testing only; production LUKS strength is not validated or changed",
+  "simulated_RAM_copy_duration_seconds": 65,
+  "checks": {
+    "startup": {
+      "elapsed": 8.68
+    },
+    "password-idle": {
+      "elapsed": 12.92
+    },
+    "password-failure": {
+      "elapsed": 14.0
+    },
+    "password-retry": {
+      "elapsed": 16.02
+    },
+    "password-success": {
+      "elapsed": 17.88
+    },
+    "ram1": {
+      "elapsed": 19.9
+    },
+    "ram2": {
+      "elapsed": 49.92
+    },
+    "ram3": {
+      "elapsed": 79.94
+    },
+    "wait": {
+      "elapsed": 83.06
+    },
+    "error": {
+      "elapsed": 87.3
+    },
+    "wrong_then_correct_unlock": true,
+    "error_to_recovery_console": true,
+    "qemu_exit": 0
+  },
+  "tested_source_sha256": {
+    "usr/share/plymouth/themes/petalos/petalos.script": "4b5789edef2934fa09e767a76481e02a1b44d55a66cc7c2f16d20b13b7120f89",
+    "usr/local/libexec/petalos-splash": "5f88b3dca49e71c716faeacc256f0480a919f1f15435ff2be8c0bbae13df312e",
+    "etc/initramfs-tools/scripts/init-premount/portable-unlock": "3e62d3f15a00ea37de47f19cf37d23edaddf774f7c467269029a0053b0064695"
+  },
+  "native_Wayland_Wait": {
+    "display_type": "GdkWaylandDisplay",
+    "native_Wayland": true,
+    "fullscreen": true,
+    "window_mapped": true,
+    "multiple_animation_frames": true,
+    "observed_unique_frames": 6
+  },
+  "GRUB_rendering": "visually verified; standalone unsigned EFI fixture, not production Secure Boot acceptance",
+  "root_OnFailure_runtime_tested": false,
+  "full_new_OS_image_tested": false,
+  "physical_media_written": false,
+  "previews_sha256": {
+    "startup.png": "2ecbdc7665e262adb4d443f4ffc119d34fb619ade3ed25670db6db8dccc0c79d",
+    "password-idle.png": "d34dc846a324e1ac16965aebd1f615f9d4330365163965de5433e476d7fdb603",
+    "password-failure.png": "dd3d4a58ebfa3758f46566fd3baafba67e4e79adcb7d2550151f61a307535ee2",
+    "password-retry.png": "267c018cdecba05ded6113a0bc1f8e2c14bb9fe3b5da33182393761c96c5c629",
+    "password-success.png": "7b8a268e55ca1c45f049fe47b64fbb11b29a8c6eb9f9221dfe512a3e08360f8f",
+    "ram1.png": "1f917b19734a14ec82ad2ff6deede2ad69aacc10b038e914ee9f34f9d1635e35",
+    "ram2.png": "43ae3f82d454a2c5b5e897419dcf822045ba17aea048c4a82cbd6ac0ca122db5",
+    "ram3.png": "b9e76a0352ff880f88ff89cd8746221aba95b724dd6058baed274c51db41aafd",
+    "wait.png": "915acbd7b3f58c7cffebb15f3b1ffd50046f1668401e9058fb2ead570188365f",
+    "error.png": "885d3f816333669facc0085c2664288ac30febb6298e5477fd20a2c3d0f9543e",
+    "grub.png": "8130ddd865178c766633e90c8fcf08dc6bf82c27426a396431f8cb25b39744e1"
+  }
+}

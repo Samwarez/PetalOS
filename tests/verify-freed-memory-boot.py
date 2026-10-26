@@ -33,6 +33,8 @@ def cpio(files):
 
 
 def main():
+    if not (RELEASE / 'manifest.json').is_file():
+        raise RuntimeError('Historical October 12 kernel fixture has been retired. See docs/retired-fixtures-20261024.md; this tool does not silently substitute another release.')
     assert os.geteuid()!=0
     kernel=RELEASE/'build/binary/live/vmlinuz'
     manifest=json.loads((RELEASE/'manifest.json').read_text())
@@ -70,5 +72,5 @@ def main():
 if __name__=='__main__':
     try:main()
     except Exception as error:
-        print('Memory-zeroing boot verification failed: '+type(error).__name__,file=sys.stderr)
+        print('Memory-zeroing boot verification failed: '+(str(error) if isinstance(error, RuntimeError) else type(error).__name__),file=sys.stderr)
         raise SystemExit(1)

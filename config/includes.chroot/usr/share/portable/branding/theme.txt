@@ -1,0 +1,17 @@
+title-text: "PetalOS"
+title-color: "#ff80c0"
+desktop-color: "#000000"
+desktop-image: "grub.png"
+terminal-font: "Unifont Regular 16"
++ boot_menu {
+    left = 12%
+    top = 65%
+    width = 76%
+    height = 25%
+    item_font = "Unifont Regular 16"
+    item_color = "#ff80c0"
+    selected_item_color = "#ffb5da"
+    item_height = 24
+    item_padding = 6
+    item_spacing = 4
+}

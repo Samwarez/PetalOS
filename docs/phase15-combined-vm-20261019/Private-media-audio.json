@@ -1,0 +1,8 @@
+{
+  "fixture": "tests/combined-vm-audio.py",
+  "VM": "20261019-220338-142131",
+  "exit": 0,
+  "seconds": 3.05,
+  "stdout": "{\"checks\": {\"guest_output_samples_received\": true, \"synthetic_tone_reached_output\": true}, \"samples\": 181980, \"rms\": 58.31, \"capture_source\": \"guest output monitor only; raw PCM not saved\"}\n",
+  "stderr": ""
+}

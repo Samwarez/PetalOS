@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Start Crystal Dock
+Comment=Start the PetalOS bottom dock
+Exec=/usr/local/libexec/portable-crystal-dock
+Icon=user-desktop
+Terminal=false
+Categories=Settings;Utility;

@@ -8,6 +8,9 @@ export QT_QPA_PLATFORM=wayland
 export MOZ_ENABLE_WAYLAND=1
 export SDL_VIDEODRIVER=wayland
 export XDG_SESSION_TYPE=wayland
+# Plymouth must release DRM before Labwc can start. Continue Wait as a temporary
+# native Wayland window until the panel, icons and background renderer are ready.
+/usr/local/libexec/petalos-desktop-curtain >/dev/null 2>&1 &
 # User services start before the desktop and can retain a stale X11 DISPLAY.
 /usr/bin/timeout 8 /usr/bin/systemctl --user unset-environment DISPLAY XAUTHORITY \
     >/dev/null 2>&1 || true

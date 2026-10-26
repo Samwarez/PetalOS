@@ -1,0 +1,9 @@
+#!/bin/sh
+set -eu
+# Keep all Debian security patches and refuse an unreviewed base-package change.
+test "$(dpkg-query -W -f='${Version}' thunar)" = '4.20.2-1+deb13u1'
+cd /usr/local/share/portable/native-thunar
+sha256sum -c Thunar.sha256
+test -x /usr/bin/Thunar
+install -o root -g root -m 0755 Thunar /usr/bin/Thunar
+rm Thunar

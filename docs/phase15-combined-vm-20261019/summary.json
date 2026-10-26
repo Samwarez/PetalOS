@@ -1,0 +1,243 @@
+{
+  "release": "20261019-211301-083244",
+  "product_source_revision": "bfd9dd9efd4294a8c0f3703181b419f4cab64e36",
+  "VM": "20261019-220338-142131",
+  "generation": "454373df5891d9db5dd46eec",
+  "assessment": "bounded QEMU acceptance passed; hardware acceptance pending",
+  "fixture_invocations": 44,
+  "successful_invocations": 38,
+  "initial_harness_failures_preserved": [
+    "cold-reboot-integrity.json",
+    "combined-vm-boot.json",
+    "combined-vm-idle-lock.json",
+    "combined-vm-persistence-stage.json",
+    "combined-vm-start-apps.json",
+    "content-ownership.json"
+  ],
+  "production_code_or_policy_changes_during_tests": false,
+  "VM_shutdown_cleanly": true,
+  "VM_image_detached": true,
+  "physical_media_written": false,
+  "records": [
+    {
+      "file": "Private-media-audio.json",
+      "exit": 0,
+      "seconds": 3.05
+    },
+    {
+      "file": "application-launch-verified.json",
+      "exit": 0,
+      "seconds": 6.28
+    },
+    {
+      "file": "audit-connect-guest.json",
+      "exit": 0,
+      "seconds": 11.46
+    },
+    {
+      "file": "credential-boundaries.json",
+      "exit": 0,
+      "seconds": 15.46
+    },
+    {
+      "file": "audit-smoke-guest.json",
+      "exit": 0,
+      "seconds": 3.01
+    },
+    {
+      "file": "av-pipeline.json",
+      "exit": 0,
+      "seconds": 22.8
+    },
+    {
+      "file": "backport-runtime-check.json",
+      "exit": 0,
+      "seconds": 4.93
+    },
+    {
+      "file": "broker-concurrency.json",
+      "exit": 0,
+      "seconds": 8.65
+    },
+    {
+      "file": "cold-reboot-VPN.json",
+      "exit": 0,
+      "seconds": 11.75
+    },
+    {
+      "file": "cold-reboot-integrity-verified.json",
+      "exit": 0,
+      "seconds": 1.45
+    },
+    {
+      "file": "cold-reboot-integrity.json",
+      "exit": 1,
+      "seconds": 2.19
+    },
+    {
+      "file": "combined-vm-Private-persistence.json",
+      "exit": 0,
+      "seconds": 6.85
+    },
+    {
+      "file": "combined-vm-audio.json",
+      "exit": 0,
+      "seconds": 3.05
+    },
+    {
+      "file": "combined-vm-boot.json",
+      "exit": 1,
+      "seconds": 2.01
+    },
+    {
+      "file": "combined-vm-desktop-poweroff.json",
+      "exit": 0,
+      "seconds": 0.97
+    },
+    {
+      "file": "combined-vm-download.json",
+      "exit": 0,
+      "seconds": 11.56
+    },
+    {
+      "file": "combined-vm-final-health.json",
+      "exit": 0,
+      "seconds": 1.94
+    },
+    {
+      "file": "combined-vm-idle-inhibit.json",
+      "exit": 0,
+      "seconds": 1.49
+    },
+    {
+      "file": "combined-vm-idle-lock.json",
+      "exit": 1,
+      "seconds": 38.77
+    },
+    {
+      "file": "combined-vm-keepass-full.json",
+      "exit": 0,
+      "seconds": 3.66
+    },
+    {
+      "file": "combined-vm-keepass-gui-check.json",
+      "exit": 0,
+      "seconds": 1.35
+    },
+    {
+      "file": "combined-vm-keepass-gui-start.json",
+      "exit": 0,
+      "seconds": 3.83
+    },
+    {
+      "file": "combined-vm-offline-connect.json",
+      "exit": 0,
+      "seconds": 88.17
+    },
+    {
+      "file": "combined-vm-persistence-check.json",
+      "exit": 0,
+      "seconds": 10.54
+    },
+    {
+      "file": "combined-vm-persistence-stage.json",
+      "exit": 1,
+      "seconds": 3.13
+    },
+    {
+      "file": "combined-vm-private-media.json",
+      "exit": 0,
+      "seconds": 7.59
+    },
+    {
+      "file": "combined-vm-sab-bridge.json",
+      "exit": 0,
+      "seconds": 1.31
+    },
+    {
+      "file": "combined-vm-start-apps.json",
+      "exit": 1,
+      "seconds": 70.61
+    },
+    {
+      "file": "content-access-after-unlock.json",
+      "exit": 0,
+      "seconds": 8.8
+    },
+    {
+      "file": "content-ownership.json",
+      "exit": 1,
+      "seconds": 0.99
+    },
+    {
+      "file": "desktop-save-immediate.json",
+      "exit": 0,
+      "seconds": 3.05
+    },
+    {
+      "file": "final-VPN-reconnect.json",
+      "exit": 0,
+      "seconds": 10.25
+    },
+    {
+      "file": "final-desktop-shutdown.json",
+      "exit": 0,
+      "seconds": 0.96
+    },
+    {
+      "file": "idle-lock-verified.json",
+      "exit": 0,
+      "seconds": 6.94
+    },
+    {
+      "file": "manual-clock-recovery.json",
+      "exit": 0,
+      "seconds": 13.64
+    },
+    {
+      "file": "mapped-content-lock.json",
+      "exit": 0,
+      "seconds": 9.74
+    },
+    {
+      "file": "media-start.json",
+      "exit": 0,
+      "seconds": 18.36
+    },
+    {
+      "file": "network-and-desktop.json",
+      "exit": 0,
+      "seconds": 1.1
+    },
+    {
+      "file": "network-failures.json",
+      "exit": 0,
+      "seconds": 38.01
+    },
+    {
+      "file": "offline-boot-verified.json",
+      "exit": 0,
+      "seconds": 1.44
+    },
+    {
+      "file": "offline-boundary.json",
+      "exit": 0,
+      "seconds": 1.71
+    },
+    {
+      "file": "settings-export-verified.json",
+      "exit": 0,
+      "seconds": 1.25
+    },
+    {
+      "file": "startup-family-cleanup.json",
+      "exit": 0,
+      "seconds": 16.89
+    },
+    {
+      "file": "testing-download-mode.json",
+      "exit": 0,
+      "seconds": 2.13
+    }
+  ]
+}

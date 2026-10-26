@@ -1,0 +1,93 @@
+{
+  "date": "2026-10-23",
+  "git_base": "543cf7ef2dd49eb0903fddc757fff2cff774502f",
+  "uncommitted_changes": true,
+  "results": [
+    {
+      "command": [
+        "/usr/bin/python3",
+        "-B",
+        "tests/check-phase2-branding.py"
+      ],
+      "exit": 0,
+      "stdout": "PASS wallpaper seed, custom-file preservation, interrupted write cleanup/retry and symlink refusal\nPASS initial XFCE folder selection, saved wallpaper override and solid-color override\nPASS 72 supplied PNG checksums and requested default wallpaper\nPASS real binary hook stages supplied artwork, retains kernel arguments and is idempotent\nPASS offline GRUB checksums, interruption/retry, rollback compatibility, failsafe and idempotence\n"
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "-B",
+        "tests/check-boot-unlock.py"
+      ],
+      "exit": 0,
+      "stdout": "PASS wrong/correct retry, three-attempt refusal, non-password error, text fallback and absent-volume timeout\n"
+    },
+    {
+      "command": [
+        "python3",
+        "-B",
+        "tests/check-release-generations.py"
+      ],
+      "exit": 0,
+      "stdout": "PASS seven interrupted staging/activation points retain coherent boot choices; retry, rollback and repeat work\nPASS interrupted payload write leaves boot selectors unchanged and removes its temporary file\nPASS insufficient capacity refuses before payload staging or boot activation\nPASS successive test builds retain only current + one previous; production retains only current; repeats are idempotent\nPASS oldest release is retired before staging into capacity limited to two OS payloads\nPASS interruption/retry at all 19 test retention/staging/activation checkpoints preserves active boot and settings\nPASS interruption/retry at all 26 production retirement/staging/activation checkpoints preserves active boot and settings\nPASS unknown content, symlinks, corrupt active payloads, empty/stale selectors refuse before retirement\nPASS concurrent update is refused under the existing exclusive lock\nPASS legacy accumulated rollback menus/generations are bounded and public interrupted-config temporaries reclaimed\n"
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "-B",
+        "tests/check-desktop-settings.py"
+      ],
+      "exit": 0,
+      "stdout": "PASS selective desktop settings roundtrip\nPASS Trash contents and deletion metadata are not saved/restored; existing Trash is untouched\nPASS absolute, traversal, unrelated, symlink and device entries rejected\nPASS legacy migration drops file-chooser and unrelated app state\nPASS daemon/write failures preserve the prior archive and clean temporary output\nPASS typed live XML preserves arrays/booleans/nesting and rejects invalid values\nAll selective desktop settings checks passed.\nPASS old stock touch defaults migrate once; custom timing/distance and subsequent user overrides survive\n"
+    },
+    {
+      "command": [
+        "python3",
+        "-B",
+        "tests/private-storage-controller.py"
+      ],
+      "exit": 0,
+      "stdout": "PASS wrong passphrase preserves closed state\nPASS wrong passphrase does not close an existing volume\nPASS failed Private unlock preserves first-boot SYSTEM availability\nPASS wrong passphrase preserves open state\nPASS wrong passphrase does not close an existing volume\nPASS failed Private unlock preserves first-boot SYSTEM availability\nPASS typed unlock error preserves original failure\nPASS typed error preserves existing volume and SYSTEM\nPASS typed unlock error preserves original failure\nPASS typed error preserves existing volume and SYSTEM\nPASS typed unlock error preserves original failure\nPASS typed error preserves existing volume and SYSTEM\nPASS typed unlock error preserves original failure\nPASS typed error preserves existing volume and SYSTEM\nPASS SYSTEM screen authentication accepts valid secret\nPASS screen authentication never opens Private\nPASS SYSTEM screen authentication rejects bad secret\nPASS screen authentication never opens Private\nPASS new copies are blocked, readers drained, Trash cleared and late readers drained before Private closure\nPASS failed Trash cleanup evicts keys and powers off\nPASS busy volume evicts keys before shutdown\nPASS repeated closed-volume lock succeeds\nPASS download mode inhibits idle lock\nPASS manual lock overrides and clears download mode\nPASS concurrent lock request never enters shutdown path\nPASS sleep hook closes storage without a desktop service\nPASS resume never automatically unlocks Private\nPASS unresolved concurrent unlock at sleep fails closed\nAll synthetic storage and sleep-hook checks passed.\nPASS RAM Trash reader is identified independently of the Private block device\nPASS deleted-but-open RAM Trash reader is still identified\nPASS unrelated RAM handle is not a Private reader\n"
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit": 0,
+      "stdout": ""
+    },
+    {
+      "name": "Full build-input validation",
+      "result": "passed"
+    },
+    {
+      "name": "Final theme, actual Plymouth parser",
+      "result": "passed"
+    },
+    {
+      "name": "Changed Python/shell syntax",
+      "result": "passed"
+    },
+    {
+      "name": "Pinned RAM-copy hook and LightDM OnFailure guard",
+      "result": "passed",
+      "scope": "actual embedded hook code against public temporary copy and prior release service; no live/host configuration writes"
+    }
+  ],
+  "source_sha256": {
+    "config/includes.chroot/usr/local/lib/portable/wallpapers.py": "8c60a548403af41780aee1ec59c182c2e760813e01e029a7eb3decf9e98577a7",
+    "config/includes.chroot/usr/local/lib/portable/system_state.py": "d4f078e972100b5e0a2cb15d45386f559fbc224b16fd503a44c749c7ca6f270c",
+    "config/includes.chroot/usr/local/libexec/portable-wayland-wallpaper": "7776ac5c14a2694533c82a5029fa2ab585f2830d650601d155d115d813667cab",
+    "config/includes.chroot/usr/local/libexec/petalos-desktop-curtain": "07799e554d639b248698a9670ec42871e5479458343d95f711523a0345feaa2a",
+    "config/includes.chroot/usr/local/libexec/petalos-splash": "5f88b3dca49e71c716faeacc256f0480a919f1f15435ff2be8c0bbae13df312e",
+    "config/includes.chroot/usr/local/libexec/petalos-boot-error": "a2836840993a4b93d7e810db135989029c5bdf9ae3981ade02722dc0dc73eaf2",
+    "config/includes.chroot/usr/share/plymouth/themes/petalos/petalos.script": "4b5789edef2934fa09e767a76481e02a1b44d55a66cc7c2f16d20b13b7120f89",
+    "config/includes.chroot/etc/initramfs-tools/scripts/init-premount/portable-unlock": "3e62d3f15a00ea37de47f19cf37d23edaddf774f7c467269029a0053b0064695",
+    "config/hooks/live/0993-phase2-branding.hook.chroot": "99053a672679a168e0f52293aa99c58ca7336ee7aac9db7145f86335a47cb328",
+    "config/hooks/live/0990-brand-boot.hook.binary": "fb2af06e907c475162271f9ff3413e4130baa93e866ad8a21c8f712e8a2228bd",
+    "tests/boot_branding.py": "6d6180398e191600ce570f19499280a012f63e4e4e7a59714a565812b47d612c",
+    "tests/release_generations.py": "2dbab2540cce7588b20347a6ae3ab0f640542bf5d2fe15886fd0c6fbc0d7feef",
+    "tests/rebuild-release.py": "34364f0eb54792533e359cc8f61d756b5b6384e7a417aa8b1b3eb16e16c1629e"
+  }
+}

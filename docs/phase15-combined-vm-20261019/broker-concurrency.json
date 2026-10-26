@@ -1,0 +1,8 @@
+{
+  "fixture": "tests/phase15-repairs/broker-concurrency.py",
+  "VM": "20261019-220338-142131",
+  "exit": 0,
+  "seconds": 8.65,
+  "stdout": "{\"unrelated_app_launch_exit\": 0, \"unrelated_app_seconds\": 1.72, \"duplicate_launch_rejected\": true, \"duplicate_launch_seconds\": 3.21, \"cancel_exit\": 1, \"cancel_seconds\": 0.11, \"ordinary_user_cancel_succeeded\": true, \"cancelled_tor_worker_gone\": true, \"unrelated_app_remains_ready\": true, \"live_vpn_check_after_test\": true}\n",
+  "stderr": ""
+}

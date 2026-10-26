@@ -1,0 +1,27 @@
+From 2ca5f40625a051edb6a3695683351ad65d5359cf Mon Sep 17 00:00:00 2001
+From: Luke <no-reply@lukesgraphics.com>
+Date: Wed, 15 Apr 2026 09:33:12 -0500
+Subject: [PATCH] Add size validation for OP_SERVERMESSAGE packets
+
+Prevent out-of-bounds read when processing server messages 4 with size < 3, which would cause underflow on the buffer 5 allocation (size-1) and invalid memcpy from packet[2].
+
+Resolves #445
+---
+ src/ServerSocket.cpp | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/src/ServerSocket.cpp b/src/ServerSocket.cpp
+index 9a9ebaedd5..dc807afff6 100644
+--- a/src/ServerSocket.cpp
++++ b/src/ServerSocket.cpp
+@@ -236,6 +236,10 @@ bool CServerSocket::ProcessPacket(const uint8_t* packet, uint32 size, int8 opcod
+ 				/* Kry import of lugdunum 16.40 new features */
+ 				AddDebugLogLineN( logServer, wxT("Server: OP_SERVERMESSAGE") );
+ 
++				if (size < 3) {
++					throw wxString(wxT("Corrupt or invalid server message received (size too small)"));
++				}
++
+ 				theStats::AddDownOverheadServer(size);
+ 				char* buffer = new char[size-1];
+ 				memcpy(buffer,&packet[2],size-2);

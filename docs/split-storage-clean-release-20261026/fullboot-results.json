@@ -1,0 +1,54 @@
+{
+  "passed": true,
+  "base_release": "20261026-145911-818721",
+  "scope": "Clean live-build OS/RAM boot with unmodified production storage code",
+  "clean_release": true,
+  "provision": {
+    "stage": "full-provision",
+    "checks": {
+      "fresh_virtual_disk_only": true,
+      "base_rootfs_matches_completed_release": true,
+      "installed_real_rootfs_readback": true,
+      "clean_rootfs_without_runtime_overlay": true,
+      "full_image_provisioned_with_all_mappings_closed": true
+    },
+    "passed": true,
+    "single_system_prompt": false,
+    "acceleration": "kvm"
+  },
+  "boot": {
+    "stage": "full-boot",
+    "checks": {
+      "actual_live_root_and_home_in_ram": true,
+      "no_swap": true,
+      "runtime_matches_source_private_storage.py": true,
+      "runtime_matches_source_storage_layout.py": true,
+      "production_boot_captured_three_independent_volumes": true,
+      "os_mapping_closed_after_actual_toram": true,
+      "settings_ready_in_actual_live_os": true,
+      "private_closed_after_actual_boot": true,
+      "independent_settings_canary_readable": true,
+      "administrator_credential_in_settings_partition": true,
+      "system_screen_verifier_accepts_system": true,
+      "screen_verifier_rejects_private": true,
+      "screen_verifier_does_not_open_private": true,
+      "private_opens_with_own_passphrase_in_live_os": true,
+      "private_data_independent": true,
+      "private_reclosed_in_live_os": true
+    },
+    "passed": true,
+    "single_system_prompt": true,
+    "acceleration": "kvm"
+  },
+  "runtime_delta_sha256": null,
+  "runtime_files": {
+    "usr/local/lib/portable/private_storage.py": "ac3d5b4cd7b994a7f57998c182c5a67e1aa098a2d1c9f91193011eaff53594e2",
+    "usr/local/lib/portable/storage_layout.py": "2aa385917e4afbb43ad6c0191e04db6340559a8127dcaf7c00e1d2cfb4538c51"
+  },
+  "limits": [
+    "Direct kernel boot, not firmware/Secure Boot or graphical acceptance",
+    "Fast test-only PBKDF2, not production KDF validation",
+    "Test-only service/credentials appended to the verified clean production initrd",
+    "No physical media or pre-existing VM image modified"
+  ]
+}

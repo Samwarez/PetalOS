@@ -14,6 +14,8 @@ BASE = PROJECT.parent / "testing/petal-test.img"
 
 
 def main():
+    if not (PROJECT.parent / 'releases/20261011-171244-905383/manifest.json').is_file():
+        raise RuntimeError('Historical October 11 overlay preparation has been retired. Use the retained audit checkpoints or the current installer VM harness; no replacement image was selected.')
     if os.geteuid() == 0:
         raise RuntimeError("Run the coordinator as Sam.")
     runtime = Path(f"/run/user/{os.getuid()}")

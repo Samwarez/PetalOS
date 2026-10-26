@@ -1,0 +1,34 @@
+{
+  "builder": {
+    "image": "docker.io/library/debian:trixie-slim",
+    "manifest_sha256": "sha256:4876fdea29cac1a33a3195f1eb1952feb1fca7dd6dd00be3e2f1879cf20d34d2",
+    "layers": [
+      "sha256:f2be67225471500c788ce88c597eb5ea8336e912ad1ca4815650e0281afe2034"
+    ]
+  },
+  "component": {
+    "debian_package_version": "4.20.2-1+deb13u1",
+    "sources": {
+      "thunar_4.20.2.orig.tar.bz2": "71376f6d7ba4998943c412f374db16ec9b709610acd4d27ecb1eef3aca82af05",
+      "thunar_4.20.2-1+deb13u1.debian.tar.xz": "dbca892cd73420dd2446c3194af52181053978fa053ef4fcd63e80457164cd63"
+    },
+    "patch_sha256": {
+      "volatile-trash.patch": "039d2006fc50f801486d7f6c3df3cd8e32c3acdc86e109258c2c9a4d8e28137a",
+      "ram-trash.c": "44faf3071edd377f3e0788eb23e4206697fdbadcaefec1eeea9331fd4c4746af"
+    },
+    "binary_sha256": "5ed83ca8195406fdfa32ac6f78c445c9add4001d58773a610614212b2321dd8c",
+    "Debian_patches_applied": true,
+    "make_check": "passed",
+    "make_check_test_count": 0,
+    "builder_sha256": "e2d3a7360f3a991047fe6a0f877373e39b6ee3ab4a6e09e6251c427f19422a94",
+    "build_flags": {
+      "CFLAGS": "-g -O2 -Werror=implicit-function-declaration -ffile-prefix-map=/build=. -fstack-protector-strong -fstack-clash-protection -Wformat -Werror=format-security -fcf-protection",
+      "CPPFLAGS": "-Wdate-time -D_FORTIFY_SOURCE=2",
+      "LDFLAGS": "-Wl,-z,relro -Wl,-z,now -Wl,-O1 -Wl,-z,defs"
+    },
+    "scope": "normal Thunar Private Trash dispatch to an unprivileged RAM-copy helper"
+  },
+  "host_packages_installed": false,
+  "full_OS_build_started": false,
+  "host_mount_namespace_or_security_policy_changed": false
+}

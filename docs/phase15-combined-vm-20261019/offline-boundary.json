@@ -1,0 +1,8 @@
+{
+  "fixture": "tests/phase15-20261018/offline-boundary.py",
+  "VM": "20261019-220338-142131",
+  "exit": 0,
+  "seconds": 1.71,
+  "stdout": "{\"capabilities_zero\": true, \"desktop_can_read_new_mode0600_app_file\": true, \"hidden:/dev/mapper\": true, \"hidden:/dev/vda\": true, \"hidden:/home/Petal\": true, \"hidden:/mnt/system-state\": true, \"hidden:/run/dbus/system_bus_socket\": true, \"hidden:/run/user/1000\": true, \"hidden:/tmp/.X11-unix\": true, \"mode0600_file_owner\": 1000, \"network_denied:10\": true, \"network_denied:2\": true, \"no_new_privs\": true, \"privileged_wayland_protocols_hidden\": true, \"read_denied:/etc/shadow\": true, \"read_denied:/etc/wireguard/wg0.conf\": true, \"save_reopen\": true, \"usable_wayland_protocols\": true}\n",
+  "stderr": ""
+}

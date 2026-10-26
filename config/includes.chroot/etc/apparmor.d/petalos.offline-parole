@@ -2,7 +2,8 @@
 
 profile petalos_offline_parole flags=(attach_disconnected,mediate_deleted) {
   #include <abstractions/petalos-offline-common>
-  owner /mnt/ram/{,**} rwkl,
+  # Only this role's delegated content; desktop-owned files must be editable.
+  /mnt/ram/Documents/parole/{,**} rwkl,
   /mnt/private/Documents/parole/{,**} rwkl,
   deny network inet,
 }

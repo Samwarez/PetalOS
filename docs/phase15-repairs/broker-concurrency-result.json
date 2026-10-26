@@ -1,0 +1,18 @@
+{
+  "fixture": "tests/phase15-repairs/broker-concurrency.py",
+  "exit": 0,
+  "elapsed_seconds": 11.97,
+  "stderr": "",
+  "result": {
+    "unrelated_app_launch_exit": 0,
+    "unrelated_app_seconds": 1.61,
+    "duplicate_launch_rejected": true,
+    "duplicate_launch_seconds": 3.2,
+    "cancel_exit": 1,
+    "cancel_seconds": 4.03,
+    "ordinary_user_cancel_succeeded": true,
+    "cancelled_tor_worker_gone": true,
+    "unrelated_app_remains_ready": true,
+    "live_vpn_check_after_test": true
+  }
+}

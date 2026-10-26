@@ -1,0 +1,8 @@
+{
+  "fixture": "tests/phase15-repairs/startup-family-cleanup.py",
+  "VM": "20261019-220338-142131",
+  "exit": 0,
+  "seconds": 16.89,
+  "stdout": "{\"new_backend_removed\": true, \"existing_backend_preserved\": true}\n",
+  "stderr": ""
+}

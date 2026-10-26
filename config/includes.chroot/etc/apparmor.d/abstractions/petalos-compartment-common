@@ -1,6 +1,7 @@
   # The root broker supplies a separate real UID, mount/PID/IPC namespace,
   # RAM home, private display and no host buses before entering this policy.
   #include <abstractions/base>
+  #include <abstractions/petalos-no-persistent-trash>
   /usr/** mrix,
   /{,usr/}lib/** mr,
   /lib64/** mr,

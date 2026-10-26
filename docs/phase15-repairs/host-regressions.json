@@ -1,0 +1,17 @@
+{
+  "scope": "Host source regression fixtures; runtime outcomes are recorded separately.",
+  "scripts": {
+    "check-release-generations.py": "passed",
+    "check-startup-control.py": "passed",
+    "check-desktop-settings.py": "passed",
+    "check-desktop-helpers.py": "passed",
+    "check-vpn-connect-flow.py": "passed",
+    "check-credential-prompts.py": "passed",
+    "check-vpn-profile-gui.py": "passed",
+    "check-download-prepare.py": "passed"
+  },
+  "harness_updates": [
+    "VPN askpass delegates to the existing shared credential dialog.",
+    "Download preparation receives the current state-root environment and compares normalized Transmission settings semantically."
+  ]
+}

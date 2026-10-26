@@ -1,0 +1,9 @@
+{
+  "fixture": "tests/phase15-repairs/hide-content-mounts.py",
+  "exit": 0,
+  "elapsed_seconds": 0.94,
+  "stderr": "",
+  "result": {
+    "content_mount_display_hint_installed": true
+  }
+}

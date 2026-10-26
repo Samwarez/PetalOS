@@ -1,0 +1,84 @@
+{
+  "source": {
+    "files": {
+      "policykit-1_126-2.debian.tar.xz": "5b2b8c2b1b2e757e71fd740028be0bb3cc4cf532f826a0a8c0ea7c0ea1d4cfcc",
+      "policykit-1_126-2.dsc": "70d429b75e180af1cb69f452d3b42fd641c746eeed17686e1fe4075df6cee325",
+      "policykit-1_126.orig.tar.gz": "2814a7281989f6baa9e57bd33bbc5e148827e2721ccef22aaf28ab2b376068e8"
+    },
+    "version": "126-2",
+    "patch": {
+      "file": "polkit-cookie-bounds.patch",
+      "sha256": "a0f26f5c2c8bd30d47012010739bd3960642bca3322af9a7b04e4309942b1dcd"
+    },
+    "package_version": "126-2+petalos1"
+  },
+  "debs": {
+    "libpolkit-gobject-1-0_126-2+petalos1_amd64.deb": {
+      "sha256": "6b2370ec8ddae15aa2729ffd3ba52967fc3c05372111a42f3d7de0622cb6da60",
+      "package": "libpolkit-gobject-1-0",
+      "version": "126-2+petalos1"
+    },
+    "pkexec_126-2+petalos1_amd64.deb": {
+      "sha256": "5f5119da025e39c583669a505462e1c8578715cea0a845c32de67b4d06ffee42",
+      "package": "pkexec",
+      "version": "126-2+petalos1"
+    },
+    "libpolkit-agent-1-0_126-2+petalos1_amd64.deb": {
+      "sha256": "9a3541afed1b47b827797c124fcf78485961a981e02b44ac17760bbd4d6ed662",
+      "package": "libpolkit-agent-1-0",
+      "version": "126-2+petalos1"
+    },
+    "polkitd-dbgsym_126-2+petalos1_amd64.deb": {
+      "sha256": "759e28f9c65d7ba415fbc7f1e00640515032110ae0174f8998cb35020f32d0fe",
+      "package": "polkitd-dbgsym",
+      "version": "126-2+petalos1"
+    },
+    "gir1.2-polkit-1.0_126-2+petalos1_amd64.deb": {
+      "sha256": "26cea1ba77ee0e42ec1929600a8dc0a9e41a6b931d745ffc0a076c3d63f7d49c",
+      "package": "gir1.2-polkit-1.0",
+      "version": "126-2+petalos1"
+    },
+    "libpolkit-gobject-1-dev_126-2+petalos1_amd64.deb": {
+      "sha256": "3d2154de0e1570d80326d396b09aad7316d2c5951028f8ead02ad6b4b9948ac5",
+      "package": "libpolkit-gobject-1-dev",
+      "version": "126-2+petalos1"
+    },
+    "libpolkit-agent-1-dev_126-2+petalos1_amd64.deb": {
+      "sha256": "d860036696657894d6eb4cb2766d17df2e53c479b8f20a615f63e9bb0c6c17c5",
+      "package": "libpolkit-agent-1-dev",
+      "version": "126-2+petalos1"
+    },
+    "policykit-1-doc_126-2+petalos1_all.deb": {
+      "sha256": "3df2deecb076bee106263f5e25802b27038b5b2a82328365d3d11b581be7b69d",
+      "package": "policykit-1-doc",
+      "version": "126-2+petalos1"
+    },
+    "libpolkit-agent-1-0-dbgsym_126-2+petalos1_amd64.deb": {
+      "sha256": "c1049bea5f7a1730d61be02981f72129e9fcabc7bee5b921a009afeb4d918487",
+      "package": "libpolkit-agent-1-0-dbgsym",
+      "version": "126-2+petalos1"
+    },
+    "pkexec-dbgsym_126-2+petalos1_amd64.deb": {
+      "sha256": "59f7934575837261f062b5701b66ce7f4fe28f3086c773e5b576db0df2ba7615",
+      "package": "pkexec-dbgsym",
+      "version": "126-2+petalos1"
+    },
+    "libpolkit-gobject-1-0-dbgsym_126-2+petalos1_amd64.deb": {
+      "sha256": "d46cb97e06ff2783b7e4721b9ad03646bc2dbe14beebedca0155c632de50f23f",
+      "package": "libpolkit-gobject-1-0-dbgsym",
+      "version": "126-2+petalos1"
+    },
+    "polkitd_126-2+petalos1_amd64.deb": {
+      "sha256": "975b475c151cafa7a55857ac971b4bfec532f6d6c3e5c6a1280d879075da8373",
+      "package": "polkitd",
+      "version": "126-2+petalos1"
+    }
+  },
+  "Debian_build_completed_with_tests_enabled": true,
+  "architecture": "amd64",
+  "build_environment": {
+    "GIO_USE_VFS": "local",
+    "DEB_BUILD_OPTIONS": "parallel=4"
+  },
+  "regression_scope": "bounded source regressions; installed-package workflow tests are separate"
+}

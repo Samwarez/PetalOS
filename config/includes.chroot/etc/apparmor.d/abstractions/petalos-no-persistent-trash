@@ -1,0 +1,5 @@
+  # GIO's per-volume trash must not persist content/deletion metadata in
+  # Private, including app bind mounts with a different mount-table view.
+  # Normal Thunar Trash uses the separate unprivileged Private-to-RAM helper.
+  deny /mnt/private/.Trash{,/**,-*,-*/**} rwkl,
+  deny /mnt/private/**/.Trash{,/**,-*,-*/**} rwkl,

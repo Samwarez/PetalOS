@@ -1,0 +1,38 @@
+/* A complete light palette for this app, including popups on dark desktops. */
+* { color: #513646; text-shadow: none; -gtk-icon-shadow: none; }
+window, dialog, .background { background-color: #fff4f8; background-image: none; color: #513646; }
+headerbar { background: #ffe0ec; color: #513646; border-bottom: 1px solid #d8aabd; }
+label, label:backdrop { color: #513646; }
+.brand { font-size: 24px; font-weight: bold; color: #913057; }
+.subtitle { color: #694656; }
+.section { font-size: 17px; font-weight: bold; color: #8f315a; }
+.preview { background: #fbe1ec; border-radius: 8px; padding: 8px; color: #613748; }
+button, combobox button { background-image: none; background-color: #fff8fc; color: #593247; border: 1px solid #c68aa6; border-radius: 7px; padding: 6px 12px; box-shadow: none; }
+button:hover, combobox button:hover { background-color: #f8d8e7; color: #513646; }
+button:active, button:checked { background-color: #eed0df; color: #513646; }
+button.suggested-action, button.suggested-action label, button.suggested-action:backdrop label { background-color: #a8376a; color: #ffffff; border-color: #a8376a; }
+button.suggested-action:hover, button.suggested-action:hover label { background-color: #8f2857; color: #ffffff; }
+*:disabled, *:backdrop { opacity: 1; }
+button:disabled, button:disabled label, combobox:disabled button, combobox:disabled label { background-color: #f1e4eb; color: #725062; border-color: #cbb4c0; }
+entry, entry:backdrop, spinbutton { background-image: none; background-color: #ffffff; color: #513646; border: 1px solid #c68aa6; border-radius: 6px; caret-color: #6c2449; }
+entry:disabled { background-color: #f1e4eb; color: #725062; }
+menu, menu:backdrop, menuitem, popover, popover.background, treeview.view, treeview.view:backdrop, .cell { background-color: #fff8fc; background-image: none; color: #513646; }
+menuitem label, popover label, treeview.view label { color: #513646; }
+menuitem:hover, menuitem:hover label, menuitem:selected, menuitem:selected label, treeview.view:selected, treeview.view:selected:focus, .cell:selected { background-color: #8f2857; color: #ffffff; }
+menuitem:disabled, menuitem:disabled label { background-color: #f1e4eb; color: #725062; }
+selection, entry selection, textview text selection { background-color: #8f2857; color: #ffffff; }
+check, radio { background-image: none; background-color: #ffffff; border: 1px solid #b57493; color: #8f2857; }
+check:checked, radio:checked { background-color: #a8376a; color: #ffffff; }
+checkbutton:disabled label { color: #725062; }
+textview, textview text, textview:backdrop, textview text:backdrop, viewport { background-color: #fffafd; color: #513646; }
+notebook, notebook > stack { background-color: #fff4f8; }
+notebook header { background-color: #f6dce8; }
+notebook tab, notebook tab label { color: #684155; }
+notebook tab:checked { background-color: #fffafd; border-bottom: 3px solid #a8376a; }
+notebook tab:checked label { color: #513646; }
+progressbar trough { background-color: #ead0dd; border-radius: 6px; }
+progressbar progress { background-color: #a8376a; border-radius: 6px; }
+progressbar text { color: #513646; }
+scrollbar trough { background-color: #f6e6ee; }
+scrollbar slider { background-color: #bf7a9a; }
+tooltip, tooltip label { background-color: #613748; color: #ffffff; }

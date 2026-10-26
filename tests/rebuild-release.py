@@ -3,19 +3,88 @@
 from pathlib import Path
 import datetime
 import hashlib
+import io
 import json
 import os
 import re
 import shutil
 import subprocess
 import sys
+import tempfile
+import tarfile
 
 PROJECT = Path(__file__).resolve().parents[1]
 LOG_LIMIT = 2 * 1024 * 1024
 
 
-def validate_inputs(config):
+def validate_split_storage(config):
     includes = config / 'includes.chroot'
+    installer = config / 'hooks/live/0080-split-storage.hook.chroot'
+    initrd_hook = includes / 'etc/initramfs-tools/hooks/petalos-split-storage'
+    if not installer.is_file() or not os.access(installer, os.X_OK):
+        raise RuntimeError('Missing executable early split-storage installation hook.')
+    if not initrd_hook.is_file() or not os.access(initrd_hook, os.X_OK):
+        raise RuntimeError('Missing executable split-storage initramfs hook.')
+    # Local initramfs hooks are already present when live-build runs its shell
+    # hooks. Installing the helper at 0992 was too late for the 0912 refresh.
+    for hook in (config / 'hooks/live').glob('*.hook.chroot'):
+        commands = '\n'.join(line for line in hook.read_text().splitlines()
+                             if line.strip() and not line.lstrip().startswith('#'))
+        if re.search(r'\b(?:update-initramfs|mkinitramfs)\b', commands) and hook.name <= installer.name:
+            raise RuntimeError('Split-storage helper must be installed before initramfs refresh: ' + hook.name)
+    pair = includes/'usr/local/share/portable/native-split-unlock'
+    pair_meta = json.loads((pair/'provenance.json').read_text())
+    if (pair_meta.get('source_sha256') != digest(PROJECT/'local/split-unlock/unlock-pair.c')
+        or pair_meta.get('builder_sha256') != digest(PROJECT/'local/split-unlock/build.py')
+        or pair_meta.get('binary_sha256') != digest(pair/'portable-unlock-pair')):
+        raise RuntimeError('Rebuild the reviewed split-storage unlock helper before building PetalOS.')
+
+
+def validate_inputs(config):
+    validate_split_storage(config)
+    includes = config / 'includes.chroot'
+    dock=includes/'usr/local/share/portable/native-crystal-dock'
+    meta=json.loads((dock/'provenance.json').read_text())
+    if (meta.get('version')!='2.16' or meta.get('ctest')!='passed'
+            or meta.get('binary_sha256')!=digest(dock/'crystal-dock')
+            or meta.get('patch_sha256')!=digest(PROJECT/'local/crystal-dock/petalos-integration.patch')
+            or meta.get('builder_sha256')!=digest(PROJECT/'local/crystal-dock/build.py')):
+        raise RuntimeError('Rebuild the reviewed Crystal Dock component before building PetalOS.')
+    graphics=includes/'usr/share/portable/branding/assets.json'
+    supplied=json.loads(graphics.read_text())
+    for name,expected in supplied['sha256'].items():
+        if not re.fullmatch(r'(?:(?:wallpaper|boot)/[A-Za-z0-9][A-Za-z0-9_.-]*\.png|grub\.png)',name):
+            raise RuntimeError('Unexpected branding asset path.')
+        if name.startswith('wallpaper/'):
+            path=includes/'usr/share/backgrounds/petalos-defaults'/name.split('/',1)[1]
+        elif name.startswith('boot/'):
+            path=includes/'usr/share/plymouth/themes/petalos'/name.split('/',1)[1]
+        elif name=='grub.png':path=graphics.parent/name
+        else:raise RuntimeError('Unexpected branding asset path.')
+        if not re.fullmatch(r'[a-f0-9]{64}',expected) or digest(path)!=expected:
+            raise RuntimeError('Supplied branding asset checksum mismatch.')
+    # A changed Thunar dispatch must be rebuilt, not paired with a stale binary.
+    thunar=includes/'usr/local/share/portable/native-thunar'
+    provenance=json.loads((thunar/'provenance.json').read_text())
+    if (provenance.get('debian_package_version')!='4.20.2-1+deb13u1'
+            or provenance.get('builder_sha256')!=digest(PROJECT/'local/thunar-native/build.py')
+            or provenance.get('binary_sha256')!=digest(thunar/'Thunar')
+            or provenance.get('make_check')!='passed'
+            or provenance.get('patch_sha256')!={name:digest(PROJECT/'local/thunar-native'/name)
+                                               for name in ('volatile-trash.patch','ram-trash.c')}):
+        raise RuntimeError('Rebuild the reviewed native Thunar inputs before building PetalOS.')
+    # Pinned public Debian backports are generated inputs, not arbitrary debs.
+    backports=includes/'usr/local/share/portable/security-backports'
+    expected=json.loads((PROJECT/'local/security-backports/sources.json').read_text())
+    manifest=json.loads((backports/'manifest.json').read_text())
+    if manifest.get('format')!=1 or manifest.get('sources')!=expected:
+        raise RuntimeError('Security backport inputs do not match reviewed sources.')
+    for entry in manifest['packages']:
+        if Path(entry['file']).name!=entry['file'] or not entry['file'].endswith('.deb'):
+            raise RuntimeError('Unexpected security package input path.')
+        archive=backports/entry['file']
+        if archive.is_symlink() or digest(archive)!=entry['sha256']:
+            raise RuntimeError('Security backport archive checksum mismatch.')
     loader = (includes / 'etc/systemd/system/portable-apparmor.service').read_text()
     for profile in (includes / 'etc/apparmor.d').glob('petalos.*'):
         if profile.name != 'petalos.wayland-probe' and '/etc/apparmor.d/' + profile.name not in loader.split():
@@ -110,6 +179,154 @@ def seed_package_cache(stage):
     print(f"Total reusable public package archives: {count}.", flush=True)
 
 
+def verify_release(release, state):
+    stage = release/'build'
+    validate_inputs(stage/'config')
+    squashfs = stage / "binary/live/filesystem.squashfs"
+    verification_paths = (
+        'usr/local/sbin/portable-check-vpn', 'usr/local/sbin/portable-vpn',
+        'usr/local/sbin/portable-check-tor-ready',
+        'usr/local/bin/portable-tor', 'usr/local/bin/portable-offline',
+        'usr/local/bin/portable-pan', 'usr/local/bin/portable-desktop',
+        'usr/lib/live/config/0015-petal-account', 'usr/lib/live/config/0055-petal-auth',
+        'usr/lib/live/config/0056-petal-private',
+        'etc/live/config.conf.d/10-petal-account.conf', 'etc/hostname',
+        'usr/lib/live/config/1085-petal-polkit',
+        'etc/polkit-1/rules.d/00-petal-admin.rules',
+        'etc/NetworkManager/conf.d/90-portable-dns.conf',
+        'etc/bluetooth/main.conf',
+        'etc/xdg/mimeapps.list', 'etc/xdg/xfce4/helpers.rc',
+        'usr/share/xfce4/helpers/portable-tor.desktop',
+        'usr/share/applications/firefox-esr.desktop',
+        'usr/share/applications/portable-tor.desktop',
+        'usr/local/bin/portable-web-browser',
+        'etc/os-release', 'usr/lib/os-release',
+        'usr/local/lib/portable/system_state.py',
+        'usr/local/lib/portable/desktop_settings.py',
+        'usr/local/lib/portable/volatile_trash.py',
+        'usr/local/bin/portable-trash',
+        'usr/local/bin/portable-lock',
+        'usr/local/sbin/portable-lock-auth',
+        'etc/lightdm/lightdm.conf.d/99-petalos-wayland.conf',
+        'etc/sudoers.d/zz-petal-readchecks',
+        'etc/apparmor.d/petalos.offline',
+        'etc/apparmor.d/abstractions/petalos-offline-common',
+        'etc/apparmor.d/petalos.torbrowser.Browser.firefox',
+        'etc/apparmor.d/petalos.torbrowser.Tor.tor',
+        'etc/systemd/system/portable-apparmor.service',
+        'etc/systemd/system/portable-telemetry.timer',
+        'etc/NetworkManager/conf.d/95-portable-privacy.conf',
+        'etc/sysctl.d/95-portable-hardening.conf',
+    )
+    for relative in verification_paths:
+        actual = subprocess.check_output(
+            ["/usr/bin/unsquashfs", "-cat", str(squashfs), relative]
+        )
+        if actual != (stage / "config/includes.chroot" / relative).read_bytes():
+            raise RuntimeError("Built configuration differs from staged input; contents suppressed.")
+    listing = subprocess.check_output(
+        ["/usr/bin/unsquashfs", "-ll", str(squashfs)], text=True
+    )
+    if ".portable-keys" in listing or re.search(r"/data\.key$", listing, re.M):
+        raise RuntimeError("Forbidden data-unlock key path in squashfs.")
+    packages = subprocess.check_output(['/usr/bin/unsquashfs', '-cat', str(squashfs),
+                                        'var/lib/dpkg/status'], text=True)
+    if re.search(r'^Package: (?:vlc\S*|libvlc\S*)$', packages, re.M):
+        raise RuntimeError('VLC packages remain in the release.')
+    if re.search(r'^Package: synaptic$', packages, re.M):
+        raise RuntimeError('Synaptic remains in the release.')
+    installed_versions={}
+    for stanza in packages.split('\n\n'):
+        fields=dict(line.split(': ',1) for line in stanza.splitlines()
+                    if line and not line[0].isspace() and ': ' in line)
+        if fields.get('Status')=='install ok installed':
+            installed_versions[fields['Package']]=fields['Version']
+    backport_root=stage/'config/includes.chroot/usr/local/share/portable/security-backports'
+    backport_manifest=json.loads((backport_root/'manifest.json').read_text())
+    critical={'amule':'usr/bin/amule','libxml2':'usr/lib/x86_64-linux-gnu/libxml2.so.2.9.14',
+              'polkitd':'usr/lib/polkit-1/polkit-agent-helper-1',
+              'libpoppler147':'usr/lib/x86_64-linux-gnu/libpoppler.so.147.0.0'}
+    for entry in backport_manifest['packages']:
+        name=entry['package'];version=installed_versions.get(name)
+        if version is None:
+            if name in critical:raise RuntimeError('Required security package missing from image.')
+            continue
+        if subprocess.run(['dpkg','--compare-versions',version,'ge',entry['version']]).returncode:
+            raise RuntimeError('Image contains an older dependency than the reviewed security repair.')
+        if name in critical and version==entry['version']:
+            payload=subprocess.check_output(['dpkg-deb','--fsys-tarfile',str(backport_root/entry['file'])])
+            with tarfile.open(fileobj=io.BytesIO(payload)) as archive:
+                member=archive.getmember('./'+critical[name])
+                if not member.isfile():raise RuntimeError('Security executable is not a regular package file.')
+                expected=archive.extractfile(member).read()
+            target=critical[name]+('.portable-real' if name=='amule' else '')
+            actual=subprocess.check_output(['unsquashfs','-cat',str(squashfs),target])
+            if actual!=expected:raise RuntimeError('Security executable differs from reviewed package.')
+    cups = subprocess.check_output(['/usr/bin/unsquashfs', '-cat', str(squashfs),
+                                    'etc/cups/cupsd.conf'], text=True)
+    directives = [line.split() for line in cups.splitlines() if line.strip() and not line.lstrip().startswith('#')]
+    listeners = [line for line in directives if line[0] in ('Listen', 'Port')]
+    if (listeners != [['Listen', '/run/cups/cups.sock']] or
+            ['Browsing', 'Off'] not in directives or ['WebInterface', 'No'] not in directives):
+        raise RuntimeError('Manual printing has unexpected network exposure.')
+    if re.search(r'/usr/bin/vlc(?:\.portable-real)?$', listing, re.M):
+        raise RuntimeError('VLC executable remains in the release.')
+    # Check every explicit public file, without extracting unrelated OS files.
+    public = stage/'config/includes.chroot'
+    removed_debs={'usr/local/share/portable/security-backports/'+entry['file']
+                  for entry in backport_manifest['packages']}
+    paths = sorted(str(path.relative_to(public)) for path in public.rglob('*')
+                   if path.is_file() and str(path.relative_to(public)) not in removed_debs)
+    # The native-player hook installs this verified staging artifact into
+    # the diverted executable and removes the redundant staging copy.
+    installed_paths = {
+        'usr/local/share/portable/native-parole/parole': 'usr/bin/parole.portable-real',
+        'usr/local/share/portable/native-conky/conky': 'usr/bin/conky',
+        'usr/local/share/portable/native-keepassxc/keepassxc': 'usr/bin/keepassxc.portable-real',
+        'usr/local/share/portable/native-keepassxc/keepassxc-cli': 'usr/bin/keepassxc-cli',
+        'usr/local/share/portable/native-thunar/Thunar': 'usr/bin/Thunar',
+        'usr/local/share/portable/native-crystal-dock/crystal-dock': 'usr/bin/crystal-dock',
+    }
+    with tempfile.TemporaryDirectory(prefix='public-artifact-check-', dir=state) as directory:
+        extracted = Path(directory)/'root'
+        subprocess.run(['/usr/bin/unsquashfs','-no-progress','-no-xattrs','-d',str(extracted),
+                        str(squashfs),*[installed_paths.get(path, path) for path in paths]],
+                       check=True,stdout=subprocess.DEVNULL)
+        for relative in paths:
+            if (extracted/installed_paths.get(relative, relative)).read_bytes() != (public/relative).read_bytes():
+                raise RuntimeError('Public build input differs in final artifact: '+relative+'; contents suppressed.')
+    checked = 0
+    for bootfile in (stage/'binary').rglob('*.cfg'):
+        if bootfile.is_symlink():continue
+        for line in bootfile.read_text(errors='replace').splitlines():
+            words = line.strip().split()
+            if words and words[0] in ('linux','linuxefi','append') and 'boot=live' in words:
+                if not {'toram','swap=false','init_on_alloc=1','init_on_free=1'} <= set(words):
+                    raise RuntimeError('Generated bootloader lacks required RAM/zeroing options.')
+                checked += 1
+    if not checked:raise RuntimeError('No generated live bootloader entry verified.')
+    initrd_listing=set(subprocess.check_output(['/usr/bin/lsinitramfs',str(stage/'binary/live/initrd.img')],text=True).splitlines())
+    required={'scripts/init-premount/portable-unlock','scripts/panic/plymouth',
+              'usr/share/plymouth/themes/petalos/petalos.script'}
+    if not {'bin/portable-unlock-pair', 'usr/bin/portable-unlock-pair'} & initrd_listing:
+        raise RuntimeError('Final initramfs is missing the split-storage unlock helper.')
+    required.update('usr/share/plymouth/themes/petalos/'+name.split('/',1)[1]
+                    for name in json.loads((public/'usr/share/portable/branding/assets.json').read_text())['sha256']
+                    if name.startswith('boot/'))
+    if (not required<=initrd_listing or
+            not {'bin/petalos-splash','usr/bin/petalos-splash'}&initrd_listing):
+        raise RuntimeError('Final initramfs is missing PetalOS branding/unlock components.')
+    print(f"Verified {len(paths)} public files and {checked} live bootloader entries.",flush=True)
+    outputs = ("binary/live/vmlinuz", "binary/live/initrd.img",
+               "binary/live/filesystem.squashfs", "live-image-amd64.hybrid.iso",
+               "binary/boot/grub/petalos/grub.png", "binary/boot/grub/petalos/theme.txt",
+               "binary/boot/grub/petalos/unicode.pf2")
+    manifest = {name: {"sha256": digest(stage / name),
+                       "bytes": (stage / name).stat().st_size}
+                for name in outputs}
+    (release / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
+
+
 def main():
     if os.geteuid() == 0:
         raise RuntimeError("Run this coordinator as Sam, not root.")
@@ -174,100 +391,7 @@ def main():
         update("building")
         run(["/usr/bin/sudo", "--", "/usr/bin/lb", "build"])
         update("verifying")
-        squashfs = stage / "binary/live/filesystem.squashfs"
-        verification_paths = (
-            'usr/local/sbin/portable-check-vpn', 'usr/local/sbin/portable-vpn',
-            'usr/local/sbin/portable-check-tor-ready',
-            'usr/local/bin/portable-tor', 'usr/local/bin/portable-offline',
-            'usr/local/bin/portable-pan', 'usr/local/bin/portable-desktop',
-            'usr/lib/live/config/0015-petal-account', 'usr/lib/live/config/0055-petal-auth',
-            'usr/lib/live/config/0056-petal-private',
-            'etc/live/config.conf.d/10-petal-account.conf', 'etc/hostname',
-            'usr/lib/live/config/1085-petal-polkit',
-            'etc/polkit-1/rules.d/00-petal-admin.rules',
-            'etc/NetworkManager/conf.d/90-portable-dns.conf',
-            'etc/bluetooth/main.conf',
-            'etc/xdg/mimeapps.list', 'etc/xdg/xfce4/helpers.rc',
-            'usr/share/xfce4/helpers/portable-tor.desktop',
-            'usr/share/applications/firefox-esr.desktop',
-            'usr/share/applications/portable-tor.desktop',
-            'usr/local/bin/portable-web-browser',
-            'etc/os-release', 'usr/lib/os-release',
-            'usr/local/lib/portable/system_state.py',
-            'usr/local/lib/portable/desktop_settings.py',
-            'usr/local/bin/portable-lock',
-            'usr/local/sbin/portable-lock-auth',
-            'etc/lightdm/lightdm.conf.d/99-petalos-wayland.conf',
-            'etc/sudoers.d/zz-petal-readchecks',
-            'etc/apparmor.d/petalos.offline',
-            'etc/apparmor.d/abstractions/petalos-offline-common',
-            'etc/apparmor.d/petalos.torbrowser.Browser.firefox',
-            'etc/apparmor.d/petalos.torbrowser.Tor.tor',
-            'etc/systemd/system/portable-apparmor.service',
-            'etc/systemd/system/portable-telemetry.timer',
-            'etc/NetworkManager/conf.d/95-portable-privacy.conf',
-            'etc/sysctl.d/95-portable-hardening.conf',
-        )
-        for relative in verification_paths:
-            actual = subprocess.check_output(
-                ["/usr/bin/unsquashfs", "-cat", str(squashfs), relative]
-            )
-            if actual != (stage / "config/includes.chroot" / relative).read_bytes():
-                raise RuntimeError("Built configuration differs from staged input; contents suppressed.")
-        listing = subprocess.check_output(
-            ["/usr/bin/unsquashfs", "-ll", str(squashfs)], text=True
-        )
-        if ".portable-keys" in listing or re.search(r"/data\.key$", listing, re.M):
-            raise RuntimeError("Forbidden data-unlock key path in squashfs.")
-        packages = subprocess.check_output(['/usr/bin/unsquashfs', '-cat', str(squashfs),
-                                            'var/lib/dpkg/status'], text=True)
-        if re.search(r'^Package: (?:vlc\S*|libvlc\S*)$', packages, re.M):
-            raise RuntimeError('VLC packages remain in the release.')
-        if re.search(r'^Package: synaptic$', packages, re.M):
-            raise RuntimeError('Synaptic remains in the release.')
-        cups = subprocess.check_output(['/usr/bin/unsquashfs', '-cat', str(squashfs),
-                                        'etc/cups/cupsd.conf'], text=True)
-        directives = [line.split() for line in cups.splitlines() if line.strip() and not line.lstrip().startswith('#')]
-        listeners = [line for line in directives if line[0] in ('Listen', 'Port')]
-        if (listeners != [['Listen', '/run/cups/cups.sock']] or
-                ['Browsing', 'Off'] not in directives or ['WebInterface', 'No'] not in directives):
-            raise RuntimeError('Manual printing has unexpected network exposure.')
-        if re.search(r'/usr/bin/vlc(?:\.portable-real)?$', listing, re.M):
-            raise RuntimeError('VLC executable remains in the release.')
-        # Check every explicit public file, without extracting unrelated OS files.
-        public = stage/'config/includes.chroot'
-        paths = sorted(str(path.relative_to(public)) for path in public.rglob('*') if path.is_file())
-        # The native-player hook installs this verified staging artifact into
-        # the diverted executable and removes the redundant staging copy.
-        installed_paths = {
-            'usr/local/share/portable/native-parole/parole': 'usr/bin/parole.portable-real',
-            'usr/local/share/portable/native-conky/conky': 'usr/bin/conky',
-        }
-        extracted = state/'public-artifact-check'
-        subprocess.run(['/usr/bin/unsquashfs','-no-progress','-no-xattrs','-d',str(extracted),
-                        str(squashfs),*[installed_paths.get(path, path) for path in paths]],
-                       check=True,stdout=subprocess.DEVNULL)
-        for relative in paths:
-            if (extracted/installed_paths.get(relative, relative)).read_bytes() != (public/relative).read_bytes():
-                raise RuntimeError('Public build input differs in final artifact; contents suppressed.')
-        shutil.rmtree(extracted)
-        checked = 0
-        for bootfile in (stage/'binary').rglob('*.cfg'):
-            if bootfile.is_symlink():continue
-            for line in bootfile.read_text(errors='replace').splitlines():
-                words = line.strip().split()
-                if words and words[0] in ('linux','linuxefi','append') and 'boot=live' in words:
-                    if not {'toram','swap=false','init_on_alloc=1','init_on_free=1'} <= set(words):
-                        raise RuntimeError('Generated bootloader lacks required RAM/zeroing options.')
-                    checked += 1
-        if not checked:raise RuntimeError('No generated live bootloader entry verified.')
-        print(f"Verified {len(paths)} public files and {checked} live bootloader entries.",flush=True)
-        outputs = ("binary/live/vmlinuz", "binary/live/initrd.img",
-                   "binary/live/filesystem.squashfs", "live-image-amd64.hybrid.iso")
-        manifest = {name: {"sha256": digest(stage / name),
-                           "bytes": (stage / name).stat().st_size}
-                    for name in outputs}
-        (release / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
+        verify_release(release, state)
         update("complete")
         print("Build and artifact verification completed. Existing image preserved.")
     except BaseException:
@@ -278,7 +402,22 @@ def main():
 if __name__ == "__main__":
     os.umask(0o077)
     try:
-        main()
+        if len(sys.argv) == 1:
+            main()
+        elif len(sys.argv) == 3 and sys.argv[1] == '--verify-existing':
+            if os.geteuid() == 0:
+                raise RuntimeError('Run verification as Sam, not root.')
+            release = Path(sys.argv[2]).resolve(strict=True)
+            if release.parent != PROJECT.parent/'releases':
+                raise RuntimeError('Expected an existing project release directory.')
+            state = Path(f'/run/user/{os.getuid()}/petalos-build')/release.name
+            if state.stat().st_uid != os.getuid():
+                raise RuntimeError('Unexpected verification-directory owner.')
+            verify_release(release, state)
+            (state/'status.json').write_text(json.dumps({'phase':'complete','release':str(release)}))
+            print('Build and artifact verification completed. Existing image preserved.')
+        else:
+            raise RuntimeError('Usage: rebuild-release.py [--verify-existing RELEASE]')
     except Exception as error:
         print(str(error), file=sys.stderr)
         sys.exit(1)

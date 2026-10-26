@@ -1,0 +1,6 @@
+#!/bin/sh
+set -eu
+PREREQ="plymouth"
+case "${1:-}" in prereqs) echo "$PREREQ"; exit 0;; esac
+. /usr/share/initramfs-tools/hook-functions
+copy_file script /usr/local/libexec/petalos-splash /bin/petalos-splash

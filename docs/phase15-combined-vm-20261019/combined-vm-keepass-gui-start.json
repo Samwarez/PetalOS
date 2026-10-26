@@ -1,0 +1,8 @@
+{
+  "fixture": "tests/combined-vm-keepass-gui-start.py",
+  "VM": "20261019-220338-142131",
+  "exit": 0,
+  "seconds": 3.83,
+  "stdout": "{\"new_synthetic_Private_database_created\": true, \"actual_KeePassXC_window_ready\": true, \"desktop_owns_new_database\": true}\n",
+  "stderr": ""
+}

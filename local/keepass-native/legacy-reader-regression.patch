@@ -1,0 +1,49 @@
+Subject: Verify imported KDB lookup tables contain only live entries
+
+--- a/src/format/KeePass1Reader.h
++++ b/src/format/KeePass1Reader.h
+@@ -30,6 +30,7 @@
+ class KeePass1Reader
+ {
+     Q_DECLARE_TR_FUNCTIONS(KeePass1Reader)
++    friend class TestKeePass1Reader;
+ 
+ public:
+     KeePass1Reader();
+--- a/tests/TestKeePass1Reader.h
++++ b/tests/TestKeePass1Reader.h
+@@ -31,6 +31,7 @@
+ private slots:
+     void initTestCase();
+     void testBasic();
++    void testNoDeletedMetastreamReferences();
+     void testMasterKey();
+     void testCustomIcons();
+     void testGroupExpanded();
+--- a/tests/TestKeePass1Reader.cpp
++++ b/tests/TestKeePass1Reader.cpp
+@@ -44,6 +44,24 @@
+     QVERIFY(!reader.hasError());
+ }
+ 
++void TestKeePass1Reader::testNoDeletedMetastreamReferences()
++{
++    KeePass1Reader reader;
++    auto db = reader.readDatabase(QString(KEEPASSX_TEST_DATA_DIR).append("/basic.kdb"), "masterpw", 0);
++    QVERIFY(db);
++    // The public upstream fixture includes custom-icon metadata. Metastreams
++    // are deleted during import; later streams must not retain their pointers.
++    const auto live = db->rootGroup()->entriesRecursive();
++    QCOMPARE(reader.m_entryUuids.size(), live.size());
++    QCOMPARE(reader.m_entryGroupIds.size(), live.size());
++    for (Entry* entry : reader.m_entryUuids) {
++        QVERIFY(live.contains(entry));
++    }
++    for (Entry* entry : reader.m_entryGroupIds.keys()) {
++        QVERIFY(live.contains(entry));
++    }
++}
++
+ void TestKeePass1Reader::testBasic()
+ {
+     QVERIFY(m_db->deletedObjects().isEmpty());

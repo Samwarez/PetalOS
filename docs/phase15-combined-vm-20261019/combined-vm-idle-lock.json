@@ -1,0 +1,8 @@
+{
+  "fixture": "tests/combined-vm-idle-lock.py",
+  "VM": "20261019-220338-142131",
+  "exit": 1,
+  "seconds": 38.77,
+  "stdout": "",
+  "stderr": "Traceback (most recent call last):\n  File \"<string>\", line 18, in <module>\n    r = subprocess.run(pre+['/usr/local/bin/portable-lock','--idle'], env=env, capture_output=True, timeout=35)\n  File \"/usr/lib/python3.13/subprocess.py\", line 556, in run\n    stdout, stderr = process.communicate(input, timeout=timeout)\n                     ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.13/subprocess.py\", line 1222, in communicate\n    stdout, stderr = self._communicate(input, endtime, timeout)\n                     ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.13/subprocess.py\", line 2129, in _communicate\n    self._check_timeout(endtime, orig_timeout, stdout, stderr)\n    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.13/subprocess.py\", line 1269, in _check_timeout\n    raise TimeoutExpired(\n    ...<2 lines>...\n            stderr=b''.join(stderr_seq) if stderr_seq else None)\nsubprocess.TimeoutExpired: Command '['setpriv', '--reuid=1000', '--regid=1000', '--clear-groups', '--', '/usr/local/bin/portable-lock', '--idle']' timed out after 35 seconds\n"
+}

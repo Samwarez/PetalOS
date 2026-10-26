@@ -1,0 +1,62 @@
+{
+  "checked_at": "2026-10-24T17:36:22.995982+00:00",
+  "source_sha256": {
+    "local/split-unlock/unlock-pair.c": "ee2e7da93cb8ff7a431d1564e00872f903be3bfd71874576c619186439f0392f",
+    "local/split-unlock/build.py": "b1376cc57ffa02203cc4322dbd0600675de1f1a1ba488f1570d076fbcbc6e71d",
+    "config/includes.chroot/etc/initramfs-tools/scripts/init-premount/portable-unlock": "a0e246e638262a73aa9a255c8d3c629bb06430c4044303ab3528764f62805647",
+    "config/includes.chroot/usr/local/lib/portable/private_storage.py": "ac3d5b4cd7b994a7f57998c182c5a67e1aa098a2d1c9f91193011eaff53594e2",
+    "config/includes.chroot/usr/local/lib/portable/storage_layout.py": "2aa385917e4afbb43ad6c0191e04db6340559a8127dcaf7c00e1d2cfb4538c51",
+    "local/installer/petal_installer/layout2.py": "7f47e02300fd7252fb75f1d8e3378d419a0dbab3b1f6a235a2b740f837602366",
+    "local/installer/petal_installer/plans.py": "cab8bff3d429df22b1b4b6b438fd87bdc071e5e9a6205a4b53c81cd1f5a9e2e2",
+    "local/installer/petal_installer/recovery.py": "dc504d73799e270c6b39402d1342991c8430a2cf960008f09084b9fcbf770c20",
+    "local/installer/petal_installer/store.py": "b0c944534ae98684ce8002f1c4eaa347d972ca19a3a7bd91a5b6190fa517b529",
+    "tests/release_generations.py": "ff6c7fbea2ff6c16629eeeaee409b55aadca728ef3a5432699768d0dd350ff04",
+    "tests/run-split-storage-vm.py": "0bee39e64e336f0a269a4ce89452767286b1399742d42ffb9f8a1a3ec128a657",
+    "tests/split-storage-guest.py": "e8154ee69db25c6283fce6115338213c0e7ef13ec452fec0953a15cbb30616a3",
+    "tests/run-split-fullboot-vm.py": "1d5f5811844c38b9170e27c48c32c2cd720ee621abcf7fef7a0b0ad88975cddd",
+    "tests/split-fullboot-guest.py": "3a54e81db175490579a41b077605ac886485c71583fcb4fa029b190699860250"
+  },
+  "unit_tests": {
+    "installer": {
+      "passed": true,
+      "test_count": 20
+    },
+    "native_unlock": {
+      "passed": true,
+      "groups": 4
+    },
+    "boot_shell": {
+      "passed": true,
+      "legacy_and_split": true
+    },
+    "private_controller": {
+      "passed": true
+    },
+    "generation_faults": {
+      "passed": true,
+      "layouts": [
+        1,
+        2
+      ]
+    },
+    "build_input_validation": {
+      "passed": true
+    },
+    "gui_css": {
+      "parsed": true,
+      "visual_acceptance": false,
+      "reason": "No usable graphical display in this environment"
+    }
+  },
+  "focused_vm_report": "split-storage-vm-results-20261024.json",
+  "full_live_os_report": "split-storage-fullboot-results-20261024.json",
+  "physical_media_modified": false,
+  "clean_live_build_completed": false,
+  "installer_physical_executor_enabled": false,
+  "github_catalog_downloads_live_validated": false,
+  "prior_snapshots": [
+    "before-cli-installer-20261024-141100.tar.gz",
+    "before-split-storage-20261024-142444.tar.gz"
+  ],
+  "post_vm_unit_tested_change": "Offline import descriptor pinning; on-volume protocol unchanged. Direct/prefixed console parsing regression covered."
+}

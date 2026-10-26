@@ -17,6 +17,8 @@ BASE = TESTING / "petal-test.img"
 
 
 def main():
+    if not (RELEASE / 'manifest.json').is_file():
+        raise RuntimeError('Historical October 11 ISO fixture has been retired. Use tests/audit-vm.py with a retained audit state, or tests/run-installer-engine-vm.py with a reviewed release.')
     if os.geteuid() == 0:
         raise RuntimeError("QEMU must run as the normal user.")
     if not os.access("/dev/kvm", os.R_OK | os.W_OK):

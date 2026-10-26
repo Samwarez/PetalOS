@@ -33,6 +33,9 @@
 *~
 /config/includes.chroot/usr/local/share/portable/native-parole/
 /config/includes.chroot/usr/local/share/portable/native-conky/
+/config/includes.chroot/usr/local/share/portable/native-keepassxc/
+/config/includes.chroot/usr/local/share/portable/native-thunar/
+/config/includes.chroot/usr/local/share/portable/security-backports/
 
 # Images, archives, backups, firmware-variable files and filesystem mounts.
 *.iso
@@ -103,3 +106,6 @@ wg*.conf
 # PETALOS-HANDOFF.md is an intentionally untracked local conversation record.
 # Public verification keys and authored fixture scripts are maintained inputs;
 # private/access keys and generated fixture credentials are not.
+# Regenerated pinned Crystal Dock executable/provenance.
+/config/includes.chroot/usr/local/share/portable/native-crystal-dock/
+/config/includes.chroot/usr/local/share/portable/native-split-unlock/

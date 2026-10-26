@@ -1,0 +1,30 @@
+{
+  "release": "20261019-211301-083244",
+  "initial_source_revision": "04425fed8ad4e0594e3f4bea00da73f23218f699",
+  "launcher_repair_patch_sha256": "a34cca581bb76c9b6df843265f646a6c45f48e3f018372be2d0632edfbbafff0",
+  "artifact_verification": "passed",
+  "verified_public_files": 218,
+  "verified_live_boot_entries": 5,
+  "audit_markers_absent": true,
+  "artifacts": {
+    "binary/live/vmlinuz": {
+      "sha256": "4336c75fc1a6a58e7bda66cbe9f4042f88064e7abc93faaea9e2aceb19459561",
+      "bytes": 12154816
+    },
+    "binary/live/initrd.img": {
+      "sha256": "712e3f56529e4690519d74b7edebfe71aeeac659a529526e855b53c1c4fe37fd",
+      "bytes": 141863844
+    },
+    "binary/live/filesystem.squashfs": {
+      "sha256": "7fa72b212c44ac89e037e84bf9bd56cdf2f5b0adfd5474b78d8da82a862647ab",
+      "bytes": 1783742464
+    },
+    "live-image-amd64.hybrid.iso": {
+      "sha256": "51f68e7779d5fd777d99f3ed6ac40cdc773deb7fc2c96efd4d17fe7ce28fa00d",
+      "bytes": 1953349632
+    }
+  },
+  "cold_boot_acceptance": "passed, see ../phase15-combined-vm-20261019/README.md",
+  "physical_hardware_acceptance": "pending",
+  "physical_media_written": false
+}

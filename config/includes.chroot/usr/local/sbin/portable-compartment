@@ -4,10 +4,32 @@ import fcntl
 import os
 from pathlib import Path
 import re
+import signal
 import sys
 from urllib.parse import urlsplit
 sys.path.insert(0, '/usr/local/lib/portable')
-from compartments import BASE, ROLES, OFFLINE, CompartmentError, gate, prepare, protected, roles, root_admin_configured, start, stop, supervise
+from compartments import BASE, ROLES, OFFLINE, CompartmentError, action_lock, gate, prepare, protected, read_record, roles, root_admin_configured, start, stop, supervise, worker_alive
+
+
+def start_family(backend, frontend, arguments=()):
+    """Undo this request's new workers if its second startup stage fails."""
+    previous = {app: worker_alive(read_record(app)) for app in (backend, frontend)}
+    try:
+        start(backend)
+        start(frontend, arguments)
+    except BaseException:
+        # The family action lock excludes another launch. Existing ready
+        # sessions belong to earlier requests and must remain available.
+        incomplete = False
+        for app in (frontend, backend):
+            if not previous[app]:
+                try:
+                    stop(app)
+                except CompartmentError:
+                    incomplete = True
+        if incomplete:
+            raise CompartmentError('Application startup failed and cleanup is still pending. Close the application before retrying.')
+        raise
 
 
 def main():
@@ -42,10 +64,16 @@ def main():
             return 1
     if not root_admin_configured():
         raise CompartmentError('Set the private administrator credential first.')
+    def cancelled(*_):
+        # The worker has its own cleanup handler. Raising here makes start()
+        # terminate and reap its child instead of orphaning a slow launch.
+        signal.signal(signal.SIGTERM, signal.SIG_IGN)
+        signal.signal(signal.SIGINT, signal.SIG_IGN)
+        raise CompartmentError('Application startup was cancelled.')
+    signal.signal(signal.SIGTERM, cancelled)
+    signal.signal(signal.SIGINT, cancelled)
     roles(); protected(BASE)
-    lock = os.open(BASE / 'broker.lock', os.O_RDWR | os.O_CREAT | os.O_NOFOLLOW, 0o600)
-    with os.fdopen(lock, 'r+b') as lease:
-        fcntl.flock(lease, fcntl.LOCK_EX)
+    with action_lock(app):
         if action == 'stop':
             if app == 'tor':
                 stop('browser');stop('tor')
@@ -56,13 +84,15 @@ def main():
             return 0
         gate('browser' if app == 'tor' else app)
         if app == 'tor':
-            start('tor')
             if action == 'launch':
-                start('browser', extra)
+                start_family('tor', 'browser', extra)
+            else:
+                start('tor')
         elif app == 'sabnzbd':
-            start('sabnzbd')
             if action == 'launch':
-                start('sab-viewer')
+                start_family('sabnzbd', 'sab-viewer')
+            else:
+                start('sabnzbd')
         elif action == 'launch':
             start(app, extra)
         else:
@@ -73,6 +103,9 @@ def main():
 if __name__ == '__main__':
     try:
         raise SystemExit(main())
+    except CompartmentError as error:
+        print(str(error), file=sys.stderr)
+        raise SystemExit(1)
     except Exception:
         print('The compartment could not start. Check Private, current VPN/clock, administrator setup and application confinement.', file=sys.stderr)
         raise SystemExit(1)

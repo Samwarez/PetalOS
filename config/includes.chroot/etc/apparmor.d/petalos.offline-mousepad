@@ -2,7 +2,8 @@
 
 profile petalos_offline_mousepad flags=(attach_disconnected,mediate_deleted) {
   #include <abstractions/petalos-offline-common>
-  owner /mnt/ram/{,**} rwkl,
+  # Only this role's delegated content; desktop-owned files must be editable.
+  /mnt/ram/Documents/mousepad/{,**} rwkl,
   /mnt/private/Documents/mousepad/{,**} rwkl,
   deny network inet,
 }

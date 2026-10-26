@@ -1,0 +1,27 @@
+{
+  "debian_package_version": "2.7.10+dfsg1-1",
+  "source_sha256": "c0a14b1e1c897f5664f74284db8b339e686411cbcd300d39be8eabd424f7a325",
+  "debian_archive_sha256": "23df11fc5be1febe04607286785ebeb14f8df817604bbddadfb7c5e91eb5be4f",
+  "patch_sha256": {
+    "atomic-flush.patch": "b633a4e9b1d14c1f7acf40514e7fa315133252c14cd9f8c4675425875b0caa32",
+    "legacy-reader-uaf.patch": "6518758fa74c1dbc2269ad38ebaeb0f5c61b11808c6c950a424402abf3676dc0",
+    "legacy-reader-regression.patch": "23930b2224bad9ac860ed9babb5ce3880457f24c7df695c528d999500194ec5b"
+  },
+  "binary_sha256": {
+    "keepassxc": "d84f65eb0fb7a115050c6c09805af90eeaba7c84d528a453f3cb84a9e322aec0",
+    "keepassxc-cli": "2a3153e614eadd4c40a31941593c2025abc10cb15d1689aef71ba51a3b645729"
+  },
+  "cmake_options": [
+    "-DCMAKE_BUILD_TYPE=Release",
+    "-DCMAKE_INSTALL_PREFIX=/usr",
+    "-DCMAKE_SKIP_RPATH=ON",
+    "-DWITH_TESTS=ON",
+    "-DWITH_GUI_TESTS=OFF",
+    "-DWITH_XC_ALL=ON",
+    "-DWITH_XC_UPDATECHECK=OFF",
+    "-DWITH_XC_DOCS=OFF"
+  ],
+  "scope": "atomic-save buffered-flush failure and CVE-2026-69150 legacy import",
+  "legacy_reader_tests": "passed",
+  "legacy_reader_negative_control": true
+}

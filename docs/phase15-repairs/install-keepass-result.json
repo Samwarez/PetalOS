@@ -1,0 +1,11 @@
+{
+  "fixture": "tests/phase15-repairs/install-keepass.py",
+  "exit": 0,
+  "elapsed_seconds": 1.13,
+  "stderr": "",
+  "result": {
+    "public_binaries_installed": 2,
+    "readbacks_match": true,
+    "original_binaries_preserved_in_guest_ram": true
+  }
+}

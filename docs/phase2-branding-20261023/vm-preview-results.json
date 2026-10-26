@@ -1,0 +1,19 @@
+{
+  "release": "20261023-211330-297439",
+  "git_base": "543cf7ef2dd49eb0903fddc757fff2cff774502f",
+  "uncommitted_work_preserved": true,
+  "manifest_sha256": "88fd3248becb4a36ddec413005197ba781dc307751bf3ec98a32a42f72c6a694",
+  "os_sha256": {
+    "vmlinuz": "4336c75fc1a6a58e7bda66cbe9f4042f88064e7abc93faaea9e2aceb19459561",
+    "initrd.img": "229601a611c21dac4f0c30b8ef6326735d0cc86bdec3fd4e17156213e9ce5ba7",
+    "filesystem.squashfs": "e530498145316eb210a487e50c0a8b963d74db22dc243c9e54075d9a8225383c"
+  },
+  "disposable_preview": "20261023-220521-839943",
+  "build_artifact_verification": "passed",
+  "desktop_visual": "passed",
+  "wallpaper_count": 8,
+  "private_closed": true,
+  "swap_active": false,
+  "grub_background": "not rendered; needs investigation",
+  "full_acceptance": false
+}

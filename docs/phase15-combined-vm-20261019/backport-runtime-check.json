@@ -1,0 +1,8 @@
+{
+  "fixture": "tests/phase15-repairs/backport-runtime-check.py",
+  "VM": "20261019-220338-142131",
+  "exit": 0,
+  "seconds": 4.93,
+  "stdout": "{\"oversized_rejected_with_input_still_open\": true, \"initial_nul_rejected_with_input_still_open\": true, \"wrong_administrator_rejected\": true, \"correct_administrator_passed_PAM\": true, \"fabricated_cookie_still_denied\": true, \"installed_libxml2_namespace_roundtrip\": true, \"polkit_version\": \"126-2+petalos1\", \"libxml2_version\": \"2.12.7+dfsg+really2.9.14-2.1+deb13u3+petalos1\"}\n",
+  "stderr": ""
+}

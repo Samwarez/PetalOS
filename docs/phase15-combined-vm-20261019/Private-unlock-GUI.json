@@ -1,0 +1,8 @@
+{
+  "normal_desktop_action": true,
+  "initial_prompt_correctly_identifies_Private_passphrase": true,
+  "wrong_passphrase_shows_explicit_retry_error": true,
+  "wrong_passphrase_reopens_entry_with_red_border": true,
+  "test_credentials_in_report": false,
+  "valid_retry": "accepted; Private opened and files accessible"
+}

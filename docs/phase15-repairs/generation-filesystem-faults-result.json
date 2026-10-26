@@ -1,0 +1,12 @@
+{
+  "fixture": "tests/phase15-repairs/generation-filesystem-faults.py",
+  "exit": 0,
+  "elapsed_seconds": 3.32,
+  "stderr": "",
+  "result": {
+    "boot_actual_ENOSPC_kept_old_selection": true,
+    "system_actual_ENOSPC_kept_old_selection": true,
+    "retry_activated_complete_generation_and_retained_rollback": true,
+    "all_RAM_image_mounts_and_loops_closed": true
+  }
+}

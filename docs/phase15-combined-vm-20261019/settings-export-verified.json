@@ -1,0 +1,8 @@
+{
+  "fixture": "tests/combined-vm-persistence-stage.py",
+  "VM": "20261019-220338-142131",
+  "exit": 0,
+  "seconds": 1.25,
+  "stdout": "{\"Transmission_numeric_preference_exported\": true, \"aMule_numeric_preference_exported\": true, \"aMule_numeric_server_endpoint_exported\": true, \"history_canaries_excluded\": true}\n",
+  "stderr": ""
+}

@@ -144,24 +144,6 @@ def main():
     def safe(path, root):
         require(path.resolve(strict=True).is_relative_to(root) and not path.is_symlink() and path.is_file(), 'Unsafe destination path.')
 
-    def replace(source, target, expected):
-        mapping(); safe(target, work)
-        fd, tempname = tempfile.mkstemp(dir=target.parent, prefix='.rc1-update-')
-        temporary = Path(tempname)
-        try:
-            with os.fdopen(fd, 'wb') as output, source.open('rb') as input_file:
-                count = 0
-                while chunk := input_file.read(4 * 1024**2):
-                    output.write(chunk); count += len(chunk)
-                    if count % (64 * 1024**2) == 0:
-                        output.flush(); os.fsync(output.fileno()); identity()
-                output.flush(); os.fsync(output.fileno())
-            require(digest(temporary) == expected, 'Copied payload checksum mismatch.')
-            temporary.chmod(0o644)
-            identity(); os.replace(temporary, target)
-        finally:
-            if temporary.exists(): temporary.unlink()
-
     try:
         mapping()
         require(run('/usr/sbin/blkid', '-s', 'LABEL', '-o', 'value', str(MAPPER)) == 'LIVE_SYSTEM', 'Unexpected SYSTEM filesystem.')
@@ -183,32 +165,26 @@ def main():
                 words = line.split()
                 if words and words[0] in ('linux', 'linuxefi'):
                     require({'toram', 'swap=false', 'init_on_alloc=1', 'init_on_free=1', 'petalos_hardware_ssh=1', 'live-media=/dev/mapper/portable_system'} <= set(words), 'Unexpected boot security flags.')
-                    require(re.fullmatch(r'/(?:live/)?vmlinuz', words[1]), 'Unexpected kernel path.')
+                    require(re.fullmatch(r'/(?:live/|petalos/releases/[a-f0-9]{24}/)?vmlinuz', words[1]), 'Unexpected kernel path.')
                     destinations.append(('vmlinuz', boot / words[1].lstrip('/')))
                 if words and words[0] in ('initrd', 'initrdefi'):
-                    require(len(words) == 2 and re.fullmatch(r'/(?:live/)?initrd.img', words[1]), 'Unexpected initrd path.')
+                    require(len(words) == 2 and re.fullmatch(r'/(?:live/|petalos/releases/[a-f0-9]{24}/)?initrd.img', words[1]), 'Unexpected initrd path.')
                     destinations.append(('initrd.img', boot / words[1].lstrip('/')))
-            lines = [re.sub(r'\bPetalOS(?: RC 1)?\b', 'PetalOS RC 1', line) if line.lstrip().startswith(('menuentry ', 'submenu ')) else line for line in content.splitlines()]
-            configs.append((config, '\n'.join(lines) + '\n'))
+            configs.append((config, content))
         require(configs and {name for name, _ in destinations} == {'vmlinuz', 'initrd.img'}, 'Missing boot payloads.')
-        destinations.append(('filesystem.squashfs', system / 'live/filesystem.squashfs'))
-        destinations = list(dict.fromkeys(destinations))
-        for name, target in destinations:
-            safe(target, work)
-            space = os.statvfs(target.parent)
-            require(space.f_bavail * space.f_frsize > sources[name].stat().st_size + 16 * 1024**2, 'Insufficient space for atomic payload replacement.')
-        stage('updating OS payloads; do not remove card')
-        for name, target in destinations:
-            stage('writing ' + name)
-            replace(sources[name], target, manifest['binary/live/' + name]['sha256'])
-        for target, content in configs:
-            public = work / 'public-grub.cfg'; public.write_text(content)
-            replace(public, target, digest(public)); public.unlink()
+        for _, target in destinations:safe(target, work)
+        spec = importlib.util.spec_from_file_location('release_generations', HERE / 'release_generations.py')
+        generations = importlib.util.module_from_spec(spec);spec.loader.exec_module(generations)
+        stage('applying test retention; keeping active OS, then at most one previous release')
+        generation, installed = generations.stage_and_activate(boot, system, sources,
+            {name: manifest['binary/live/' + name]['sha256'] for name in sources}, configs,
+            selection.read_text().split(), identity=mapping, checkpoint=stage, retention='test')
+        record['generation'] = generation
         stage('flushing and reading back OS files')
         for source, target in reversed(mounted):
             run('/usr/bin/mount', '-o', 'remount,ro', str(target))
-        for name, target in destinations:
-            require(digest(target) == manifest['binary/live/' + name]['sha256'], 'Final OS readback failed.')
+        for target, expected in installed.items():
+            require(digest(target) == expected, 'Final generation readback failed.')
         require(all(digest(boot / path) == value for path, value in efi.items()), 'EFI executable changed unexpectedly.')
         require(selection.read_text().split() == ['filesystem.squashfs', 'petalos-hardware-ssh.squashfs'], 'Live module selection changed.')
     finally:
@@ -229,6 +205,8 @@ if __name__ == '__main__':
     except BaseException as error:
         # Do not print subprocess output, command arguments or credential data.
         import traceback
+        if type(error).__name__ == 'InsufficientGenerationSpace':
+            print(str(error), flush=True)
         frame = traceback.extract_tb(error.__traceback__)[-1]
         print('Update stopped: ' + type(error).__name__ + '; line ' + str(frame.lineno) +
               '. Keep card connected; report this line before booting.', flush=True)

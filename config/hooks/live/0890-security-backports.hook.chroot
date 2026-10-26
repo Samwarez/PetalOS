@@ -1,0 +1,53 @@
+#!/usr/bin/python3
+"""Install reviewed trixie repairs before app diversions; never downgrade Debian."""
+from pathlib import Path
+import hashlib,json,os,re,subprocess
+assert os.geteuid()==0
+root=Path('/usr/local/share/portable/security-backports')
+manifest=root/'manifest.json'
+assert not root.is_symlink() and not manifest.is_symlink()
+meta=json.loads(manifest.read_text());assert meta['format']==1
+assert set(meta['sources'])=={'amule','libxml2','poppler','policykit-1'}
+selected=[];versions={};record=[]
+# live-build has already installed our desktop entries. A later dpkg install
+# replaces package-owned launchers, so retain the reviewed aMule GUI entry.
+launcher=Path('/usr/share/applications/amule.desktop')
+assert launcher.is_file() and not launcher.is_symlink()
+launcher_bytes=launcher.read_bytes()
+assert b'Exec=/usr/local/bin/portable-desktop amule\n' in launcher_bytes
+for entry in meta['packages']:
+ name,package=entry['file'],entry['package']
+ assert re.fullmatch('[a-zA-Z0-9+_.:%~-]+[.]deb',name)
+ assert re.fullmatch('[a-z0-9][a-z0-9+.-]+',package) and package not in versions
+ assert entry['source'] in meta['sources']
+ assert entry['version']==meta['sources'][entry['source']]['package_version']
+ assert entry['base_version']==meta['sources'][entry['source']]['version']
+ archive=root/name;assert archive.is_file() and not archive.is_symlink()
+ with archive.open('rb') as stream:assert hashlib.file_digest(stream,'sha256').hexdigest()==entry['sha256']
+ identity=subprocess.check_output(['dpkg-deb','-f',str(archive),'Package','Version'],text=True).splitlines()
+ assert identity==['Package: '+package,'Version: '+entry['version']]
+ versions[package]=entry['version']
+ current=subprocess.run(['dpkg-query','-W','-f=${db:Status-Status}\n${Version}',package],capture_output=True,text=True)
+ if current.returncode or not current.stdout.startswith('installed\n'):continue
+ version=current.stdout.split('\n',1)[1]
+ if subprocess.run(['dpkg','--compare-versions',version,'ge',entry['version']]).returncode==0:
+  record.append(dict(package=package,version=version,action='kept_equal_or_newer'))
+  continue
+ assert version==entry['base_version'],'Unexpected old dependency version; review before replacing it.'
+ selected.append(str(archive));record.append(dict(package=package,version=entry['version'],action='security_backport'))
+# All candidates and installed versions are validated before the first mutation.
+if selected:
+ subprocess.run(['dpkg','--force-confold','--install',*selected],check=True,
+  env={**os.environ,'DEBIAN_FRONTEND':'noninteractive'})
+for row in record:
+ version=subprocess.check_output(['dpkg-query','-W','-f=${Version}',row['package']],text=True)
+ assert version==row['version']
+launcher.write_bytes(launcher_bytes)
+launcher.chmod(0o644)
+audit=subprocess.run(['dpkg','--audit'],capture_output=True,text=True)
+assert audit.returncode==0 and not audit.stdout.strip(),'Package configuration is incomplete.'
+report=Path('/usr/share/doc/petalos/security-backports.json');report.parent.mkdir(parents=True,exist_ok=True)
+report.write_text(json.dumps({'sources':meta['sources'],'installed':record},indent=2)+'\n')
+# The exact input hashes remain in manifest.json; avoid shipping duplicate debs.
+for entry in meta['packages']:(root/entry['file']).unlink()
+print('Reviewed security packages installed; equal/newer Debian versions preserved.')

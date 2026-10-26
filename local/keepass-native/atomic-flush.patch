@@ -1,0 +1,21 @@
+--- a/src/core/Database.cpp
++++ b/src/core/Database.cpp
+@@ -375,6 +375,18 @@
+             // Retain original creation time
+             saveFile.setFileTime(createTime, QFile::FileBirthTime);
+ #endif
++
++            // Qt 5 QSaveFile::commit closes the device before checking its
++            // writeError. Buffered flush errors do not reliably set that field.
++            // Reject them explicitly before a truncated temporary file replaces
++            // the original database (including ENOSPC and short writes).
++            if (!saveFile.flush()) {
++                if (error) {
++                    *error = saveFile.errorString();
++                }
++                saveFile.cancelWriting();
++                return false;
++            }
+ 
+             if (saveFile.commit()) {
+                 // store the new hash

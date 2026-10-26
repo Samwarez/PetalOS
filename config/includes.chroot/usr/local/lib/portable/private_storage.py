@@ -12,6 +12,7 @@ import time
 
 ROOT = Path('/run/portable-storage')
 PRIVATE = Path('/mnt/private')
+DESKTOP_TRASH = Path('/home/Petal/.local/share/Trash')
 ENV = {'PATH': '/usr/sbin:/usr/bin:/sbin:/bin', 'HOME': '/root', 'LC_ALL': 'C.UTF-8'}
 
 
@@ -81,8 +82,8 @@ def identity():
 
 class LuksBackend:
     """Backend API: capture, lock, unlock, is_unlocked. No caller paths."""
-    names = {'system': 'portable_system', 'data': 'portable_data'}
-    labels = {'system': 'PORTABLE_SYSTEM', 'data': 'PORTABLE_DATA'}
+    names = {'os': 'portable_os', 'system': 'portable_system', 'data': 'portable_data'}
+    labels = {'os': 'PORTABLE_OS', 'system': 'PORTABLE_SYSTEM', 'data': 'PORTABLE_DATA'}
 
     def tag(self, device, field):
         return subprocess.check_output(['/usr/sbin/blkid', '-s', field, '-o', 'value', str(device)],
@@ -91,8 +92,13 @@ class LuksBackend:
     def capture(self):
         from compartments import ram_ready
         ram_ready()
-        state = {'backend': 'luks', 'devices': {}}
-        for kind, name in self.names.items():
+        from storage_layout import boot_identity
+        layout = boot_identity()
+        state = {'backend': 'luks', 'layout': layout['layout'], 'devices': {}}
+        parents = set()
+        kinds = ('os', 'system', 'data') if layout['layout'] == 2 else ('system', 'data')
+        for kind in kinds:
+            name = self.names[kind]
             mapper = Path('/dev/mapper') / name
             sysfs = None
             if mapper.exists():
@@ -103,15 +109,25 @@ class LuksBackend:
                 assert len(slaves) == 1
                 device = Path('/dev') / slaves[0].name
             else:
-                device = Path('/dev/disk/by-label') / self.labels[kind]
+                device = (Path('/dev/disk/by-uuid') / layout['uuids'][kind] if layout['layout'] == 2
+                          else Path('/dev/disk/by-label') / self.labels[kind])
             assert self.tag(device, 'TYPE') == 'crypto_LUKS' and self.tag(device, 'LABEL') == self.labels[kind]
             uuid = self.tag(device, 'UUID')
             import uuid as uuid_module
             assert str(uuid_module.UUID(uuid)) == uuid
+            if layout['layout'] == 2:
+                assert uuid == layout['uuids'][kind]
+                raw = device.stat()
+                node = Path(f'/sys/dev/block/{os.major(raw.st_rdev)}:{os.minor(raw.st_rdev)}').resolve(strict=True)
+                assert (node / 'partition').is_file()
+                parents.add(node.parent)
             if sysfs is not None:
                 assert (sysfs / 'dm/uuid').read_text().strip().startswith('CRYPT-LUKS2-' + uuid.replace('-', '') + '-')
             raw = device.stat()
             state['devices'][kind] = {'uuid': uuid, 'device_number': raw.st_rdev}
+        if layout['layout'] == 2:
+            assert len(parents) == 1
+            assert len({v['device_number'] for v in state['devices'].values()}) == 3
         return state
 
     def device(self, state, kind):
@@ -127,7 +143,7 @@ class LuksBackend:
         return (Path('/dev/mapper') / self.names[kind]).exists()
 
     def has_active_keys(self, state):
-        return any(self.mapped(kind) for kind in self.names)
+        return any(self.mapped(kind) for kind in state['devices'])
 
     def private_device_number(self, state):
         if not self.mapped('data'):return None
@@ -184,7 +200,7 @@ class LuksBackend:
         mounted_private = subprocess.run(['/usr/bin/mountpoint', '-q', str(PRIVATE)], env=ENV, timeout=5).returncode == 0
         if not mounted_private:
             PRIVATE.mkdir(exist_ok=True)
-            command(['/usr/bin/mount', '-o', 'nodev,nosuid,noexec,noatime', '/dev/mapper/' + self.names['data'], str(PRIVATE)])
+            command(['/usr/bin/mount', '-o', 'nodev,nosuid,noexec,noatime,x-gvfs-notrash', '/dev/mapper/' + self.names['data'], str(PRIVATE)])
         os.chown(PRIVATE, 1000, 1000);PRIVATE.chmod(0o700)
         assert self.is_unlocked(state)
 
@@ -205,8 +221,20 @@ class LuksBackend:
             self.verify_mapping(state, 'system')
             command(['/usr/sbin/cryptsetup', 'close', self.names['system']])
 
+    def close_os(self, state):
+        """After toram, discard the OS mapping; SYSTEM stays independently open."""
+        if state.get('layout') != 2 or not self.mapped('os'):
+            return
+        self.verify_mapping(state, 'os')
+        mapper = '/dev/mapper/' + self.names['os']
+        check = subprocess.run(['/usr/bin/findmnt', '-n', '--source', mapper],
+                               capture_output=True, env=ENV, timeout=5)
+        assert check.returncode == 1, 'OS is still mounted; refusing to close the live source.'
+        command(['/usr/sbin/cryptsetup', 'close', self.names['os']])
+
     def evict(self, state):
-        for kind, name in self.names.items():
+        for kind in state['devices']:
+            name = self.names[kind]
             if self.mapped(kind):
                 try:
                     self.verify_mapping(state, kind)
@@ -223,6 +251,13 @@ def backend():
 def power_off():
     command(['/usr/bin/systemctl', 'poweroff', '--force', '--force'], timeout=3)
     raise RuntimeError('Emergency power-off did not terminate the system.')
+
+
+def private_content_handle(path, device_number):
+    try:
+        if device_number is not None and path.stat().st_dev==device_number:return True
+        return os.readlink(path).startswith(str(DESKTOP_TRASH)+'/')
+    except OSError:return False
 
 
 def kill_private_users(device_number, *, force_workers=False):
@@ -245,10 +280,10 @@ def kill_private_users(device_number, *, force_workers=False):
             affected = uid in roles
             if uid == 1000 and not affected:
                 try:
-                    affected = Path(os.readlink(p / 'exe')).name in ('Thunar', 'xfce4-clipman', 'xfce4-terminal', 'xterm', 'vim.basic.portable-real', 'nano')
+                    affected = Path(os.readlink(p / 'exe')).name in ('Thunar', 'gvfsd-trash', 'xfce4-clipman', 'xfce4-terminal', 'xterm', 'vim.basic.portable-real', 'nano')
                 except OSError:pass
                 paths = [p / 'cwd', *(p / 'fd').iterdir()]
-                affected = affected or (device_number is not None and any(path.stat().st_dev == device_number for path in paths if path.exists()))
+                affected = affected or any(private_content_handle(path,device_number) for path in paths)
             if affected:
                 fd = os.pidfd_open(int(p.name))
                 try:signal.pidfd_send_signal(fd, signal.SIGKILL)
@@ -281,11 +316,22 @@ def _lock_locked():
         (ROOT / 'download-mode').unlink(missing_ok=True)
         from compartments import ram_ready
         ram_ready()
+        from volatile_trash import clear as clear_ram_trash, block_private_trash
+        block_private_trash()
         # Repeated lock is harmless; actual mappings determine state.
-        if not adapter.has_active_keys(state):return
+        if not adapter.has_active_keys(state):
+            clear_ram_trash()
+            kill_private_users(None,force_workers=True)
+            return
         number = adapter.private_device_number(state)
         for attempt in range(3):
             kill_private_users(number, force_workers=attempt == 2);time.sleep(.1)
+        # Kill copy workers before discarding Private-derived Trash content and
+        # its original-path metadata from the desktop's RAM Trash.
+        clear_ram_trash()
+        # A restarted GVFS reader may have opened an item just before unlink.
+        # New copies are blocked; drain these last open handles after clearing.
+        kill_private_users(number,force_workers=True)
         # Remove VPN runtime credentials and stop tunnel time traffic.
         command(['/usr/local/sbin/portable-vpn', 'disconnect'], timeout=5)
         command(['/usr/bin/sync', '-f', str(PRIVATE)], timeout=3)
@@ -331,6 +377,9 @@ def unlock(password, *, raise_errors=False):
         opened_before = adapter.is_unlocked(state)
         try:
             adapter.unlock(state, password)
+            assert adapter.is_unlocked(state)
+            from volatile_trash import allow_private_trash
+            allow_private_trash()
         except Exception:
             if opened_before:
                 # Failed password verification must not alter an already-open
@@ -354,9 +403,15 @@ def boot_unlock():
     adapter = backend()
     with operation():
         state = adapter.capture();remember(state)
+        from volatile_trash import block_private_trash
+        block_private_trash()
         (ROOT / 'locking').touch(mode=0o600, exist_ok=True)
         # SYSTEM settings are available before the desktop without opening DATA.
         from system_state import prepare
         prepare(state)
+        # Layout 2's OS contains no credentials or writable settings. It is
+        # no longer needed after live-boot has copied its payload to RAM.
+        if state.get('layout') == 2:
+            adapter.close_os(state)
         if not adapter.mapped('data'):
             PRIVATE.mkdir(exist_ok=True);PRIVATE.chmod(0o000)

@@ -1,0 +1,88 @@
+{
+  "passed": true,
+  "result": {
+    "passed": true,
+    "stage": "portable-installer",
+    "checks": {
+      "packaged_cli_has_current_version": true,
+      "bundled_shell_tool_and_subcommands": true,
+      "bundled_gtk_display_started": true,
+      "five_packaged_native_gtk_checks": true,
+      "no_installed_petalos_backend": true,
+      "packaged_runtime_self_check": true,
+      "worker_temporary_runtime_cleaned_6": true,
+      "altered_payload_refused_before_execution": true,
+      "worker_temporary_runtime_cleaned_8": true,
+      "path_traversal_refused_before_execution": true,
+      "worker_temporary_runtime_cleaned_10": true,
+      "truncated_transfer_refused": true,
+      "fresh_disposable_usb_target": true,
+      "worker_temporary_runtime_cleaned_13": true,
+      "new_external_host_mount_refused": true,
+      "external_mount_refusal_kept_disk_unchanged": true,
+      "worker_temporary_runtime_cleaned_16": true,
+      "protected_worker_rejects_stale_plan": true,
+      "stale_plan_left_disposable_disk_unchanged": true,
+      "worker_temporary_runtime_cleaned_19": true,
+      "pipe_cancellation_reaches_protected_worker": true,
+      "cancelled_worker_left_no_mappings": true,
+      "worker_temporary_runtime_cleaned_22": true,
+      "portable_random_wipe_and_full_readback": true,
+      "successful_worker_left_no_mappings": true
+    }
+  },
+  "artifact": "petalos-installer-0.3.0-linux-amd64",
+  "acceleration": "tcg",
+  "cpu": "qemu64",
+  "artifact_manifest_sha256": "c27eb73fa82ab7416428ccbe0af994b27d149272166e55404849f44ffe992784",
+  "elapsed_seconds": 664.3,
+  "limits": [
+    "Networkless synthetic VM; generic pkexec/desktop authorization interaction untested.",
+    "Real portable worker random-wipe/cancel/readback on a new disposable USB; full OS installation/update not repeated.",
+    "No physical media, existing writable images, host shares or production credentials."
+  ],
+  "date": "2026-10-25",
+  "version": "0.3.0",
+  "local_tests_passed": 46,
+  "native_gtk_tests_passed": 5,
+  "vm_checks_passed": 25,
+  "packaged_files": 7169,
+  "runtime_packages": 229,
+  "archive_bytes": 132148738,
+  "archive_sha256": "1e87dafe3c9df98c5d1de2f675ad1574380389c173df2da6c63236cbb915044f",
+  "deb_sha256": "b6dabbb5270693a84f571b69e2005491820deac4840d3219fa554de4424e0a8b",
+  "exact_current_source_match": true,
+  "extracted_runtime_verified": true,
+  "static_bootstrap": true,
+  "initial_snapshot": "snapshots/before-portable-installer-20261025-163139.tar.gz",
+  "existing_backups_verified": true,
+  "physical_media_written": false,
+  "host_package_installed": false,
+  "notes": [
+    "Checked existing installer snapshot plus both readable original backup archive checksums before editing.",
+    "Prior disposable attempts exposed missing generated MIME data and an incorrect Broadway readiness check; both corrected.",
+    "A real successful wipe exposed the old buffered daemon-reader shutdown abort; replaced by unbuffered polling plus bounded thread join, with four local regressions.",
+    "Live mount state is checked through the original-namespace supervisor; the final VM explicitly mounts the target after worker namespace creation and verifies refusal and byte-identical storage.",
+    "Relocation to a path containing spaces passed on the preceding identical launcher/runtime; final extracted package source, hashes and image decoding were checked again."
+  ],
+  "physical_media_written_scope": "Original agent-run build/VM verification only; later user-performed physical-card actions are recorded separately below.",
+  "user_reported_acceptance": [
+    {
+      "date": "2026-10-25",
+      "reported_by": "Sam",
+      "version": "0.3.0",
+      "desktop_administrator_prompt": "confirmed working by user",
+      "physical_card_quick_wipe": "reported successful by user",
+      "reported_option": "quick",
+      "gui_option_mapping": "Remove encryption keys only (quick) -> keys-only",
+      "evidence": "User reports that the app asked for the administrator password and successfully wiped the card using the quick option.",
+      "limits": [
+        "User report; agent did not independently inspect the card or operation logs.",
+        "Quick key-removal operation; no full overwrite/readback or forensic-erasure claim.",
+        "Full physical installation, update and boot acceptance remain unverified."
+      ],
+      "agent_performed_card_operation": false,
+      "further_card_operations_authorized": false
+    }
+  ]
+}

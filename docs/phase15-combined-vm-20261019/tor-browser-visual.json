@@ -1,0 +1,9 @@
+{
+  "test": "Actual Tor Browser navigation",
+  "VM": "20261019-220338-142131",
+  "destination": "https://check.torproject.org/",
+  "observed": "HTTPS page rendered with the confirmation that the browser is configured to use Tor",
+  "native_browser_profile": "petalos_browser (enforce)",
+  "screenshot_storage": "RAM only; not copied into report",
+  "exit_address_recorded": false
+}

@@ -1,0 +1,46 @@
+{
+  "date": "2026-10-25",
+  "status": "clean build requires normal-terminal sudo",
+  "source_preflight": true,
+  "old_release_refused": true,
+  "local_checks": {
+    "installer_passed": 53,
+    "installer_gtk_skipped": 6,
+    "native_paired_unlock": "passed",
+    "boot_unlock": "passed",
+    "private_screen_sleep": "passed",
+    "generation_layout1": "passed",
+    "generation_layout2": "passed"
+  },
+  "focused_vm": {
+    "passed": true,
+    "checks": 63,
+    "source_report_sha256": "36559625313d767d23a4c054bdbe9e3e18cea98e156277fd7aa41e35d364d90b",
+    "scope": "Focused encrypted-storage VM, synthetic payloads, fast test-only PBKDF2"
+  },
+  "clean_fullboot": "pending new clean OS build",
+  "fullboot_development_overlay": {
+    "passed": true,
+    "provision_checks": 5,
+    "boot_checks": 16,
+    "clean_release": false,
+    "source_report_sha256": "b6280b2c88fbfafaa41cef4e684c39e01e1b4956fa31d5e4862fe548a0c94fb6",
+    "scope": "Actual full live OS/RAM boot with reviewed layout-2 delta"
+  },
+  "physical_media_modified": false,
+  "commands": {
+    "build_verify_export": "python3 -B scripts/prepare-split-release.py",
+    "verify_completed": "python3 -B scripts/prepare-split-release.py --release ../releases/BUILD_TIMESTAMP"
+  },
+  "limits": [
+    "Focused VM uses synthetic payloads and test-only PBKDF2",
+    "Old completed release remains preserved; no clean layout-2 release yet",
+    "Firmware/graphical/hardware acceptance remains separate"
+  ],
+  "source_sha256": {
+    "scripts/prepare-split-release.py": "c125b0538fb08148440b8fad72f289e47159fa7fb4f4b869f9c7be237be8a982",
+    "tests/run-split-fullboot-vm.py": "009a10668c59ec7d991a8f92d92748bf5c065a0118f8996282ec58af2f9ee660",
+    "tests/split-fullboot-provision.py": "9a8514c7ed9d31ab6883c39d771eac745921e7bffcb8d728068be11444bd7bd8",
+    "tests/run-split-storage-vm.py": "d7b592de28abaebf1313d44068b51320557a4360814ceb854bb0c3687fb1c85f"
+  }
+}

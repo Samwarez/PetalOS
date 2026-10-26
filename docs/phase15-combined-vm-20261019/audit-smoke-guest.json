@@ -1,0 +1,8 @@
+{
+  "fixture": "tests/audit-smoke-guest.py",
+  "VM": "20261019-220338-142131",
+  "exit": 0,
+  "seconds": 3.01,
+  "stdout": "{\"Petal_password_disabled\": true, \"Private_closed_at_boot\": true, \"VLC_absent\": true, \"administrator_hash_in_encrypted_SYSTEM\": true, \"explicit_print_start\": true, \"explicit_print_stop\": true, \"firewall_default_drop\": true, \"freed_memory_zeroing\": true, \"local_print_socket\": true, \"no_TCP_print_listener\": true, \"no_legacy_automatic_Private_key\": true, \"no_swap\": true, \"printing_off_at_boot\": true, \"printing_reactivation_masked\": true, \"selective_SYSTEM_ready\": true, \"sudo_configuration_valid\": true, \"synaptic_absent\": true}\n",
+  "stderr": ""
+}

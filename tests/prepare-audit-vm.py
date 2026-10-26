@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Prepare an empty, separately credentialed audit VM; never clone user data."""
 from pathlib import Path
+import argparse
 import datetime
 import hashlib
 import importlib.util
@@ -15,9 +16,17 @@ PROJECT = Path(__file__).resolve().parents[1]
 
 
 def main():
-    assert os.geteuid() != 0 and len(sys.argv) in (2, 4)
-    if len(sys.argv) == 4:assert sys.argv[2] == '--vpn'
-    release = Path(sys.argv[1]).resolve(strict=True)
+    assert os.geteuid() != 0
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('release', type=Path)
+    parser.add_argument('--vpn', type=Path)
+    parser.add_argument('--generation', action='store_true')
+    parser.add_argument('--graphical-preview', action='store_true',
+                        help='Use graphical boot artwork and manual/observed SYSTEM entry instead of serial auto-entry.')
+    args = parser.parse_args()
+    if args.graphical_preview and not args.generation:
+        parser.error('--graphical-preview requires --generation')
+    release = args.release.resolve(strict=True)
     assert release.parent == PROJECT.parent / 'releases'
     assert (release / 'manifest.json').is_file()
     stamp = datetime.datetime.now().strftime('%Y%m%d-%H%M%S-%f')
@@ -38,9 +47,12 @@ def main():
     state = {'phase': 'awaiting-provisioning', 'scope': 'disposable-audit-only',
              'directory': str(work), 'release': str(release), 'image': str(image),
              'ssh_module': str(layer), 'ssh_module_sha256': hashlib.sha256(layer.read_bytes()).hexdigest(),
-             'cid': 43, 'port': 2225, 'vpn_provisioned': False}
-    if len(sys.argv) == 4:
-        source = Path(sys.argv[3]).resolve(strict=True)
+             'cid': 43, 'port': 2225, 'vpn_provisioned': False,
+             'generation_boot': args.generation}
+    if args.graphical_preview:
+        state['graphical_boot'] = True
+    if args.vpn is not None:
+        source = args.vpn.resolve(strict=True)
         assert source.is_file()
         state['vpn_source'] = str(source)
     path = work / 'state.json'; path.write_text(json.dumps(state, indent=2))

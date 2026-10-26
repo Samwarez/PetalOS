@@ -1,0 +1,53 @@
+#!/usr/bin/python3
+"""Manual UTC recovery for a clock too old to establish WireGuard."""
+from datetime import datetime, timezone
+import os, subprocess, sys, threading
+sys.path.insert(0, '/usr/local/lib/portable')
+from manual_clock import parse
+
+def main():
+    import gi
+    gi.require_version('Gtk', '3.0')
+    from gi.repository import Gtk, GLib
+    if os.geteuid() == 0 or sys.argv[1:]:return 1
+    window=Gtk.Window(title='Correct system clock')
+    box=Gtk.Box(orientation=Gtk.Orientation.VERTICAL,spacing=12);box.set_border_width(18)
+    window.add(box)
+    box.add(Gtk.Label(label='Disconnect VPN first. Enter the current UTC date and time.\n'
+        'This changes the running clock only. Afterward, reconnect VPN\n'
+        'to synchronize accurately through the tunnel.',wrap=True))
+    entry=Gtk.Entry();entry.set_max_length(19)
+    entry.set_text(datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S'));box.add(entry)
+    box.add(Gtk.Label(label='Format: YYYY-MM-DD HH:MM:SS (UTC)'))
+    button=Gtk.Button(label='Set clock with administrator authorization');box.add(button)
+    status=Gtk.Label();status.set_line_wrap(True);box.add(status)
+    busy=False
+    def finish(ok):
+        nonlocal busy
+        busy=False;button.set_sensitive(True);entry.set_sensitive(True)
+        status.set_text('Clock corrected. Reconnect VPN to synchronize and verify it.' if ok else
+                       'Clock was not changed. Disconnect VPN and retry with administrator authorization.')
+        return False
+    def apply(_):
+        nonlocal busy
+        if busy:return
+        text=entry.get_text()
+        try:parse(text)
+        except ValueError:
+            status.set_text('Enter a valid UTC date and time in YYYY-MM-DD HH:MM:SS format.');return
+        busy=True;button.set_sensitive(False);entry.set_sensitive(False)
+        status.set_text('Waiting for administrator authorization…')
+        def work():
+            ok=False
+            try:
+                result=subprocess.run(['/usr/bin/sudo','-A','--','/usr/local/sbin/portable-set-clock',text],
+                    env={**os.environ,'SUDO_ASKPASS':'/usr/local/bin/portable-askpass'},stdin=subprocess.DEVNULL,
+                    stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
+                ok=result.returncode==0
+            finally:GLib.idle_add(finish,ok)
+        threading.Thread(target=work,daemon=True).start()
+    button.connect('clicked',apply)
+    window.connect('delete-event',lambda *_:busy);window.connect('destroy',Gtk.main_quit)
+    window.show_all();Gtk.main();return 0
+
+if __name__=='__main__':raise SystemExit(main())

@@ -1,0 +1,242 @@
+--- a/src/desktop/desktop_env.cc
++++ b/src/desktop/desktop_env.cc
+@@ -48,7 +48,7 @@
+   } else if (currentDesktopEnv == "KDE") {
+     static std::unique_ptr<KdeDesktopEnv> kde(new KdeDesktopEnv);
+     return kde.get();
+-  } else if (currentDesktopEnv == "labwc") {
++  } else if (currentDesktopEnv == "labwc" || currentDesktopEnv == "XFCE") {
+     static std::unique_ptr<LabwcDesktopEnv> labwc(new LabwcDesktopEnv);
+     return labwc.get();
+   } else if (currentDesktopEnv == "LXQt") {
+--- a/src/desktop/labwc_desktop_env.cc
++++ b/src/desktop/labwc_desktop_env.cc
+@@ -30,14 +30,14 @@
+           "Lock Screen",
+           "",
+           "system-lock-screen",
+-          "swaylock",
++          "/usr/local/bin/portable-lock",
+           ""
+         },
+         {kLogOutId,
+           "Log Out",
+           "",
+           "system-log-out",
+-          "labwc --exit",
++          "/usr/bin/xfce4-session-logout",
+           ""
+         },
+       },
+@@ -48,8 +48,8 @@
+ }
+ 
+ std::vector<QString> LabwcDesktopEnv::getDefaultLaunchers() const {
+-  return { kShowDesktopId, defaultWebBrowser(), "alacritty",
+-           kSeparatorId, kLockScreenId, kLogOutId, kSeparatorId };
++  return { "xfce4-terminal-emulator", "xfce4-file-manager", "portable-tor",
++           kSeparatorId, "portable-helpers", kLockScreenId };
+ }
+ 
+ }  // namespace crystaldock
+--- a/src/main.cc
++++ b/src/main.cc
+@@ -86,6 +86,8 @@
+     return -1;
+   }
+ 
++  QIcon::setFallbackThemeName("Adwaita");
++
+   QApplication::setWindowIcon(QIcon::fromTheme("user-desktop"));
+ 
+   auto configHome = qEnvironmentVariable("XDG_CONFIG_HOME").trimmed();
+--- a/src/model/multi_dock_model.h
++++ b/src/model/multi_dock_model.h
+@@ -584,8 +584,7 @@
+   }
+ 
+   bool showWifiManager(int dockId) const {
+-    return dockProperty(dockId, kGeneralCategory, kShowWifiManager,
+-                        kDefaultShowWifiManager);
++    return false;  // PetalOS uses its guarded UI and offline build updates.
+   }
+ 
+   void setShowWifiManager(int dockId, bool value) {
+@@ -620,8 +619,7 @@
+   }
+ 
+   bool showVersionChecker(int dockId) const {
+-    return dockProperty(dockId, kGeneralCategory, kShowVersionChecker,
+-                        kDefaultShowVersionChecker);
++    return false;  // PetalOS uses its guarded UI and offline build updates.
+   }
+ 
+   void setShowVersionChecker(int dockId, bool value) {
+--- a/src/view/dock_panel.cc
++++ b/src/view/dock_panel.cc
+@@ -642,7 +642,7 @@
+     int y = height() - itemSpacing_ - k3DPanelThickness;
+     if (isFloating()) { y -= floatingMargin_; }
+     QImage toMirrorImage = mainImage.copy(0, y - itemSpacing_ + 2, width(), itemSpacing_ - 2);
+-    QImage mirrorImage = toMirrorImage.flipped(Qt::Vertical);
++    QImage mirrorImage = toMirrorImage.mirrored(false, true);
+     painter.setOpacity(0.3);
+     painter.drawImage(0, y, mirrorImage);
+     painter.setOpacity(1.0);
+@@ -987,6 +987,7 @@
+   wifiManagerAction_ = extraComponents->addAction(QString("Wi-Fi Manager"), this,
+                                                   SLOT(toggleWifiManager()));
+   wifiManagerAction_->setCheckable(true);
++  wifiManagerAction_->setEnabled(false);
+   volumeControlAction_ = extraComponents->addAction(QString("Volume Control"), this,
+                                                     SLOT(toggleVolumeControl()));
+   volumeControlAction_->setCheckable(true);
+@@ -999,6 +1000,7 @@
+   versionCheckerAction_ = extraComponents->addAction(QString("Version Checker"), this,
+                                                      SLOT(toggleVersionChecker()));
+   versionCheckerAction_->setCheckable(true);
++  versionCheckerAction_->setEnabled(false);
+   clockAction_ = extraComponents->addAction(QString("Clock"), this,
+                                             SLOT(toggleClock()));
+   clockAction_->setCheckable(true);
+--- a/src/view/trash.cc
++++ b/src/view/trash.cc
+@@ -23,6 +23,7 @@
+ #include <QDir>
+ #include <QFileInfo>
+ #include <QMouseEvent>
++#include <QMessageBox>
+ #include <QPainter>
+ #include <QProcess>
+ #include <QProcessEnvironment>
+@@ -150,23 +151,11 @@
+ }
+ 
+ void Trash::dropEvent(QDropEvent* event) {
+-  setAcceptDrops(false);
+-  
+-  if (!canAcceptDrop(event->mimeData())) {
+-    return;
+-  }
+-  
+-  QStringList filePaths;
+-  for (const QUrl& url : event->mimeData()->urls()) {
+-    if (url.isLocalFile()) {
+-      filePaths << url.toLocalFile();
+-    }
+-  }
+-  
+-  if (!filePaths.isEmpty()) {
+-    moveToTrash(filePaths);
+-    event->acceptProposedAction();
+-  }
++  // The maintained Thunar helper provides bounded, recoverable cross-filesystem
++  // Private-to-RAM Trash. Do not implement a second rename/copy backend here.
++  event->ignore();
++  QMessageBox::information(parent_, "RAM Trash",
++      "Use Move to Trash in the file manager. It safely handles files from Private and RAM.");
+ }
+ 
+ void Trash::createMenu() {
+@@ -178,46 +167,6 @@
+   parent_->addPanelSettings(&menu_);
+ }
+ 
+-void Trash::moveToTrash(const QStringList& filePaths) {
+-  for (const QString& filePath : filePaths) {
+-    QFileInfo fileInfo(filePath);
+-    if (!fileInfo.exists()) {
+-      continue;
+-    }
+-    
+-    QString fileName = fileInfo.fileName();
+-    QString destPath = trashFilesPath_ + "/" + fileName;
+-    QString infoPath = trashInfoPath_ + "/" + fileName + ".trashinfo";
+-    
+-    int counter = 1;
+-    while (QFile::exists(destPath)) {
+-      QString baseName = fileInfo.baseName();
+-      QString suffix = fileInfo.completeSuffix();
+-      if (!suffix.isEmpty()) {
+-        fileName = QString("%1_%2.%3").arg(baseName).arg(counter).arg(suffix);
+-      } else {
+-        fileName = QString("%1_%2").arg(baseName).arg(counter);
+-      }
+-      destPath = trashFilesPath_ + "/" + fileName;
+-      infoPath = trashInfoPath_ + "/" + fileName + ".trashinfo";
+-      counter++;
+-    }
+-    
+-    if (QFile::rename(filePath, destPath)) {
+-      QFile infoFile(infoPath);
+-      if (infoFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
+-        QTextStream stream(&infoFile);
+-        stream << "[Trash Info]\n";
+-        stream << "Path=" << filePath << "\n";
+-        stream << "DeletionDate=" << QDateTime::currentDateTime().toString(Qt::ISODate) << "\n";
+-        infoFile.close();
+-      }
+-    }
+-  }
+-  
+-  updateTrashState();
+-}
+-
+ bool Trash::isTrashEmpty() const {
+   QDir trashDir(trashFilesPath_);
+   return trashDir.isEmpty();
+--- a/src/view/version_checker.cc
++++ b/src/view/version_checker.cc
+@@ -45,13 +45,8 @@
+   } else {
+     setVersionStatus(VersionStatus::UpToDate);
+   }
+-  if (status_ == VersionStatus::UpToDate) {
+-    // checks version now and every hour.
+-    QTimer::singleShot(1000, this, &VersionChecker::checkVersion);
+-    timer_ = new QTimer(this);
+-    connect(timer_, &QTimer::timeout, this, &VersionChecker::checkVersion);
+-    timer_->start(timerInterval_);
+-  }
++  // PetalOS updates are supplied only through reviewed offline builds.
++
+ 
+   connect(&menu_, &QMenu::aboutToHide, this,
+           [this]() {
+@@ -71,35 +66,7 @@
+ }
+ 
+ void VersionChecker::checkVersion() {
+-  if (status_ != VersionStatus::UpToDate) {
+-    return;
+-  }
+-
+-  QProcess* curlProcess = new QProcess(parent_);
+-  connect(curlProcess, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
+-          [this, curlProcess](int exitCode, QProcess::ExitStatus exitStatus) {
+-            if (exitCode == 0) {
+-              const QString output = curlProcess->readAllStandardOutput();
+-              const QJsonDocument jsonDoc = QJsonDocument::fromJson(output.toUtf8());
+-              if (jsonDoc.isNull() || !jsonDoc.isObject()) {
+-                return;
+-              }
+-              const QJsonObject json = jsonDoc.object();
+-              if (!json.contains("tag_name")) {
+-                return;
+-              }
+-              QString latestRelease = json.value("tag_name").toString().trimmed();
+-              latestRelease = latestRelease.mid(latestRelease.indexOf("v") + 1);
+-              const QString version = DockPanel::kVersion;
+-              if (version == latestRelease) {
+-                setVersionStatus(VersionStatus::UpToDate);
+-              } else {
+-                setVersionStatus(VersionStatus::OutOfDate);
+-              }
+-            }
+-            curlProcess->deleteLater();
+-          });
+-  curlProcess->start("curl", QStringList() << "-s" << "https://api.github.com/repos/dangvd/crystal-dock/releases/latest");
++  // No online checks, including a restored or manually enabled component.
+ }
+ 
+ void VersionChecker::setVersionStatus(VersionStatus status) {

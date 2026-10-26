@@ -1,0 +1,8 @@
+{
+  "fixture": "tests/combined-vm-idle-inhibit.py",
+  "VM": "20261019-220338-142131",
+  "exit": 0,
+  "seconds": 1.49,
+  "stdout": "{\"idle_action_returns_cleanly\": true, \"download_mode_keeps_Private_open\": true, \"download_mode_does_not_create_screen_locker\": true}\n",
+  "stderr": ""
+}

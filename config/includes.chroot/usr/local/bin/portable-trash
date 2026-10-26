@@ -1,0 +1,22 @@
+#!/usr/bin/python3 -I
+"""Private-to-RAM trash; errors contain neither filenames nor file contents."""
+import signal
+import sys
+sys.path.insert(0,'/usr/local/lib/portable')
+from volatile_trash import move,TrashCapacityError
+
+
+def interrupted(*_):raise InterruptedError('Trash operation cancelled.')
+
+
+signal.signal(signal.SIGTERM,interrupted)
+signal.signal(signal.SIGINT,interrupted)
+try:
+    assert len(sys.argv)==3 and sys.argv[1]=='--'
+    move(sys.argv[2])
+except TrashCapacityError:
+    print('RAM Trash capacity exceeded; the original was kept.',file=sys.stderr)
+    raise SystemExit(2)
+except Exception:
+    print('Unable to finish the RAM Trash operation. Any published RAM copy was retained.',file=sys.stderr)
+    raise SystemExit(1)

@@ -27,7 +27,8 @@ for app in ('transmission','pan','amule'):
         source=source.replace('/usr/bin/transmission-gtk.portable-real','/bin/sh '+str(native)).replace('/usr/bin/pan.portable-real','/bin/sh '+str(native)).replace('/usr/bin/amule.portable-real','/bin/sh '+str(native))
         source=source.replace('/home/Petal',str(home))
         script=root/'wrapper';script.write_text(source)
-        environment={**os.environ,'HOME':str(home),'PATH':str(commands)+':/usr/bin:/bin'}
+        environment={**os.environ,'HOME':str(home),'PATH':str(commands)+':/usr/bin:/bin',
+                     'PORTABLE_STATE_ROOT':str(private)}
         def run(block=False):
             return subprocess.run(['/bin/bash',str(script),'--prepare'],env={**environment,'FAKE_BLOCK':str(int(block))},
                 stdin=subprocess.DEVNULL,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL,timeout=10).returncode
@@ -55,7 +56,20 @@ for app in ('transmission','pan','amule'):
             with file.open('w') as output:value.write(output)
         before=file.read_text()
         assert run()==0
-        if app=='amule':
+        if app=='transmission':
+            after=json.loads(file.read_text())
+            assert after['cache-size-mb']==17
+            base=str(private/'Downloads/transmission')
+            assert after['download-dir']==base
+            assert after['open-dialog-dir']==base
+            assert after['incomplete-dir']==base+'/incomplete'
+            for setting in ('port-forwarding-enabled','lpd-enabled','rpc-enabled',
+                            'blocklist-enabled','watch-dir-enabled'):
+                assert after[setting] is False
+            # The wrapper normalizes JSON formatting on each preparation.
+            # Compare content, not the caller's whitespace or trailing newline.
+            assert after==json.loads(before)
+        elif app=='amule':
             value.read(file);assert value.get('eMule','Nick')=='disposable-test' and value.get('eMule','NewVersionCheck')=='0'
         else:
             assert file.read_text()==before

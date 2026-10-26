@@ -1,0 +1,69 @@
+#!/bin/sh
+set -eu
+
+# Retained rollback generations must not all be read into RAM. Limit this
+# change to the reviewed trixie implementation and the generated path syntax.
+test "$(dpkg-query -W -f='${Version}' live-boot)" = '1:20250815~deb13u1'
+python3 - <<'PY'
+from pathlib import Path
+import hashlib
+p=Path('/usr/lib/live/boot/9990-toram-todisk.sh')
+assert hashlib.sha256(p.read_bytes()).hexdigest()=='42f7d613546fe4b952a0c6c72f354af3f248d5081f77b2a8e3d22cf40673de7b'
+s=p.read_text()
+old='\tif [ -z "${MODULETORAM}" ]\n\tthen\n\t\tsize=$(fs_size "" ${copyfrom}/ "used")'
+new='''\tpetalos_generation=""
+\tif [ "${copytodev}" = ram ] && [ -z "${MODULETORAM}" ] &&
+\t   printf '%s\\n' "${LIVE_MEDIA_PATH}" | grep -Eq '^/?petalos/releases/[a-f0-9]{24}/live$'
+\tthen
+\t\tpetalos_generation="${copyfrom}/${LIVE_MEDIA_PATH}"
+\t\t[ -d "${petalos_generation}" ] && [ ! -L "${petalos_generation}" ] || {
+\t\t\tpanic "Selected PetalOS generation is unavailable"; exit 1;
+\t\t}
+\tfi
+\tif [ -n "${petalos_generation}" ]
+\tthen
+\t\tsize=$(du -sk "${petalos_generation}" | awk '{print $1 + 8192}')
+\telif [ -z "${MODULETORAM}" ]
+\tthen
+\t\tsize=$(fs_size "" ${copyfrom}/ "used")'''
+assert s.count(old)==1;s=s.replace(old,new)
+old='''\t\telse
+\t\t\tif [ -x /bin/rsync ]
+\t\t\tthen
+\t\t\t\techo " * Copying whole medium to RAM"'''
+new='''\t\telse
+\t\t\tif [ -n "${petalos_generation}" ]
+\t\t\tthen
+\t\t\t\tmkdir -p "${copyto}/${LIVE_MEDIA_PATH}"
+\t\t\t\tif [ -x /bin/rsync ]
+\t\t\t\tthen
+\t\t\t\t\trsync -a -- "${petalos_generation}/" "${copyto}/${LIVE_MEDIA_PATH}/" || {
+\t\t\t\t\t\tpanic "Selected PetalOS generation could not be copied to RAM"; exit 1;
+\t\t\t\t\t}
+\t\t\t\telse
+\t\t\t\t\tcp -a "${petalos_generation}/." "${copyto}/${LIVE_MEDIA_PATH}/" || {
+\t\t\t\t\t\tpanic "Selected PetalOS generation could not be copied to RAM"; exit 1;
+\t\t\t\t\t}
+\t\t\t\tfi
+\t\t\telif [ -x /bin/rsync ]
+\t\t\tthen
+\t\t\t\techo " * Copying whole medium to RAM"'''
+assert s.count(old)==1;s=s.replace(old,new)
+old='\t\tlog_warning_msg "Not enough free ${free_string} (${freespace}k free, ${size}k needed) to copy live media in ${copytodev}."\n\t\treturn 1'
+new='''\t\tlog_warning_msg "Not enough free ${free_string} (${freespace}k free, ${size}k needed) to copy live media in ${copytodev}."
+\t\tif [ -n "${petalos_generation}" ]; then
+\t\t\tpanic "Insufficient RAM for the selected PetalOS generation"; exit 1
+\t\tfi
+\t\treturn 1'''
+assert s.count(old)==1;s=s.replace(old,new)
+old='\tmount -t "${fstype}" ${mount_options} "${dev}" "${copyto}"'
+new=old+''' || {
+\t\tif [ -n "${petalos_generation}" ]; then
+\t\t\tpanic "PetalOS RAM medium could not be mounted"; exit 1
+\t\tfi
+\t\treturn 1
+\t}'''
+assert s.count(old)==1;s=s.replace(old,new)
+p.write_text(s)
+PY
+update-initramfs -u -k all

@@ -68,6 +68,10 @@ with patch.object(Gtk.Widget, 'show_all', lambda _: None), patch.object(Gtk.Dial
         assert len(calls) == (1 if cancelled else 2)
     print('PASS: cancelled recovery never invokes cryptsetup; wrong key fails, accepted key travels only in stdin')
     desktop = load(root / 'bin/portable-desktop')
+    # Exercise the UI's result handling here; the cancellable process runner
+    # has separate real-child and guest sudo/broker regression tests.
+    desktop['run_action'] = lambda command, env, event: subprocess.run(command, env=env,
+        stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode
     for action in desktop['ACTIONS']:
         for success in (True, False):
             with tempfile.TemporaryDirectory(prefix='petalos-desktop-', dir='/dev/shm') as temporary:

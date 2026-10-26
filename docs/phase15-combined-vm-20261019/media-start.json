@@ -1,0 +1,8 @@
+{
+  "fixture": "tests/phase15-20261018/media-start.py",
+  "VM": "20261019-220338-142131",
+  "exit": 0,
+  "seconds": 18.36,
+  "stdout": "{\"fixture_bytes\": 1742780, \"parole_ready\": true, \"opened_from_downloads_via_readonly_handoff\": true, \"duration_seconds\": 120}\n",
+  "stderr": ""
+}

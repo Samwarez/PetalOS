@@ -1,0 +1,13 @@
+[Unit]
+Description=Prepare PetalOS temporary Documents and Downloads
+After=live-config.service local-fs.target
+Before=display-manager.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/portable-ram-content-setup
+RemainAfterExit=yes
+TimeoutStartSec=20
+
+[Install]
+WantedBy=multi-user.target

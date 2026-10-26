@@ -1,0 +1,9 @@
+{
+  "fixture": "tests/combined-vm-persistence-check.py",
+  "VM": "20261019-220338-142131",
+  "fixture_sha256": "881ffabbc27c217f25c0887d97814f1521bfb1fd81c8bb1092c216dd9a555077",
+  "exit": 0,
+  "seconds": 10.54,
+  "stdout": "{\"Private_still_closed_after_reboot\": true, \"RAM_canary_gone\": true, \"RAM_download_fixture_gone\": true, \"fresh_boot_trash_empty\": true, \"approved_SYSTEM_settings_retained\": true, \"immediate_desktop_save_restored\": true, \"actual_Transmission_applied_saved_preference\": true, \"Transmission_history_path_not_restored\": true, \"actual_aMule_applied_saved_preference\": true, \"actual_aMule_restored_server_endpoint\": true, \"aMule_history_canary_not_restored\": true, \"Private_not_needed_for_restoration\": true}\n",
+  "stderr": ""
+}

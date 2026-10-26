@@ -67,6 +67,8 @@ def main(ssh_module=None, host_public_key=None, configuration_module=None, repla
     if os.geteuid() != 0 or len(sys.argv) not in (2, 3):
         raise RuntimeError("Invoke through the prepared coordinator and sudo.")
     release = Path(sys.argv[2]) if len(sys.argv) == 3 else RELEASE
+    if not (release / 'manifest.json').is_file():
+        raise RuntimeError('Historical default release has been retired or the explicit release is incomplete. Supply a reviewed retained release explicitly; no disk has been opened.')
     if (release.parent != PROJECT.parent / "releases" or
             not re.fullmatch(r"\d{8}-\d{6}-\d+", release.name) or
             release.resolve(strict=True) != release or not release.is_dir()):

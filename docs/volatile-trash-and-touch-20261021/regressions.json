@@ -1,0 +1,76 @@
+{
+  "date": "2026-10-21",
+  "base_git_revision": "543cf7ef2dd49eb0903fddc757fff2cff774502f",
+  "uncommitted_source_changes": true,
+  "results": [
+    {
+      "name": "RAM Trash backend",
+      "command": [
+        "python3",
+        "-B",
+        "tests/check-volatile-trash.py"
+      ],
+      "exit_code": 0,
+      "stdout": "PASS actual cross-filesystem RAM Trash copy, metadata, source removal and file restore\nPASS directories copy completely; symlinks are copied without reading their targets\nPASS capacity, write/sync failure, changing source, FIFO, complexity and collision preserve original data\nPASS deletion failure retains the published complete RAM copy and its recovery metadata\nPASS concurrent Trash copy refuses without deleting the source\nPASS substituted Trash ancestor is refused without writing outside RAM Trash\nPASS lock cleanup removes RAM data/metadata, preserves watched directories and never follows links to unrelated files\nPASS retry reclaims only abandoned RAM staging and unpublished metadata after an interrupted helper\nPASS normal desktop umask is tightened before copying; a wrong filesystem is rejected before any directory creation\nPASS lock beginning during a copy prevents publication and deletion; original data remains intact\n",
+      "stderr": ""
+    },
+    {
+      "name": "Private lock controller",
+      "command": [
+        "python3",
+        "-B",
+        "tests/private-storage-controller.py"
+      ],
+      "exit_code": 0,
+      "stdout": "PASS wrong passphrase preserves closed state\nPASS wrong passphrase does not close an existing volume\nPASS failed Private unlock preserves first-boot SYSTEM availability\nPASS wrong passphrase preserves open state\nPASS wrong passphrase does not close an existing volume\nPASS failed Private unlock preserves first-boot SYSTEM availability\nPASS typed unlock error preserves original failure\nPASS typed error preserves existing volume and SYSTEM\nPASS typed unlock error preserves original failure\nPASS typed error preserves existing volume and SYSTEM\nPASS typed unlock error preserves original failure\nPASS typed error preserves existing volume and SYSTEM\nPASS typed unlock error preserves original failure\nPASS typed error preserves existing volume and SYSTEM\nPASS SYSTEM screen authentication accepts valid secret\nPASS screen authentication never opens Private\nPASS SYSTEM screen authentication rejects bad secret\nPASS screen authentication never opens Private\nPASS new copies are blocked, readers drained, Trash cleared and late readers drained before Private closure\nPASS failed Trash cleanup evicts keys and powers off\nPASS busy volume evicts keys before shutdown\nPASS repeated closed-volume lock succeeds\nPASS download mode inhibits idle lock\nPASS manual lock overrides and clears download mode\nPASS concurrent lock request never enters shutdown path\nPASS sleep hook closes storage without a desktop service\nPASS resume never automatically unlocks Private\nPASS unresolved concurrent unlock at sleep fails closed\nAll synthetic storage and sleep-hook checks passed.\nPASS RAM Trash reader is identified independently of the Private block device\nPASS deleted-but-open RAM Trash reader is still identified\nPASS unrelated RAM handle is not a Private reader\n",
+      "stderr": ""
+    },
+    {
+      "name": "Selective settings and touch migration",
+      "command": [
+        "/usr/bin/python3",
+        "-B",
+        "tests/check-desktop-settings.py"
+      ],
+      "exit_code": 0,
+      "stdout": "PASS selective desktop settings roundtrip\nPASS Trash contents and deletion metadata are not saved/restored; existing Trash is untouched\nPASS absolute, traversal, unrelated, symlink and device entries rejected\nPASS legacy migration drops file-chooser and unrelated app state\nPASS daemon/write failures preserve the prior archive and clean temporary output\nPASS typed live XML preserves arrays/booleans/nesting and rejects invalid values\nAll selective desktop settings checks passed.\nPASS old stock touch defaults migrate once; custom timing/distance and subsequent user overrides survive\n",
+      "stderr": ""
+    },
+    {
+      "name": "Build-hook preservation, idempotence and conflicting fstab refusal",
+      "result": "passed",
+      "scope": "temporary public filesystem fixture; no host configuration changed"
+    },
+    {
+      "name": "Full release build-input validation",
+      "result": "passed",
+      "scope": "validation only; no live-build or full image created"
+    },
+    {
+      "name": "AppArmor parse only",
+      "result": "passed",
+      "profiles": 22,
+      "scope": "no host policy load; runtime enforcement not tested"
+    },
+    {
+      "name": "Whitespace verification",
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "source_sha256": {
+    "config/includes.chroot/usr/local/lib/portable/volatile_trash.py": "a3b0f2878146eb6132efcd0fa855497942e96e7f1ba0da2073f93c0163c34916",
+    "config/includes.chroot/usr/local/lib/portable/private_storage.py": "e909bc1f6dc5bbbfb05a8eac0c90bc9b6c03ab8a69b91a223bae7a116daf9f8e",
+    "config/includes.chroot/usr/local/lib/portable/desktop_settings.py": "fbbb84a376f923c8e0f49b0b367ff38363e03f1c2abdd3c0761c6d63003895bc",
+    "tests/thunar-volatile-trash-fixture.py": "c2c40606d9e5463a4522404b23e9faae283d1cfb97642aa3aa3d57a0f1925d69",
+    "tests/check-volatile-trash.py": "8702be6d44c38377c0d96550009a255d46811dddd01d44b0c0b15e59b0e0281a",
+    "tests/private-storage-controller.py": "a25f7008f82508d57956e69c951e30d43eab05ac432a6bb4c223620309f72722",
+    "tests/check-desktop-settings.py": "44144dcd315650f685ca86dd0ade1226761700547d17bd70d89558a4c5feaa44"
+  }
+}

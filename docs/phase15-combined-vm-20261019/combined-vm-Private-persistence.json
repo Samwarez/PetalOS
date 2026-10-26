@@ -1,0 +1,9 @@
+{
+  "fixture": "tests/combined-vm-Private-persistence.py",
+  "VM": "20261019-220338-142131",
+  "fixture_sha256": "9e213911fa8c544b0c6f6e0523045f707c0afae5e04bcbca7ec9fdd473e1a1ba",
+  "exit": 0,
+  "seconds": 6.85,
+  "stdout": "{\"Private_content_retained_after_reboot\": true, \"Private_canary_owner_and_mode_retained\": true, \"GUI_saved_database_survived_reboot\": true, \"fresh_install_has_no_legacy_PortableSettings_folder\": true, \"Private_closed_after_check\": true, \"SYSTEM_state_still_ready\": true}\n",
+  "stderr": ""
+}

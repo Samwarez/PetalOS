@@ -1,0 +1,8 @@
+[Plymouth Theme]
+Name=PetalOS
+Description=PetalOS startup, independent SYSTEM unlock and RAM loading
+ModuleName=script
+
+[script]
+ImageDir=/usr/share/plymouth/themes/petalos
+ScriptFile=/usr/share/plymouth/themes/petalos/petalos.script

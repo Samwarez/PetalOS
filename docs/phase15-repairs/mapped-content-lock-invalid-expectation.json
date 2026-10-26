@@ -1,0 +1,13 @@
+{
+  "fixture": "tests/phase15-repairs/mapped-content-lock.py",
+  "exit": 1,
+  "elapsed_seconds": 13.48,
+  "stderr": "Traceback (most recent call last):\n  File \"<string>\", line 29, in <module>\n    assert all(result.values())\n           ~~~^^^^^^^^^^^^^^^^^\nAssertionError\n",
+  "result": {
+    "manual_lock_succeeded": true,
+    "Private_mapping_closed": true,
+    "SYSTEM_mapping_closed": false,
+    "application_workers_gone": true,
+    "mapped_Private_views_gone": true
+  }
+}

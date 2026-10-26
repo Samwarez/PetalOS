@@ -2,7 +2,8 @@
 
 profile petalos_offline_gthumb flags=(attach_disconnected,mediate_deleted) {
   #include <abstractions/petalos-offline-common>
-  owner /mnt/ram/{,**} rwkl,
+  # Only this role's delegated content; desktop-owned files must be editable.
+  /mnt/ram/Documents/gthumb/{,**} rwkl,
   /mnt/private/Documents/gthumb/{,**} rwkl,
   deny network inet,
 }

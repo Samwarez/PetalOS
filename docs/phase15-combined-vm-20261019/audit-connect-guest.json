@@ -1,0 +1,8 @@
+{
+  "fixture": "tests/audit-connect-guest.py",
+  "VM": "20261019-220338-142131",
+  "exit": 0,
+  "seconds": 11.46,
+  "stdout": "{\"dedicated_VPN_connected\": true, \"live_network_and_clock_gate_ready\": true}\n",
+  "stderr": ""
+}

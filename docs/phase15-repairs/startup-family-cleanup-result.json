@@ -1,0 +1,10 @@
+{
+  "fixture": "tests/phase15-repairs/startup-family-cleanup.py",
+  "exit": 0,
+  "elapsed_seconds": 10.9,
+  "stderr": "",
+  "result": {
+    "new_backend_removed": true,
+    "existing_backend_preserved": true
+  }
+}

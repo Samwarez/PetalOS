@@ -74,7 +74,7 @@ def unlock_screen(work):
     raise RuntimeError('Desktop unlock did not complete.')
 
 
-def launch(work, s):
+def launch(work, s, *, offline=False):
     assert os.geteuid() != 0
     image = work / 'audit.img';assert s['image'] == str(image)
     assert image.is_file() and not image.is_symlink() and image.stat().st_size == 16 * 1024**3
@@ -95,13 +95,15 @@ def launch(work, s):
             '-drive', 'if=pflash,format=raw,file=' + str(work / 'OVMF_VARS.fd'),
             '-drive', 'format=raw,if=virtio,file=' + str(image),
             '-global', 'virtio-blk-pci.bootindex=1',
-            '-boot', 'order=c', '-nic', 'user,model=virtio-net-pci',
+            '-boot', 'order=c', '-netdev', 'user,id=auditnet',
+            '-device', 'virtio-net-pci,netdev=auditnet,id=auditnic',
             '-device', 'vhost-vsock-pci,guest-cid=43',
             '-object', 'rng-random,filename=/dev/urandom,id=entropy', '-device', 'virtio-rng-pci,rng=entropy',
             '-device', 'virtio-vga,xres=1280,yres=800', '-display', 'gtk,zoom-to-fit=off',
             '-audiodev', 'pa,id=sound', '-device', 'ich9-intel-hda', '-device', 'hda-output,audiodev=sound',
             '-serial', 'unix:' + str(serial) + ',server=on,wait=on', '-monitor', 'none',
-            '-qmp', 'unix:' + str(qmp) + ',server=on,wait=off', '-name', 'PetalOS DISPOSABLE Phase 1.5 audit']
+            '-qmp', 'unix:' + str(qmp) + ',server=on,wait=off', '-name',
+            'PetalOS Phase 2 preview' if s.get('graphical_boot') else 'PetalOS DISPOSABLE Phase 1.5 audit']
     process = None;relay = None
     error_tail = bytearray()
     console_tail = bytearray()
@@ -117,8 +119,6 @@ def launch(work, s):
 
     def drain_errors():
         try:
-            for name in ('console-status.json', 'audit-screen.ppm', 'audit-screen.png'):
-                (runtime / name).unlink(missing_ok=True)
             while chunk := process.stderr.read(8192):
                 error_tail.extend(chunk);del error_tail[:-65536]
         except BlockingIOError:
@@ -128,6 +128,8 @@ def launch(work, s):
     with (work / 'vm.lock').open('a') as lock:
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
         try:
+            for name in ('console-status.json', 'audit-screen.ppm', 'audit-screen.png', 'capture.ppm', 'capture.png'):
+                (runtime / name).unlink(missing_ok=True)
             process = subprocess.Popen(args, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
             os.set_blocking(process.stderr.fileno(), False)
             deadline = time.monotonic() + 20
@@ -137,9 +139,36 @@ def launch(work, s):
                 time.sleep(.2)
             connection = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
             connection.connect(str(serial));connection.settimeout(1)
+            if offline:
+                with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as control:
+                    control.settimeout(5);control.connect(str(qmp))
+                    stream = control.makefile('rwb', buffering=0)
+                    json.loads(stream.readline())
+                    for command in ({'execute': 'qmp_capabilities'},
+                                    {'execute': 'set_link', 'arguments': {'name': 'auditnic', 'up': False}}):
+                        stream.write(json.dumps(command).encode()+b'\n')
+                        while True:
+                            reply = json.loads(stream.readline())
+                            if 'error' in reply:raise RuntimeError('Offline boot link control failed.')
+                            if 'return' in reply:break
+                    stream.close()
+                print('Audit NIC link disabled before SYSTEM unlock.', flush=True)
             relay = subprocess.Popen(['socat', 'TCP4-LISTEN:2225,bind=127.0.0.1,reuseaddr,fork',
                                       'VSOCK-CONNECT:43:22'], stdout=subprocess.DEVNULL,
                                      stderr=subprocess.DEVNULL, start_new_session=True)
+            if s.get('graphical_boot'):
+                connection.setblocking(False)
+                (runtime / 'running.json').write_text(json.dumps({'pid':process.pid,'qmp':str(qmp),'image':str(image)}))
+                print('Graphical preview booting. SYSTEM entry requires the visible prompt; no blind serial injection.',flush=True)
+                print('Pinned preview SSH relay: 127.0.0.1:2225.',flush=True)
+                while process.poll() is None:
+                    drain_errors()
+                    try:console_status(connection.recv(65536))
+                    except BlockingIOError:pass
+                    time.sleep(.2)
+                drain_errors()
+                assert process.returncode==0
+                return
             credentials = json.loads((work / 'credentials.json').read_text())
             sent = False;buffer = b'';deadline = time.monotonic() + 180
             print('Audit VM booting; SYSTEM entry is automated from test-only credentials.', flush=True)
@@ -181,7 +210,8 @@ def main():
     assert os.geteuid() != 0 and len(sys.argv) >= 3
     work, s = state(sys.argv[1]);action = sys.argv[2]
     if action == 'launch':
-        assert len(sys.argv) == 3;launch(work, s)
+        assert len(sys.argv) == 3 or sys.argv[3:] == ['--offline']
+        launch(work, s, offline=len(sys.argv) == 4)
     elif action == 'unlock-screen':
         assert len(sys.argv) == 3;unlock_screen(work)
     elif action == 'ssh':

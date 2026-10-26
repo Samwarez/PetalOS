@@ -1,0 +1,9 @@
+#!/usr/bin/python3 -B
+"""Run Bloom from the maintained source tree."""
+from pathlib import Path
+import sys
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'local/installer'))
+from petal_installer.cli import main
+
+raise SystemExit(main(['gui'] if len(sys.argv) == 1 else None))

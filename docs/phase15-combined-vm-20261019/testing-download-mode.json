@@ -1,0 +1,8 @@
+{
+  "fixture": "tests/phase15-repairs/connect-test-vpn.py",
+  "VM": "20261019-220338-142131",
+  "exit": 0,
+  "seconds": 2.13,
+  "stdout": "{\"live_vpn_check\": true, \"download_mode_for_tests\": true}\n",
+  "stderr": ""
+}

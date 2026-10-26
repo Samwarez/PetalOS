@@ -1,0 +1,32 @@
+{
+  "test_command": "python3 -B tests/check-release-generations.py",
+  "environment": "ordinary disposable host directories; no block devices or QEMU used",
+  "result": "passed",
+  "test_retention_interruption_points": 19,
+  "production_retention_interruption_points": 26,
+  "also_verified": [
+    "seven existing staging/activation interruptions",
+    "payload-write failure and insufficient capacity",
+    "successive bounded releases and production transition",
+    "repeat installation idempotence",
+    "simulated capacity for only two OS payloads",
+    "unknown file and symlink refusal",
+    "corrupt active generation refusal",
+    "empty and stale selector refusal",
+    "exclusive lock refuses concurrent install",
+    "legacy accumulated menus flattened and interrupted public config cleaned",
+    "settings, shared module and EFI canaries preserved"
+  ],
+  "source_sha256": {
+    "tests/release_generations.py": "6773ee83859c17d5fc23ff43a3e2498c4ce6ba46524c891bfc2fedaeff989ea8",
+    "tests/check-release-generations.py": "2778dccf5dca0a7537efb56b753d7ce99c33bf1034a292652ffaa5e3242a20f3",
+    "tests/update-card-release-root.py": "bf6e1de83603f40cc20f089233578279dc66fe83503a86a968480c68ef485d14",
+    "tests/phase15-repairs/prepare-coldboot-guest.py": "8d09728bd21c4b3d65fc244542111c804d01b1f71c5cb3c58af6289cac8ac47c"
+  },
+  "not_verified": [
+    "real FAT/ext4 space exhaustion for the new retention path",
+    "new-image boot",
+    "physical-card retention execution"
+  ],
+  "physical_card_untouched": true
+}

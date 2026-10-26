@@ -52,7 +52,7 @@ def prepare(identity=None):
     folder.mkdir(mode=0o700,exist_ok=True)
     assert folder.stat().st_uid in (0,1000)
     os.chown(folder,0,1000);folder.chmod(0o750)
-    for name in ('Network','Network/Profiles','Desktop','Applications','Applications/TorBrowser'):
+    for name in ('Network','Network/Profiles','Desktop','Applications','Applications/TorBrowser','Wallpapers'):
         p=folder/name
         assert not any(q.is_symlink() for q in (p,*p.parents))
         p.mkdir(mode=0o700,exist_ok=True)
@@ -67,6 +67,8 @@ def prepare(identity=None):
     # per-mount flags, not the underlying filesystem's writable bind.
     command(['/usr/bin/mount','-o','remount,bind,ro,nodev,nosuid,noexec',str(FULL)])
     require()
+    from wallpapers import seed
+    seed(STATE/'Wallpapers')
 
 
 def unmount():

@@ -1,0 +1,10 @@
+{
+  "fixture": "tests/phase15-repairs/install-poppler-test-api.py",
+  "exit": 0,
+  "elapsed_seconds": 4.85,
+  "stderr": "",
+  "result": {
+    "test_API_install_exit": 0,
+    "disposable_RAM_only": true
+  }
+}

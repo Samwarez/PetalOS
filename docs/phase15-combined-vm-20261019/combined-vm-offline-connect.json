@@ -1,0 +1,8 @@
+{
+  "fixture": "tests/combined-vm-offline-connect.py",
+  "VM": "20261019-220338-142131",
+  "exit": 0,
+  "seconds": 88.17,
+  "stdout": "{\"checks\": {\"offline_connection_reports_failure\": true, \"failed_connection_removed_tunnel\": true, \"readiness_denied_after_failure\": true, \"all_firewall_default_policies_still_drop\": true}, \"seconds\": 86.74}\n",
+  "stderr": ""
+}

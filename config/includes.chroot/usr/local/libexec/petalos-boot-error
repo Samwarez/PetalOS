@@ -1,0 +1,7 @@
+#!/bin/sh
+# Boot presentation only; acknowledging it grants no privileges.
+if plymouth --ping >/dev/null 2>&1; then
+    /usr/local/libexec/petalos-splash error
+    plymouth watch-keystroke --keys=' ' >/dev/null 2>&1 || true
+    plymouth quit >/dev/null 2>&1 || true
+fi

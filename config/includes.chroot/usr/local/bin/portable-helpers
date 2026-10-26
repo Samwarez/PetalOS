@@ -1,0 +1,33 @@
+#!/usr/bin/python3
+"""Fixed PetalOS helper group; dispatch existing trusted desktop entries."""
+from pathlib import Path
+import os
+import gi
+gi.require_version('Gtk','3.0')
+from gi.repository import Gtk,Gio
+
+ENTRIES=('portable-private','portable-lock-private','portable-download-mode',
+         'portable-vpn-connect','portable-vpn-disconnect','portable-check-exit-ip',
+         'portable-check-ipv6','portable-save-settings','portable-save-app-preferences',
+         'portable-tor-install','portable-sabnzbd','portable-sabnzbd-stop')
+
+def main():
+    assert os.getuid()==1000 and os.environ.get('XDG_SESSION_TYPE')=='wayland'
+    window=Gtk.Window(title='PetalOS Helpers');window.set_default_size(340,360)
+    scroller=Gtk.ScrolledWindow();scroller.set_policy(Gtk.PolicyType.NEVER,Gtk.PolicyType.AUTOMATIC)
+    box=Gtk.Box(orientation=Gtk.Orientation.VERTICAL,spacing=5);box.set_border_width(12)
+    for name in ENTRIES:
+        entry=Gio.DesktopAppInfo.new_from_filename('/usr/share/applications/'+name+'.desktop')
+        if entry is None:continue
+        button=Gtk.Button(label=entry.get_display_name())
+        def activate(_, app=entry):
+            try:app.launch([],None);window.destroy()
+            except Exception:
+                dialog=Gtk.MessageDialog(transient_for=window,modal=True,message_type=Gtk.MessageType.ERROR,
+                    buttons=Gtk.ButtonsType.CLOSE,text='The helper could not start. Please try again.')
+                dialog.run();dialog.destroy()
+        button.connect('clicked',activate);box.pack_start(button,False,False,0)
+    scroller.add(box);window.add(scroller);window.connect('destroy',lambda *_:Gtk.main_quit())
+    window.show_all();Gtk.main()
+
+if __name__=='__main__':main()

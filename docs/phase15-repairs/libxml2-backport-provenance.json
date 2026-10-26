@@ -1,0 +1,60 @@
+{
+  "source": {
+    "files": {
+      "libxml2_2.12.7+dfsg+really2.9.14-2.1+deb13u3.debian.tar.xz": "3b6d265f482d6a8fbe3c056d2006fb3b563b4a838f7258b388ac5f0b29206921",
+      "libxml2_2.12.7+dfsg+really2.9.14-2.1+deb13u3.dsc": "04b1da890535b11e3db231f39114ee09e643badceff79441d749d0ca78efaaa5",
+      "libxml2_2.12.7+dfsg+really2.9.14.orig.tar.xz": "4fe913dec8b1ab89d13b489b419a8203176ea39e931eaa0d25b17eafb9c279e9"
+    },
+    "version": "2.12.7+dfsg+really2.9.14-2.1+deb13u3",
+    "patch": {
+      "file": "libxml2-qstring-overflow.patch",
+      "sha256": "602072e0dbd464f749a95d7c907be54e241f6cf8cb73b876fc96b2d7e9dd7426"
+    },
+    "package_version": "2.12.7+dfsg+really2.9.14-2.1+deb13u3+petalos1"
+  },
+  "debs": {
+    "libxml2-doc_2.12.7+dfsg+really2.9.14-2.1+deb13u3+petalos1_all.deb": {
+      "sha256": "8025ab340ac45335100b49cbca95dfff3057cc34534b29b97f93c79e0d2d2576",
+      "package": "libxml2-doc",
+      "version": "2.12.7+dfsg+really2.9.14-2.1+deb13u3+petalos1"
+    },
+    "python3-libxml2_2.12.7+dfsg+really2.9.14-2.1+deb13u3+petalos1_amd64.deb": {
+      "sha256": "fad9ca8ba5a9c167180bc92596d7a2cfacb51effc23500a081485a0b0e92eb23",
+      "package": "python3-libxml2",
+      "version": "2.12.7+dfsg+really2.9.14-2.1+deb13u3+petalos1"
+    },
+    "libxml2-dbgsym_2.12.7+dfsg+really2.9.14-2.1+deb13u3+petalos1_amd64.deb": {
+      "sha256": "5ff9786774e7b583d9f7410dad522cdd84c79af7d24fbfa79eb9a149ea32f796",
+      "package": "libxml2-dbgsym",
+      "version": "2.12.7+dfsg+really2.9.14-2.1+deb13u3+petalos1"
+    },
+    "libxml2-utils-dbgsym_2.12.7+dfsg+really2.9.14-2.1+deb13u3+petalos1_amd64.deb": {
+      "sha256": "e7efbdebf03ccfbb519f6915de16bbf55414092752313f06d04e9c4c0b113436",
+      "package": "libxml2-utils-dbgsym",
+      "version": "2.12.7+dfsg+really2.9.14-2.1+deb13u3+petalos1"
+    },
+    "python3-libxml2-dbgsym_2.12.7+dfsg+really2.9.14-2.1+deb13u3+petalos1_amd64.deb": {
+      "sha256": "32385b71a9cc079a2ebb2df7f0194b28c53d75685f1fc5aafa3c2a3887d53d29",
+      "package": "python3-libxml2-dbgsym",
+      "version": "2.12.7+dfsg+really2.9.14-2.1+deb13u3+petalos1"
+    },
+    "libxml2-dev_2.12.7+dfsg+really2.9.14-2.1+deb13u3+petalos1_amd64.deb": {
+      "sha256": "4055e5005a3768e0aba36e25e8320df52ecf4c2d9f8b08d014bae994b9dbe0e0",
+      "package": "libxml2-dev",
+      "version": "2.12.7+dfsg+really2.9.14-2.1+deb13u3+petalos1"
+    },
+    "libxml2-utils_2.12.7+dfsg+really2.9.14-2.1+deb13u3+petalos1_amd64.deb": {
+      "sha256": "d942ba2e96816ea9f46d8c0c34e29d3db7b6ad656e278bf3967ab044efc2cf28",
+      "package": "libxml2-utils",
+      "version": "2.12.7+dfsg+really2.9.14-2.1+deb13u3+petalos1"
+    },
+    "libxml2_2.12.7+dfsg+really2.9.14-2.1+deb13u3+petalos1_amd64.deb": {
+      "sha256": "d7a6236246cd5f824836efbf290572060eb86eb34b658137f77694ddcaa3ca8e",
+      "package": "libxml2",
+      "version": "2.12.7+dfsg+really2.9.14-2.1+deb13u3+petalos1"
+    }
+  },
+  "Debian_build_completed_with_tests_enabled": true,
+  "architecture": "amd64",
+  "regression_scope": "bounded source regressions; installed-package workflow tests are separate"
+}

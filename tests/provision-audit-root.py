@@ -137,14 +137,30 @@ def main():
         system = mounted(devices['system'], 'system', 'ext4')
         private = mounted(devices['private'], 'private', 'ext4')
         os.chown(private, 1000, 1000);private.chmod(0o700)
-        (boot / 'live').mkdir();(system / 'live').mkdir()
+        boot_payload = boot / 'live'
+        live_payload = system / 'live'
+        generation = None
+        if s.get('generation_boot'):
+            metadata = {'format': 1, 'os': {name: digest(p) for name, p in sources.items()},
+                        'modules': {module.name: digest(module)}}
+            encoded = json.dumps(metadata, sort_keys=True, separators=(',', ':')).encode()
+            generation = hashlib.sha256(encoded).hexdigest()[:24]
+            relative = Path('petalos/releases') / generation
+            boot_payload = boot / relative
+            live_payload = system / relative / 'live'
+            for directory in (boot_payload, live_payload.parent):
+                directory.mkdir(parents=True)
+                (directory / 'generation.json').write_bytes(encoded)
+            s['generation'] = generation
+        boot_payload.mkdir(parents=True, exist_ok=True)
+        live_payload.mkdir(parents=True, exist_ok=True)
         for name in ('vmlinuz', 'initrd.img'):
-            shutil.copyfile(sources[name], boot / 'live' / name)
-            assert digest(boot / 'live' / name) == digest(sources[name])
+            shutil.copyfile(sources[name], boot_payload / name)
+            assert digest(boot_payload / name) == digest(sources[name])
         for src in (sources['filesystem.squashfs'], module):
-            shutil.copyfile(src, system / 'live' / src.name)
-            assert digest(system / 'live' / src.name) == digest(src)
-        (system / 'live/filesystem.module').write_text('filesystem.squashfs\npetalos-qemu-ssh.squashfs\n')
+            shutil.copyfile(src, live_payload / src.name)
+            assert digest(live_payload / src.name) == digest(src)
+        (live_payload / 'filesystem.module').write_text('filesystem.squashfs\npetalos-qemu-ssh.squashfs\n')
         selected = system / '.petalos-state'
         selected.mkdir(mode=0o750);os.chown(selected, 0, 1000)
         for name in ['Network', 'Network/Profiles', 'Desktop', 'Applications', 'Applications/TorBrowser']:
@@ -181,8 +197,26 @@ menuentry 'PetalOS disposable audit VM' {
  initrd /live/initrd.img
 }
 '''
+        if generation is not None:
+            prefix = '/petalos/releases/' + generation
+            grub = grub.replace('/live/vmlinuz', prefix + '/vmlinuz').replace(
+                '/live/initrd.img', prefix + '/initrd.img').replace(
+                'live-media=/dev/mapper/portable_system',
+                'live-media=/dev/mapper/portable_system live-media-path=' + prefix + '/live')
+        if s.get('graphical_boot'):
+            assert generation is not None
+            grub=grub.replace('set timeout=1','set timeout=5').replace(' console=ttyS0,115200','')
+            grub=grub.replace('console=tty0','console=tty0 quiet splash')
+            grub=grub.replace('PetalOS disposable audit VM','PetalOS Phase 2 preview')
         for p in (efi / 'grub.cfg', boot / 'EFI/debian/grub.cfg', boot / 'boot/grub/grub.cfg'):
             p.parent.mkdir(parents=True, exist_ok=True);p.write_text(grub)
+        if s.get('graphical_boot'):
+            spec=importlib.util.spec_from_file_location('boot_branding',PROJECT/'tests/boot_branding.py')
+            branding=importlib.util.module_from_spec(spec);spec.loader.exec_module(branding)
+            style=branding.verified(release/'build/binary/boot/grub/petalos');assert style is not None
+            configs=[(p,p.read_text()) for p in (efi/'grub.cfg',boot/'EFI/debian/grub.cfg',boot/'boot/grub/grub.cfg')]
+            installed=branding.install(boot,style,configs,identity=identity)
+            assert all(digest(path)==sha for path,sha in installed.items())
         status('flushing-and-detaching')
         for target in mounts:run(['/usr/bin/sync', '-f', str(target)])
     except BaseException:

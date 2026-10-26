@@ -1,0 +1,67 @@
+--- a/thunar/thunar-gio-extensions.h
++++ b/thunar/thunar-gio-extensions.h
+@@ -24,6 +24,10 @@
+ #include <gio/gio.h>
+ 
+ G_BEGIN_DECLS
++
++gchar *thunar_g_file_original_basename (GFile *file);
++gboolean thunar_g_file_is_private (GFile *file);
++gboolean thunar_g_file_trash_volatile (GFile *file, GCancellable *cancellable, GError **error);
+ 
+ #define THUNAR_METADATA_STRING_DELIMETER "|"
+ 
+--- a/thunar/thunar-io-jobs.c
++++ b/thunar/thunar-io-jobs.c
+@@ -897,10 +897,13 @@
+       _thunar_assert (G_IS_FILE (lp->data));
+ 
+       /* trash the file or folder */
+-      g_file_trash (lp->data, exo_job_get_cancellable (EXO_JOB (job)), &err);
++      thunar_g_file_trash_volatile (lp->data, exo_job_get_cancellable (EXO_JOB (job)), &err);
+ 
+       if (err != NULL)
+         {
++          /* RAM-copy failure must not become a permanent-delete prompt. */
++          if (thunar_g_file_is_private (lp->data))
++            break;
+           response = thunar_job_ask_delete (job, "%s", err->message);
+ 
+           g_clear_error (&err);
+--- a/thunar/thunar-file.c
++++ b/thunar/thunar-file.c
+@@ -3597,6 +3597,9 @@
+   if (file->info == NULL)
+     return FALSE;
+ 
++  if (thunar_g_file_is_private (file->gfile))
++    return g_file_info_get_attribute_boolean (file->info, G_FILE_ATTRIBUTE_ACCESS_CAN_DELETE);
++
+   return g_file_info_get_attribute_boolean (file->info,
+                                             G_FILE_ATTRIBUTE_ACCESS_CAN_TRASH);
+ }
+--- a/thunar/thunar-application.c
++++ b/thunar/thunar-application.c
+@@ -887,7 +887,7 @@
+         }
+       else
+         {
+-          base_name = g_file_get_basename (lp->data);
++          base_name = thunar_g_file_original_basename (lp->data);
+           file = g_file_resolve_relative_path (target_file, base_name);
+           g_free (base_name);
+ 
+--- a/thunar/thunar-transfer-job.c
++++ b/thunar/thunar-transfer-job.c
+@@ -896,7 +896,10 @@
+       /* guess the target file for this node (unless already provided) */
+       if (should_use_copy_name)
+         {
+-          base_name = g_strdup (g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_STANDARD_COPY_NAME));
++          if (g_file_has_uri_scheme (node->source_file, "trash"))
++            base_name = thunar_g_file_original_basename (node->source_file);
++          else
++            base_name = g_strdup (g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_STANDARD_COPY_NAME));
+           /* copy name is NULLable, so use display name for fallback */
+           if (base_name == NULL)
+             base_name = g_strdup (g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME));

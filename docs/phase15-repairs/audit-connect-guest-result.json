@@ -1,0 +1,10 @@
+{
+  "fixture": "tests/audit-connect-guest.py",
+  "exit": 0,
+  "elapsed_seconds": 11.71,
+  "stderr": "",
+  "result": {
+    "dedicated_VPN_connected": true,
+    "live_network_and_clock_gate_ready": true
+  }
+}

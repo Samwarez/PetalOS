@@ -1,0 +1,137 @@
+# PetalOS supplied frame sequences. Twenty refreshes/second gives exact integer
+# frame steps for 200 ms (4 ticks) and 250 ms (5 ticks); no boot-progress guessing.
+Window.SetBackgroundTopColor(0, 0, 0);
+Window.SetBackgroundBottomColor(0, 0, 0);
+Plymouth.SetRefreshRate(20);
+ticks=0; started=0; ram_started=0; phase="startup"; pending="";
+frames=[]; counts=[]; picture=Sprite(); caption=Sprite(); prompt=Sprite(); hint=Sprite(); logs=Sprite();
+last_group=""; last_frame=-1; last_caps=-1;
+
+fun load_frames(group, count, max_width, max_height)
+{
+    global.frames[group]=[]; global.counts[group]=count;
+    scale=Math.Min(1, Math.Min(Window.GetWidth()*0.9/max_width, (Window.GetHeight()-150)/max_height));
+    scale=Math.Max(0.1, scale);
+    for (i=0; i<count; i++) {
+        image=Image(group+"-"+i+".png");
+        global.frames[group][i]=image.Scale(Math.Int(image.GetWidth()*scale), Math.Int(image.GetHeight()*scale));
+    }
+}
+load_frames("startup",20,352,352);
+load_frames("idle",6,576,576);
+load_frames("success",6,596,596);
+load_frames("fail",6,576,576);
+load_frames("ram1",6,768,342);
+load_frames("ram2",6,768,342);
+load_frames("ram3",6,768,342);
+load_frames("wait",6,512,512);
+error_image=Image("error.png");
+scale=Math.Min(Window.GetWidth()*0.33/error_image.GetWidth(), (Window.GetHeight()-80)/error_image.GetHeight());
+error_image=error_image.Scale(Math.Int(error_image.GetWidth()*scale),Math.Int(error_image.GetHeight()*scale));
+
+fun text(sprite, value, y, size)
+{
+    image=Image.Text(value,1,0.60,0.80,1,"Sans "+size);
+    sprite.SetImage(image); sprite.SetPosition((Window.GetWidth()-image.GetWidth())/2,y,10);
+}
+
+fun change_phase(value)
+{
+    global.phase=value; global.started=ticks; global.last_group="";
+    if (value!="idle") prompt.SetOpacity(0);
+    if (value=="startup") label="Starting PetalOS";
+    if (value=="idle") label="Unlock SYSTEM";
+    if (value=="success") label="SYSTEM unlocked";
+    if (value=="fail") label="Incorrect SYSTEM passphrase. Please try again.";
+    if (value=="ram") label="Loading the system into RAM";
+    if (value=="wait") label="Preparing your desktop";
+    if (value=="error") label="PetalOS could not finish booting";
+    text(caption,label,Window.GetHeight()-100,16);
+}
+
+fun refresh()
+{
+    global.ticks++;
+    age=ticks-started;
+    if (phase=="startup" && age>=80) change_phase("idle");
+    if (phase=="fail" && age>=30) change_phase("idle");
+    if (phase=="success" && age>=30 && pending!="") {
+        next=pending; global.pending=""; change_phase(next);
+    }
+    group=phase;
+    if (phase=="ram") {
+        elapsed=ticks-ram_started;
+        group="ram1";
+        if (elapsed>=600) group="ram2";
+        if (elapsed>=1200) group="ram3";
+    }
+    if (phase=="error") {
+        picture.SetImage(error_image);
+        picture.SetPosition(Window.GetWidth()*0.66,(Window.GetHeight()-error_image.GetHeight())/2,0);
+    } else {
+        step=5; if (group=="startup") step=4;
+        index=Math.Int((ticks-started)/step)%counts[group];
+        if (group!=last_group || index!=last_frame) {
+            image=frames[group][index]; picture.SetImage(image);
+            picture.SetPosition((Window.GetWidth()-image.GetWidth())/2,(Window.GetHeight()-150-image.GetHeight())/2,0);
+            global.last_group=group; global.last_frame=index;
+        }
+    }
+    caps=Plymouth.GetCapslockState();
+    if (caps!=last_caps) {
+        message="Esc: boot log";
+        if (caps) message="Caps Lock is ON   |   Esc: boot log";
+        if (phase=="error") message="Space: boot console   |   Esc: boot log";
+        text(hint,message,Window.GetHeight()-30,11); global.last_caps=caps;
+    }
+}
+
+fun password(prompt_text, bullets)
+{
+    if (phase!="idle") change_phase("idle");
+    dots="";
+    for (i=0; i<Math.Min(bullets,24); i++) dots+="*";
+    text(prompt,"SYSTEM passphrase: "+dots,Window.GetHeight()-65,16);
+    prompt.SetOpacity(1);
+}
+
+fun normal() { prompt.SetOpacity(0); }
+
+fun message(value)
+{
+    if (value=="petalos:startup") change_phase("startup");
+    if (value=="petalos:idle") change_phase("idle");
+    if (value=="petalos:fail") change_phase("fail");
+    if (value=="petalos:success") change_phase("success");
+    if (value=="petalos:ram") {
+        global.ram_started=ticks;
+        if (phase=="success" && ticks-started<30) global.pending="ram";
+        else change_phase("ram");
+    }
+    if (value=="petalos:wait") {
+        if (phase=="success" && ticks-started<30) global.pending="wait";
+        else change_phase("wait");
+    }
+    if (value=="petalos:error") {
+        global.pending=""; change_phase("error");
+        text(hint,"Space: boot console   |   Esc: boot log",Window.GetHeight()-30,11);
+        global.last_caps=Plymouth.GetCapslockState();
+    }
+    if (value.SubString(0,18)=="petalos:error-log:") {
+        image=Image.Text(value.SubString(18,10000),0.95,0.95,0.95,1,"Monospace 11");
+        scale=Math.Min(1,Math.Min(Window.GetWidth()*0.61/image.GetWidth(),(Window.GetHeight()-160)/image.GetHeight()));
+        image=image.Scale(Math.Int(image.GetWidth()*scale),Math.Int(image.GetHeight()*scale));
+        logs.SetImage(image); logs.SetPosition(15,25,2);
+    }
+}
+change_phase("startup");
+if (Plymouth.GetMode()=="shutdown" || Plymouth.GetMode()=="reboot") {
+    change_phase("wait");
+    label="Shutting down PetalOS";
+    if (Plymouth.GetMode()=="reboot") label="Restarting PetalOS";
+    text(caption,label,Window.GetHeight()-100,16);
+}
+Plymouth.SetRefreshFunction(refresh);
+Plymouth.SetDisplayPasswordFunction(password);
+Plymouth.SetDisplayNormalFunction(normal);
+Plymouth.SetMessageFunction(message);

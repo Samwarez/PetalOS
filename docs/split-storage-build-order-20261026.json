@@ -1,0 +1,20 @@
+{
+  "date": "2026-10-26",
+  "failed_build": "20261026-143113-545377",
+  "cause": "0912 regenerated initramfs before 0992 installed the required unlock helper",
+  "fix": "Install the verified helper at 0080 before package hooks and initramfs refreshes",
+  "regression_checks_passed": 12,
+  "real_debian_initramfs_copy_functions_used": true,
+  "fixture_paths_relocated": true,
+  "complete_source_preflight_passed": true,
+  "failed_build_rejected_before_expensive_work": true,
+  "full_privileged_rebuild": "pending normal-terminal rerun",
+  "physical_media_modified": false,
+  "source_sha256": {
+    "config/hooks/live/0080-split-storage.hook.chroot": "c630f12505e79715488b0ac33f0dd165409e2229ed19b91ff8da48f3c49648e6",
+    "config/includes.chroot/etc/initramfs-tools/hooks/petalos-split-storage": "918f95a4999118991d475272acb0a76596cdf1f1e8087094b41c16cf461f28ae",
+    "tests/rebuild-release.py": "4fd732db3c33af1f11cd10456a2671b48056ac97fc5bccc90ec0d9eaea1e6e42",
+    "tests/check-split-build-hooks.py": "d2398f1d6592ba4567c9dd47bf0d9f0457ec72f1285b053ee419ce98af07ca88",
+    "scripts/prepare-split-release.py": "504e94db49cc06c8de5b709e9a790055c75c428f4627d735cf417e1f3e545293"
+  }
+}

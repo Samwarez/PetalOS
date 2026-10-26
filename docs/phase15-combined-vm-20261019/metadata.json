@@ -1,0 +1,16 @@
+{
+  "release": "20261019-211301-083244",
+  "VM": "20261019-220338-142131",
+  "generation": "454373df5891d9db5dd46eec",
+  "source_revision": "bfd9dd9efd4294a8c0f3703181b419f4cab64e36",
+  "initial_uplink": "disabled before SYSTEM unlock",
+  "public_files_expected": 218,
+  "test_credentials": "three distinct disposable values outside repository",
+  "physical_media_written": false,
+  "product_source_revision": "bfd9dd9efd4294a8c0f3703181b419f4cab64e36",
+  "kernel": "6.12.113+deb13-amd64 (Debian 6.12.113-1)",
+  "QEMU": "10.0.13 (Debian 1:10.0.13+ds-0+deb13u1)",
+  "machine": "q35, KVM, 8 CPUs, 16384 MiB RAM",
+  "firmware": "OVMF Secure Boot with stock Microsoft-signed template; no per-machine enrollment",
+  "status": "completed; guest powered off"
+}

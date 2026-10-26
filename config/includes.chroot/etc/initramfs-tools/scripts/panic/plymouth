@@ -1,0 +1,9 @@
+#!/bin/sh
+# Override the distro's immediate-quit hook: show the picture/log first, then
+# release the VT for the existing initramfs recovery shell on Space.
+case "${1:-}" in prereqs) echo ""; exit 0;; esac
+if [ -x /bin/petalos-splash ] && plymouth --ping >/dev/null 2>&1; then
+    /bin/petalos-splash error
+    plymouth watch-keystroke --keys=' ' >/dev/null 2>&1 || true
+fi
+plymouth quit >/dev/null 2>&1 || true

@@ -1,0 +1,10 @@
+{
+  "fixture": "tests/phase15-20261018/close-private.py",
+  "exit": 0,
+  "elapsed_seconds": 3.57,
+  "stderr": "",
+  "result": {
+    "Private_mapping_closed": true,
+    "runtime_VPN_key_removed": true
+  }
+}

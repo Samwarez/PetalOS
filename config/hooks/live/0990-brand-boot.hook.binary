@@ -2,6 +2,7 @@
 """Brand generated boot labels before live-build computes medium checksums."""
 from pathlib import Path
 import re
+import shutil
 
 # live-build executes binary hooks with the generated binary directory as cwd.
 for directory in ('boot/grub','isolinux','syslinux'):
@@ -24,3 +25,19 @@ for directory in ('boot/grub','isolinux','syslinux'):
             lines.append(line)
         changed=''.join(lines)
         if changed!=original:path.write_text(changed)
+
+# This hook runs outside the chroot, with binary/ as its working directory.
+source=Path('../config/includes.chroot/usr/share/portable/branding')
+grub=Path('boot/grub')
+if grub.is_dir():
+    destination=grub/'petalos';destination.mkdir(exist_ok=True)
+    for name in ('grub.png','theme.txt'):shutil.copyfile(source/name,destination/name)
+    shutil.copyfile(grub/'unicode.pf2',destination/'unicode.pf2')
+    # Keep the distribution's loader and signed EFI executables unchanged.
+    (grub/'theme.cfg').write_text('''set menu_color_normal=light-magenta/black
+set menu_color_highlight=white/magenta
+set theme=/boot/grub/petalos/theme.txt
+export theme
+''')
+    config=grub/'config.cfg'
+    if config.exists():config.write_text(config.read_text().replace('set gfxmode=800x600','set gfxmode=auto'))

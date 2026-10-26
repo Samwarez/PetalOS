@@ -1,0 +1,70 @@
+{
+  "passed": true,
+  "result": {
+    "passed": true,
+    "stage": "portable-installer",
+    "checks": {
+      "packaged_cli_has_current_version": true,
+      "bundled_shell_tool_and_subcommands": true,
+      "bundled_gtk_display_started": true,
+      "six_packaged_native_gtk_checks": true,
+      "no_installed_petalos_backend": true,
+      "packaged_runtime_self_check": true,
+      "worker_temporary_runtime_cleaned_6": true,
+      "altered_payload_refused_before_execution": true,
+      "worker_temporary_runtime_cleaned_8": true,
+      "path_traversal_refused_before_execution": true,
+      "worker_temporary_runtime_cleaned_10": true,
+      "truncated_transfer_refused": true,
+      "fresh_disposable_usb_target": true,
+      "worker_temporary_runtime_cleaned_13": true,
+      "new_external_host_mount_refused": true,
+      "external_mount_refusal_kept_disk_unchanged": true,
+      "worker_temporary_runtime_cleaned_16": true,
+      "protected_worker_rejects_stale_plan": true,
+      "stale_plan_left_disposable_disk_unchanged": true,
+      "worker_temporary_runtime_cleaned_19": true,
+      "pipe_cancellation_reaches_protected_worker": true,
+      "cancelled_worker_left_no_mappings": true,
+      "worker_temporary_runtime_cleaned_22": true,
+      "portable_random_wipe_and_full_readback": true,
+      "successful_worker_left_no_mappings": true
+    }
+  },
+  "artifact": "bloom-0.4.0-linux-amd64",
+  "acceleration": "tcg",
+  "cpu": "qemu64",
+  "artifact_manifest_sha256": "99fee299a5f3a36c02134717b2564417377c69f7ca0c7e41cd945bd6f123411e",
+  "elapsed_seconds": 611.4,
+  "limits": [
+    "Networkless synthetic VM; generic pkexec/desktop authorization interaction untested.",
+    "Real portable worker random-wipe/cancel/readback on a new disposable USB; full OS installation/update not repeated.",
+    "No physical media, existing writable images, host shares or production credentials."
+  ],
+  "version": "0.4.0",
+  "app_name": "Bloom",
+  "local_tests_passed": 53,
+  "native_gtk_tests_passed": 6,
+  "vm_assertions_passed": 25,
+  "exact_current_source_match": true,
+  "archive_sha256": "6afbaf1b47e221e54cc7179775cad6ff0d713f0f33cb281593724194328cd300",
+  "archive_bytes": 132135083,
+  "deb_sha256": "b23d1b5c09f4eb7873f462d9634d4831796f942b9d61e858761b606cce1946e2",
+  "packaged_self_check": {
+    "name": "Bloom",
+    "version": "0.4.0",
+    "portable": true,
+    "verified_files": 7170,
+    "gtk": [
+      3,
+      24
+    ],
+    "python": "3.13.5",
+    "png": true,
+    "svg": true
+  },
+  "passphrases_only": true,
+  "agent_physical_media_written": false,
+  "host_package_installed": false,
+  "source_snapshot": "snapshots/before-bloom-20261025-181338.tar.gz"
+}

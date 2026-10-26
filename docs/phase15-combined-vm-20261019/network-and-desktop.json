@@ -1,0 +1,8 @@
+{
+  "fixture": "tests/audit-runtime-metadata-guest.py",
+  "VM": "20261019-220338-142131",
+  "exit": 0,
+  "seconds": 1.1,
+  "stdout": "{\"Private_closed\": true, \"SecureBoot_enabled\": true, \"automatic_VPN_checks\": {\"clock\": \"passed\", \"dns\": \"passed\", \"ipv4\": \"passed\", \"ipv6\": \"passed\", \"tunnel\": \"passed\"}, \"desktop_processes\": {\"labwc\": true, \"swaybg\": true, \"xfce4-panel\": true, \"xfce4-session\": true}, \"kernel_lockdown_active\": true}\n",
+  "stderr": ""
+}

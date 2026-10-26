@@ -1,0 +1,89 @@
+{
+  "fixture": "tests/phase15-repairs/wrong-clock-diagnosis.py",
+  "exit": 0,
+  "elapsed_seconds": 97.02,
+  "stderr": "",
+  "result": {
+    "connection_returncode": 21,
+    "observations": [
+      {
+        "handshake_seen": false,
+        "received_bytes": 0,
+        "sent_bytes": 148
+      },
+      {
+        "handshake_seen": false,
+        "received_bytes": 0,
+        "sent_bytes": 296
+      },
+      {
+        "handshake_seen": false,
+        "received_bytes": 0,
+        "sent_bytes": 296
+      },
+      {
+        "handshake_seen": false,
+        "received_bytes": 0,
+        "sent_bytes": 444
+      },
+      {
+        "handshake_seen": false,
+        "received_bytes": 0,
+        "sent_bytes": 444
+      },
+      {
+        "handshake_seen": false,
+        "received_bytes": 0,
+        "sent_bytes": 592
+      },
+      {
+        "handshake_seen": false,
+        "received_bytes": 0,
+        "sent_bytes": 592
+      },
+      {
+        "handshake_seen": false,
+        "received_bytes": 0,
+        "sent_bytes": 740
+      },
+      {
+        "handshake_seen": false,
+        "received_bytes": 0,
+        "sent_bytes": 740
+      },
+      {
+        "handshake_seen": false,
+        "received_bytes": 0,
+        "sent_bytes": 888
+      },
+      {
+        "handshake_seen": false,
+        "received_bytes": 0,
+        "sent_bytes": 1036
+      },
+      {
+        "handshake_seen": false,
+        "received_bytes": 0,
+        "sent_bytes": 1036
+      },
+      {
+        "handshake_seen": false,
+        "received_bytes": 0,
+        "sent_bytes": 1184
+      },
+      {
+        "handshake_seen": false,
+        "received_bytes": 0,
+        "sent_bytes": 1184
+      },
+      {
+        "handshake_seen": false,
+        "received_bytes": 0,
+        "sent_bytes": 1332
+      }
+    ],
+    "time_sync_failure_reported": true,
+    "tunnel_removed_after_failure": true,
+    "restored_clock_reconnect": true
+  }
+}

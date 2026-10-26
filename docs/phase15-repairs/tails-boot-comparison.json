@@ -1,0 +1,170 @@
+{
+  "comparison_scope": "Offline alteration of an external initramfs before encrypted storage unlock; not whole-system security equivalence.",
+  "download": {
+    "version": "7.15",
+    "metadata_url": "https://tails.net/install/v2/Tails/amd64/stable/latest.json",
+    "image_url": "https://download.tails.net/tails/stable/tails-amd64-7.15/tails-amd64-7.15.img",
+    "size": 1889533952,
+    "sha256": "2bad37833f2e44abbf68646a460759c26d1fc32589c2e0437099743bc6b6197b",
+    "official_https_metadata_match": true,
+    "elapsed_seconds": 69.41
+  },
+  "preparation": {
+    "format": 1,
+    "scope": "Only new disposable regular image copies; original official image preserved.",
+    "original_image_sha256": "2bad37833f2e44abbf68646a460759c26d1fc32589c2e0437099743bc6b6197b",
+    "partition_offset": 1048576,
+    "probe_marker_sha256": "39e984a8fed9ec6ffe2c289b85df0f64196b8cb65e3b90eaaddb8e5d3fe5771f",
+    "original_boot_file_sha256": {
+      "/live/initrd.img": "ea36cd970a99092b399f9c3000b769d0e3ca37276ab420be6137bb22ec564fcc",
+      "/live/vmlinuz": "6d8a7f745280cc06a6d2877c932f4dfa9079b694eb4227b61b27232642340794",
+      "/EFI/BOOT/BOOTX64.EFI": "e103c5d02657879f141b086ed703584d28bb9e2721b423333be085ee1b4d397b",
+      "/EFI/BOOT/grubx64.efi": "425ffb5b84e8738084815d9df4a33c0e5f64409c7aadeb3dd3bcf60357551c5a",
+      "/EFI/debian/grub.cfg": "e502c44cde46db0b97a6e56426b5d4cab957b433ac71b5641184a838e715d35c"
+    },
+    "variants": {
+      "probe": {
+        "image_sha256": "057f308a1b8c1f78a0e56880e3dd96f9a48cacf395dcf4bbb7cc91180d31a7ce",
+        "changed_file": "/live/initrd.img",
+        "boot_file_readback_sha256": {
+          "/live/initrd.img": "81da5c8aa4b79252d53e000b2a28b046a0c437309c922103e0e607065c3489b1",
+          "/live/vmlinuz": "6d8a7f745280cc06a6d2877c932f4dfa9079b694eb4227b61b27232642340794",
+          "/EFI/BOOT/BOOTX64.EFI": "e103c5d02657879f141b086ed703584d28bb9e2721b423333be085ee1b4d397b",
+          "/EFI/BOOT/grubx64.efi": "425ffb5b84e8738084815d9df4a33c0e5f64409c7aadeb3dd3bcf60357551c5a",
+          "/EFI/debian/grub.cfg": "e502c44cde46db0b97a6e56426b5d4cab957b433ac71b5641184a838e715d35c"
+        }
+      },
+      "kernel-negative": {
+        "image_sha256": "23a1fc36ce3957b0c08cf15f71f813173c9cdf8be0a982c4ea77222ed6ffbbfb",
+        "changed_file": "/live/vmlinuz",
+        "boot_file_readback_sha256": {
+          "/live/initrd.img": "ea36cd970a99092b399f9c3000b769d0e3ca37276ab420be6137bb22ec564fcc",
+          "/live/vmlinuz": "cb529e2d8fa0f27d86c862a3ce6a229c75ea37a73ef214584ad601bfda18e2f2",
+          "/EFI/BOOT/BOOTX64.EFI": "e103c5d02657879f141b086ed703584d28bb9e2721b423333be085ee1b4d397b",
+          "/EFI/BOOT/grubx64.efi": "425ffb5b84e8738084815d9df4a33c0e5f64409c7aadeb3dd3bcf60357551c5a",
+          "/EFI/debian/grub.cfg": "e502c44cde46db0b97a6e56426b5d4cab957b433ac71b5641184a838e715d35c"
+        }
+      }
+    }
+  },
+  "boots": {
+    "baseline": {
+      "mode": "baseline",
+      "image_sha256": "2bad37833f2e44abbf68646a460759c26d1fc32589c2e0437099743bc6b6197b",
+      "firmware_sha256": "1a46295574430cfb7f825ee3e4dc64b052acbef08e310377ed7c64cb757a9dc1",
+      "initial_firmware_variables_sha256": "0d12f9839018a68f4b13c9819cbf607b8b62d566f9c9dd7966550d93335f06b2",
+      "network_devices": 0,
+      "host_disks_exposed": 0,
+      "test_image_writes_use_disposable_8GiB_qcow2_overlay": true,
+      "elapsed_seconds": 96.16,
+      "qemu_status": {
+        "status": "running",
+        "running": true
+      },
+      "marker_seen": false,
+      "marker_with_secure_boot_enabled_and_setup_mode_off": false,
+      "marker_lines": [],
+      "screen_sha256": "1a8622d027cf9b72bf1f8452ca99e12d59771629bfc14e198fa7c399e02ca725",
+      "visual_observation": "Graphical GNOME environment reached; no credentials entered."
+    },
+    "probe": {
+      "mode": "probe",
+      "image_sha256": "057f308a1b8c1f78a0e56880e3dd96f9a48cacf395dcf4bbb7cc91180d31a7ce",
+      "firmware_sha256": "1a46295574430cfb7f825ee3e4dc64b052acbef08e310377ed7c64cb757a9dc1",
+      "initial_firmware_variables_sha256": "0d12f9839018a68f4b13c9819cbf607b8b62d566f9c9dd7966550d93335f06b2",
+      "network_devices": 0,
+      "host_disks_exposed": 0,
+      "test_image_writes_use_disposable_8GiB_qcow2_overlay": true,
+      "elapsed_seconds": 70.93,
+      "qemu_status": {
+        "status": "running",
+        "running": true
+      },
+      "marker_seen": true,
+      "marker_with_secure_boot_enabled_and_setup_mode_off": false,
+      "marker_lines": [
+        "PETALOS_TAILS_UNSIGNED_INITRD_MARKER SecureBoot= SetupMode="
+      ],
+      "screen_sha256": "2ad06b7fe154f88c3dfe986230d9193a93e5a6868ca57536be080c97f3984a71",
+      "visual_observation": "Graphical GNOME environment reached after the added marker executed."
+    },
+    "kernel-signature-control": {
+      "mode": "kernel-signature-control",
+      "image_sha256": "23a1fc36ce3957b0c08cf15f71f813173c9cdf8be0a982c4ea77222ed6ffbbfb",
+      "firmware_sha256": "1a46295574430cfb7f825ee3e4dc64b052acbef08e310377ed7c64cb757a9dc1",
+      "initial_firmware_variables_sha256": "0d12f9839018a68f4b13c9819cbf607b8b62d566f9c9dd7966550d93335f06b2",
+      "network_devices": 0,
+      "host_disks_exposed": 0,
+      "test_image_writes_use_disposable_8GiB_qcow2_overlay": true,
+      "elapsed_seconds": 43.74,
+      "qemu_status": {
+        "status": "running",
+        "running": true
+      },
+      "marker_seen": false,
+      "marker_with_secure_boot_enabled_and_setup_mode_off": false,
+      "guest_kernel_reports_secure_boot_enabled": false,
+      "marker_lines": [],
+      "screen_sha256": "ce5d0a7180ac524c03c8720a386c00fe7ab834accf7fd633115108c947eb2ba1",
+      "visual_observation": "GRUB command linux /live/vmlinuz returned: error: bad shim signature."
+    },
+    "probe-observed": {
+      "mode": "probe-observed",
+      "image_sha256": "bfbe500f45aa4732150d761c09b1cde615a120c57bcd905d13a3265f084e2b1e",
+      "firmware_sha256": "1a46295574430cfb7f825ee3e4dc64b052acbef08e310377ed7c64cb757a9dc1",
+      "initial_firmware_variables_sha256": "0d12f9839018a68f4b13c9819cbf607b8b62d566f9c9dd7966550d93335f06b2",
+      "network_devices": 0,
+      "host_disks_exposed": 0,
+      "test_image_writes_use_disposable_8GiB_qcow2_overlay": true,
+      "elapsed_seconds": 35.25,
+      "qemu_status": {
+        "status": "running",
+        "running": true
+      },
+      "marker_seen": true,
+      "marker_with_secure_boot_enabled_and_setup_mode_off": false,
+      "guest_kernel_reports_secure_boot_enabled": true,
+      "observation_lines": [
+        "PETALOS_TAILS_UNSIGNED_INITRD_MARKER SecureBoot= SetupMode=",
+        "[    0.000000] Kernel is locked down from EFI Secure Boot; see man kernel_lockdown.7",
+        "[    0.000000] secureboot: Secure boot enabled",
+        "[    5.789015] integrity: Loaded X.509 cert 'Debian Secure Boot CA: 6ccece7e4c6c0d1f6149f3dd27df"
+      ],
+      "screen_sha256": "1e9402c0e2d03734a40679e94df55cae4026d5110a226a605efc6ec5abee32ac"
+    }
+  },
+  "initial_fixture_limits": [
+    "The official ISO has no UEFI El Torito entry; it was replaced with the separately verified official USB image.",
+    "The unexpanded USB image reaches an initramfs size check; final boots use 8 GiB disposable qcow2 overlays.",
+    "A merged-initramfs recompression exceeded FAT free space; the final fixture preserves early CPIO archives and modifies two final-archive records.",
+    "Direct EFI variable reads were unavailable in the early Tails initramfs; the marker fields are empty, not evidence that Secure Boot is disabled. Signature enforcement is confirmed by the modified-kernel control."
+  ],
+  "kernel_observation_preparation": {
+    "format": 1,
+    "scope": "Only new disposable regular image copies; original official image preserved.",
+    "original_image_sha256": "2bad37833f2e44abbf68646a460759c26d1fc32589c2e0437099743bc6b6197b",
+    "partition_offset": 1048576,
+    "probe_marker_sha256": "a7ec167538955d85286f4f5b4d4cf73a8fcca2a02e778e319ddcad3d9d9118d8",
+    "original_boot_file_sha256": {
+      "/live/initrd.img": "ea36cd970a99092b399f9c3000b769d0e3ca37276ab420be6137bb22ec564fcc",
+      "/live/vmlinuz": "6d8a7f745280cc06a6d2877c932f4dfa9079b694eb4227b61b27232642340794",
+      "/EFI/BOOT/BOOTX64.EFI": "e103c5d02657879f141b086ed703584d28bb9e2721b423333be085ee1b4d397b",
+      "/EFI/BOOT/grubx64.efi": "425ffb5b84e8738084815d9df4a33c0e5f64409c7aadeb3dd3bcf60357551c5a",
+      "/EFI/debian/grub.cfg": "e502c44cde46db0b97a6e56426b5d4cab957b433ac71b5641184a838e715d35c"
+    },
+    "variants": {
+      "probe": {
+        "image_sha256": "bfbe500f45aa4732150d761c09b1cde615a120c57bcd905d13a3265f084e2b1e",
+        "changed_file": "/live/initrd.img",
+        "boot_file_readback_sha256": {
+          "/live/initrd.img": "f24754da55ca787480eee525cb454862ccabdbf3aef9274416ceb23210d2f1cf",
+          "/live/vmlinuz": "6d8a7f745280cc06a6d2877c932f4dfa9079b694eb4227b61b27232642340794",
+          "/EFI/BOOT/BOOTX64.EFI": "e103c5d02657879f141b086ed703584d28bb9e2721b423333be085ee1b4d397b",
+          "/EFI/BOOT/grubx64.efi": "425ffb5b84e8738084815d9df4a33c0e5f64409c7aadeb3dd3bcf60357551c5a",
+          "/EFI/debian/grub.cfg": "e502c44cde46db0b97a6e56426b5d4cab957b433ac71b5641184a838e715d35c"
+        }
+      }
+    }
+  },
+  "acceptance": "S-01 accepted for phase one under the user-authorized Tails benchmark; specific boot-media execution path only."
+}

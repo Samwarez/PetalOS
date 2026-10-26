@@ -1,0 +1,8 @@
+{
+  "fixture": "tests/phase15-repairs/content-ownership.py",
+  "VM": "20261019-220338-142131",
+  "exit": 1,
+  "seconds": 0.99,
+  "stdout": "",
+  "stderr": "Traceback (most recent call last):\n  File \"<string>\", line 6, in <module>\n    assert os.geteuid()==0 and c.private_available()\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError\n"
+}

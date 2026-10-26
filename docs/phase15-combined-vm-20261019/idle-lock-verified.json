@@ -1,0 +1,8 @@
+{
+  "fixture": "tests/combined-vm-idle-lock.py",
+  "VM": "20261019-220338-142131",
+  "exit": 0,
+  "seconds": 6.94,
+  "stdout": "{\"idle_action_succeeded\": true, \"idle_action_closed_Private_mapping\": true, \"graphical_locker_established\": true}\n",
+  "stderr": ""
+}

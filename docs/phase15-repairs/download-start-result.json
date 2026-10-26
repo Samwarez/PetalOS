@@ -1,0 +1,9 @@
+{
+  "fixture": "tests/phase15-repairs/download-start.py",
+  "exit": 0,
+  "elapsed_seconds": 4.79,
+  "stderr": "",
+  "result": {
+    "locked_Private_real_torrent_import_ready": true
+  }
+}

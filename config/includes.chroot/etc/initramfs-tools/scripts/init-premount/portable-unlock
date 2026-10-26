@@ -1,10 +1,76 @@
 #!/bin/sh
 
-PREREQ=""
+PREREQ="plymouth"
 prereqs() { echo "$PREREQ"; }
 
 case "$1" in
     prereqs) prereqs; exit 0 ;;
+esac
+
+# Layout 2: independent OS and settings keys, one shared SYSTEM prompt.
+# UUIDs are public boot identifiers. Never choose a second disk by label.
+case " $(cat /proc/cmdline) " in
+    *" petalos.layout=2 "*)
+        . /scripts/functions
+        case " $(cat /proc/cmdline) " in
+            *" live-media=/dev/mapper/portable_os "*) ;;
+            *) panic "Split storage requires the encrypted OS boot source."; exit 1;;
+        esac
+        os_uuid= system_uuid= private_uuid=
+        os_count=0 system_count=0 private_count=0 layout_count=0
+        for word in $(cat /proc/cmdline); do
+            case "$word" in
+                petalos.layout=*) layout_count=$((layout_count + 1));;
+                petalos.os=*) os_uuid=${word#petalos.os=}; os_count=$((os_count + 1));;
+                petalos.system=*) system_uuid=${word#petalos.system=}; system_count=$((system_count + 1));;
+                petalos.private=*) private_uuid=${word#petalos.private=}; private_count=$((private_count + 1));;
+            esac
+        done
+        if [ "$os_count:$system_count:$private_count:$layout_count" != 1:1:1:1 ]; then
+            panic "Incomplete or duplicate split-storage boot identity."; exit 1
+        fi
+        for uuid in "$os_uuid" "$system_uuid" "$private_uuid"; do
+            if ! printf '%s\n' "$uuid" | grep -E '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$' >/dev/null; then
+                panic "Invalid split-storage boot identity."; exit 1
+            fi
+        done
+        if [ "$os_uuid" = "$system_uuid" ] || [ "$private_uuid" = "$os_uuid" ] || [ "$private_uuid" = "$system_uuid" ]; then
+            panic "OS, settings and Private must be different encrypted volumes."; exit 1
+        fi
+        os_device=/dev/disk/by-uuid/$os_uuid
+        settings_device=/dev/disk/by-uuid/$system_uuid
+        modprobe dm_crypt
+        udevadm settle --timeout=10 || true
+        count=0
+        while [ ! -e "$os_device" ] || [ ! -e "$settings_device" ]; do
+            sleep 1; count=$((count + 1))
+            [ "$count" -lt 30 ] || { panic "Encrypted OS or SYSTEM settings volume was not found."; exit 1; }
+        done
+        if plymouth --ping >/dev/null 2>&1; then /bin/petalos-splash startup; sleep 4; fi
+        echo "Unlocking PetalOS OS and SYSTEM settings..."
+        attempt=0
+        while [ "$attempt" -lt 3 ]; do
+            attempt=$((attempt + 1)); result=0
+            if plymouth --ping >/dev/null 2>&1; then
+                /bin/petalos-splash idle
+                plymouth ask-for-password --prompt='SYSTEM passphrase' |
+                    /bin/portable-unlock-pair --stdin "$os_device" "$settings_device" || result=$?
+            else
+                /lib/cryptsetup/askpass 'SYSTEM passphrase: ' |
+                    /bin/portable-unlock-pair --stdin "$os_device" "$settings_device" || result=$?
+            fi
+            if [ "$result" -eq 0 ]; then /bin/petalos-splash success; exit 0; fi
+            if [ "$result" -ne 2 ]; then
+                panic "OS and SYSTEM settings could not both be unlocked; check the paired volumes in offline recovery."
+                exit 1
+            fi
+            /bin/petalos-splash fail
+            if plymouth --ping >/dev/null 2>&1; then sleep 1.5; fi
+            echo "Incorrect SYSTEM passphrase."
+        done
+        panic "Unable to unlock PetalOS after three attempts."
+        exit 1
+        ;;
 esac
 
 # Only run for our encrypted-system boot entry.
@@ -29,8 +95,35 @@ while [ ! -e "$device" ]; do
     fi
 done
 
-echo "Unlocking portable Linux system..."
-if ! cryptsetup open --type luks --tries 3 "$device" portable_system; then
-    panic "Unable to unlock the portable system."
-    exit 1
+if plymouth --ping >/dev/null 2>&1; then
+    /bin/petalos-splash startup
+    sleep 4
 fi
+echo "Unlocking PetalOS SYSTEM..."
+attempt=0
+while [ "$attempt" -lt 3 ]; do
+    attempt=$((attempt + 1))
+    result=0
+    if plymouth --ping >/dev/null 2>&1; then
+        /bin/petalos-splash idle
+        # The passphrase goes directly from Plymouth through a pipe to
+        # cryptsetup. No shell variable, file, argument or diagnostic receives it.
+        plymouth ask-for-password --prompt='SYSTEM passphrase' |
+            cryptsetup open --type luks --tries 1 --key-file - "$device" portable_system || result=$?
+    else
+        cryptsetup open --type luks --tries 1 "$device" portable_system || result=$?
+    fi
+    if [ "$result" -eq 0 ]; then
+        /bin/petalos-splash success
+        exit 0
+    fi
+    if [ "$result" -ne 2 ]; then
+        panic "PetalOS SYSTEM could not be opened (storage or encryption error)."
+        exit 1
+    fi
+    /bin/petalos-splash fail
+    if plymouth --ping >/dev/null 2>&1; then sleep 1.5; fi
+    echo "Incorrect SYSTEM passphrase."
+done
+panic "Unable to unlock PetalOS SYSTEM after three attempts."
+exit 1

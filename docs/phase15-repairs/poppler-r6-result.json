@@ -1,0 +1,48 @@
+{
+  "fixture": "tests/phase15-repairs/poppler-r6.py",
+  "exit": 0,
+  "elapsed_seconds": 2.99,
+  "stderr": "",
+  "result": {
+    "package_version": "25.03.0-5+deb13u4+petalos1",
+    "cases": {
+      "correct_127": {
+        "exit": 0,
+        "one_page_reported": true,
+        "blue_page_rendered": true,
+        "crashed": false,
+        "public_fixture_stderr": ""
+      },
+      "correct_truncated_128": {
+        "exit": 0,
+        "one_page_reported": true,
+        "blue_page_rendered": true,
+        "crashed": false,
+        "public_fixture_stderr": ""
+      },
+      "correct_truncated_1024": {
+        "exit": 0,
+        "one_page_reported": true,
+        "blue_page_rendered": true,
+        "crashed": false,
+        "public_fixture_stderr": ""
+      },
+      "incorrect_short": {
+        "exit": 1,
+        "one_page_reported": false,
+        "blue_page_rendered": false,
+        "crashed": false,
+        "public_fixture_stderr": "airo.FORMAT_ARGB32,200,200);d.get_page(0).render(cairo.Context(s));s.flush();p=bytes(s.get_data()[100*s.get_stride()+400:100*s.get_stride()+404]);print(json.dumps({'pages':d.get_n_pages(),'blue_pixel':p==bytes([255,0,0,255])}))\n                                                                                                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\ngi.repository.GLib.GError: poppler-quark: Document is encrypted (1)\n"
+      },
+      "incorrect_long": {
+        "exit": 1,
+        "one_page_reported": false,
+        "blue_page_rendered": false,
+        "crashed": false,
+        "public_fixture_stderr": "airo.FORMAT_ARGB32,200,200);d.get_page(0).render(cairo.Context(s));s.flush();p=bytes(s.get_data()[100*s.get_stride()+400:100*s.get_stride()+404]);print(json.dumps({'pages':d.get_n_pages(),'blue_pixel':p==bytes([255,0,0,255])}))\n                                                                                                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\ngi.repository.GLib.GError: poppler-quark: Document is encrypted (1)\n"
+      }
+    },
+    "under_actual_Atril_role": true,
+    "synthetic_document_only": true
+  }
+}

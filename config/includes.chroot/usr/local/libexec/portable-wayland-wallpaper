@@ -17,7 +17,9 @@ import subprocess
 import tempfile
 import time
 
-DEFAULT = '/usr/share/backgrounds/xfce/xfce-blue.jpg'
+import sys
+sys.path.insert(0, '/usr/local/lib/portable')
+from wallpapers import DEFAULT, FALLBACK
 STYLES = {1: 'center', 2: 'tile', 3: 'stretch', 4: 'fit', 5: 'fill', 6: 'fill'}
 
 
@@ -117,10 +119,19 @@ def command(names):
         prefix = f'/backdrop/screen0/monitor{model}/workspace{workspace}'
         image = query(prefix + '/last-image')
         if not image and model != name:
-            prefix = f'/backdrop/screen0/monitor{name}/workspace{workspace}'
-            image = query(prefix + '/last-image')
-        if not image.startswith('/') or len(image) > 4096 or not Path(image).is_file():
+            legacy = f'/backdrop/screen0/monitor{name}/workspace{workspace}'
+            candidate = query(legacy + '/last-image')
+            if candidate:
+                prefix, image = legacy, candidate
+        if not image:
+            # Initial selection also makes XFCE's folder chooser start in the
+            # persistent library. Existing saved monitor settings always win.
+            subprocess.run(['xfconf-query', '-c', 'xfce4-desktop', '-p', prefix + '/last-image',
+                            '--create', '-t', 'string', '-s', DEFAULT],
+                           capture_output=True, timeout=3)
             image = DEFAULT
+        if not image.startswith('/') or len(image) > 4096 or not Path(image).is_file():
+            image = DEFAULT if Path(DEFAULT).is_file() else FALLBACK
         style = query(prefix + '/image-style')
         first, second = color(prefix, 1), color(prefix, 2)
         background = '#' + ''.join(f'{value:02x}' for value in first)

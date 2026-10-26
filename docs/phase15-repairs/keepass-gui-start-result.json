@@ -1,0 +1,10 @@
+{
+  "fixture": "tests/phase15-repairs/keepass-gui-start.py",
+  "exit": 0,
+  "elapsed_seconds": 3.49,
+  "stderr": "",
+  "result": {
+    "gui_ready": true,
+    "synthetic_tiny_ram_volume_mounted": true
+  }
+}

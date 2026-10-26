@@ -1,0 +1,14 @@
+#!/usr/bin/python3 -I
+"""Administrator-authenticated correction before VPN handshake/time sync."""
+from pathlib import Path
+import fcntl, os, subprocess, sys, time
+assert os.geteuid() == 0 and len(sys.argv) == 2
+sys.path.insert(0, '/usr/local/lib/portable')
+from manual_clock import parse
+value = parse(sys.argv[1])
+fd = os.open('/run/portable-vpn.lock', os.O_RDWR | os.O_CREAT | os.O_NOFOLLOW, 0o600)
+with os.fdopen(fd, 'r+b') as lock:
+    fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    assert not Path('/sys/class/net/wg0').exists(), 'Disconnect VPN before correcting the clock.'
+    subprocess.run(['systemctl', 'stop', 'chrony.service'], check=True, timeout=10)
+    time.clock_settime(time.CLOCK_REALTIME, value)

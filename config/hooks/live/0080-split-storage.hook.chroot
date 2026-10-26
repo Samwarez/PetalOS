@@ -1,0 +1,13 @@
+#!/bin/sh
+set -eu
+# Install before package hooks or explicit initramfs refreshes can require it.
+python3 - <<'PY'
+from pathlib import Path
+import hashlib,json,shutil
+root=Path('/usr/local/share/portable/native-split-unlock')
+meta=json.loads((root/'provenance.json').read_text())
+source=root/'portable-unlock-pair'
+assert hashlib.sha256(source.read_bytes()).hexdigest()==meta['binary_sha256']
+target=Path('/usr/local/libexec/portable-unlock-pair')
+shutil.copyfile(source,target);target.chmod(0o755)
+PY

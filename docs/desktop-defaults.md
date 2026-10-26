@@ -51,3 +51,20 @@ not an access-control boundary. Standard file-manager navigation can remain.
 Applied in the current QEMU RAM session and staged for the next build after
 release `20261015-193931-862289`; the completed release and physical card do
 not contain this follow-up yet.
+
+## Touch double clicks (2026-10-21)
+
+The next build sets GTK 3 and XFCE double-click defaults to **20 logical pixels**
+and **500 milliseconds**. This accommodates more movement between finger taps
+than the old 5-pixel/250-millisecond defaults. It affects mouse clicks as well;
+the normal Mouse and Touchpad settings can still change these values.
+
+Restoring an older settings archive migrates only those stock values once,
+using a saved `PetalOS/TouchDefaultsVersion` marker. Other custom values and
+later deliberate changes are preserved. No settings archive must be deleted.
+
+An isolated GTK/Xfconf session received both defaults, and migration tests
+preserved custom overrides. Finger double taps on the Lenovo X230 Tablet still
+need a hardware retest after rebuilding; the observed pen/finger difference
+does not establish that distance alone caused the failure. See the
+[component test report](volatile-trash-and-touch-20261021/README.md).

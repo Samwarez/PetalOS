@@ -1,0 +1,40 @@
+{
+  "passed": true,
+  "result": {
+    "passed": true,
+    "stage": "native-gtk",
+    "checks": {
+      "five_native_gtk_tests": true
+    },
+    "single_system_prompt": false,
+    "acceleration": "tcg"
+  },
+  "scope": "Native GTK3 layout, empty/error/automatic selection and contrast checks on a VM-only Broadway display",
+  "limits": [
+    "Fake release responses; no download/disk/backend operation",
+    "OS squashfs mounted read-only with RAM overlay; not a full desktop/polkit test",
+    "No host shares, networking, physical media or existing VM images"
+  ],
+  "version": "0.2.1",
+  "local_tests_passed": 34,
+  "native_gtk_tests_passed": 5,
+  "gtk_css_parse_passed": true,
+  "package_permissions_and_exact_vm_source_match": true,
+  "package_sha256": "5f539b0b3ec9659a4057efa50a78c365c19340b3b7f9ac939a8df061377d33f5",
+  "preview_size": [
+    972,
+    721
+  ],
+  "preview_uses_fake_release_data": true,
+  "github_release_lookup": {
+    "repository": "Samwarez/PetalOS",
+    "published_releases_returned": 0,
+    "method": "Connected GitHub GET releases API"
+  },
+  "harness_notes": [
+    "The storage-only full boot fixture could not start a normal desktop; no OS security policy was relaxed. A focused native GTK VM uses the release squashfs read-only with a RAM overlay and VM-local Broadway display.",
+    "Native checks caught an initial 732px minimum height; settings actions were compacted. Initial realization included hidden panels and inflated window size; panels now choose visibility before mapping, with smaller default height including decorations.",
+    "Four style/data checks passed before the final height fix; the final complete five-check run passed on the exact packaged GUI source. The preview image was also inspected."
+  ],
+  "disposable_credentials_absent_from_package": true
+}

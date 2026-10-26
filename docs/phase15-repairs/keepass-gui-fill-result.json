@@ -1,0 +1,9 @@
+{
+  "fixture": "tests/phase15-repairs/keepass-gui-fill.py",
+  "exit": 0,
+  "elapsed_seconds": 0.94,
+  "stderr": "",
+  "result": {
+    "synthetic_destination_full": true
+  }
+}

@@ -1,5 +1,12 @@
 # Current storage layout
 
+This document describes the selected settings/content locations shared by both
+layouts. The new [layout 2 target](split-storage-20261024.md) puts OS and SYSTEM
+settings in separate encrypted partitions, with independent keys and one shared
+SYSTEM boot passphrase. Private and administrator authentication remain separate.
+The existing physical card retains its prior combined layout pending a separately
+authorized migration; the dated cleanup observations below are historical.
+
 | Friendly location | Path | Purpose |
 | --- | --- | --- |
 | Private Files | `/mnt/private` | Documents, downloads and application state that can reveal activity. Requires its own passphrase. |

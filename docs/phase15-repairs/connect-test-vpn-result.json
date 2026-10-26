@@ -1,0 +1,10 @@
+{
+  "fixture": "tests/phase15-repairs/connect-test-vpn.py",
+  "exit": 0,
+  "elapsed_seconds": 11.89,
+  "stderr": "",
+  "result": {
+    "live_vpn_check": true,
+    "download_mode_for_tests": true
+  }
+}
