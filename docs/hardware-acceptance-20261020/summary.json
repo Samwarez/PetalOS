@@ -1,0 +1,35 @@
+{
+  "release": "20261019-211301-083244",
+  "product_revision": "bfd9dd9efd4294a8c0f3703181b419f4cab64e36",
+  "generation": "5508b17fe0e494723bdf3086",
+  "kernel": "6.12.113+deb13-amd64",
+  "live_source_patch": "Qt Private sidebar only; source saved, live library patched in RAM, new image not built",
+  "passed": [
+    "Secure Boot and kernel lockdown",
+    "30 enforcing PetalOS AppArmor profiles",
+    "RAM runtime, no swap, SYSTEM full view read-only",
+    "live VPN IPv4/IPv6/DNS/clock and randomized Wi-Fi MAC",
+    "bounded Wi-Fi egress capture and negative probes",
+    "all16 role RAM/Private file boundaries",
+    "actual KeePass GUI Private database save/reopen",
+    "actual Tor page confirmed by user",
+    "Parole RAM/Private playback and user-confirmed speaker output",
+    "synthetic1080p600frames0drops",
+    "tunnel failure/reconnect with4apps remaining alive",
+    "actual16-second hardware suspend/resume",
+    "Private closed before sleep and after desktop unlock",
+    "postresume RAM-only KeePass launch and closed-Private Qt sidebar",
+    "normal desktop shutdown confirmed by user; SSH offline"
+  ],
+  "remaining": [
+    "apply bounded retention during a separately authorized offline card installation; current SYSTEM remains at 29 MiB free",
+    "build and verify new image including Qt sidebar change"
+  ],
+  "limits": [
+    "one background Qt probe interrupted with exit137; cause unconfirmed, successful foreground retry and native app/broker results recorded separately",
+    "physical observer saw Private close before lid reported closed; confirms closed at suspend, not which trigger first closed it",
+    "real Usenet and Kad high-ID excluded",
+    "no new physical external-media, printer, rfkill-key, brightness-key or volume-OSD regression checks in this pass",
+    "no forensic-erasure, whole-system Tails-equivalence or comprehensive anonymity claim"
+  ]
+}

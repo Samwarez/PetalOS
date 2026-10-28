@@ -28,6 +28,7 @@
 #include "portable-pin.h"
 
 static char stage[PATH_MAX];
+static char caller_uid[32] = "0";
 static uint64_t consumed;
 static int hashfd = -1;
 static volatile sig_atomic_t stopped;
@@ -156,6 +157,7 @@ static void worker(void) {
     char supervisor_pid[32];
     snprintf(supervisor_pid, sizeof(supervisor_pid), "%ld", (long)getppid());
     setenv("PETALOS_SUPERVISOR_PID", supervisor_pid, 1);
+    setenv("BLOOM_CALLER_UID", caller_uid, 1);
     setenv("PATH", "/usr/sbin:/usr/bin:/sbin:/bin", 1);
     setenv("HOME", stage, 1); setenv("LC_ALL", "C.UTF-8", 1);
     setenv("PYTHONDONTWRITEBYTECODE", "1", 1);
@@ -168,6 +170,13 @@ int main(int argc, char **argv) {
     (void)argv;
     setvbuf(stdout, NULL, _IOLBF, 0);
     if (argc != 1 || geteuid() != 0 || getuid() != 0) die("The portable backend requires administrator authorization and no arguments.");
+    const char *pk_uid = getenv("PKEXEC_UID");
+    if (pk_uid) {
+        size_t n = strlen(pk_uid);
+        if (!n || n >= sizeof(caller_uid) || strspn(pk_uid, "0123456789") != n)
+            die("Could not identify the authorizing desktop user.");
+        memcpy(caller_uid, pk_uid, n + 1);
+    }
     struct rlimit core = {0, 0};
     if (setrlimit(RLIMIT_CORE, &core) || prctl(PR_SET_DUMPABLE, 0)) die("Could not protect the temporary backend process.");
     umask(0077);

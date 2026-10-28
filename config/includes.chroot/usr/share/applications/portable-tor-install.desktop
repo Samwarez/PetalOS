@@ -1,8 +1,9 @@
 [Desktop Entry]
 Type=Application
 Name=Install Tor Archive
-Comment=Verify and install a signed Tor Browser archive in encrypted Private
+Comment=Legacy Tor archive installer; new builds include Tor Browser
 Exec=/usr/local/bin/portable-tor-install
 Icon=/usr/share/icons/hicolor/128x128/apps/portable-tor.png
 Terminal=false
 Categories=Network;Settings;
+NoDisplay=true

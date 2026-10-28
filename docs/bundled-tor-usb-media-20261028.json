@@ -1,0 +1,64 @@
+{
+  "date": "2026-10-28",
+  "status": "Clean OS build and all three release suites passed; publication preparation in progress",
+  "production_tor_pin": {
+    "version": "15.0.26",
+    "archive": "tor-browser-linux-x86_64-15.0.26.tar.xz",
+    "sha256": "327ac7443724b9eb6d3697506391b110ee159739bdc14bd731caa6fc16ffbf74",
+    "source": "https://dist.torproject.org/torbrowser/15.0.26/",
+    "checksum_source": "https://dist.torproject.org/torbrowser/15.0.26/sha256sums-signed-build.txt"
+  },
+  "production_payload_sha256_verified": true,
+  "production_developer_signature_verified": true,
+  "complete_build_input_preflight_passed": true,
+  "combined_vm_report": "docs/bundled-tor-usb-media-20261027/combined-production-results.json",
+  "combined_vm_checks_passed": 15,
+  "source_index_scan": {
+    "files_checked_before_final_evidence": 1062,
+    "problems": []
+  },
+  "gitleaks": {
+    "version": "8.30.1",
+    "findings": 0
+  },
+  "media": {
+    "file": "hardware-test.webm",
+    "sha256": "58db56f6a789ef3f1a9922c034ca449e2cec25e266a81b056d0e9ad38f35ee20",
+    "bytes": 1531203,
+    "duration_seconds": 12,
+    "width": 1280,
+    "height": 720,
+    "frames_per_second": 25,
+    "audio_channels": 2,
+    "sample_rate": 48000,
+    "cues": [
+      "0\u20134 s: left 440 Hz",
+      "4\u20138 s: right 880 Hz",
+      "8\u201312 s: both"
+    ],
+    "license": "CC0-1.0",
+    "origin": "Original synthetic Cairo/GStreamer picture and sine-wave audio; no recorded content",
+    "generator_sha256": "d2b1ffb09979046f08e524573faa8f39d81436a2648fc3581b3a484ef790f002"
+  },
+  "pending": [
+    "Publish reviewed source and verified release",
+    "Hardware retest"
+  ],
+  "limits": [
+    "Clean release suites passed with no production-file runtime overlay.",
+    "Direct-kernel tests do not establish new firmware or laptop hardware acceptance.",
+    "Tor version smoke test and public archive integrity passed; no live VPN bootstrap/browser GUI acceptance was added.",
+    "Video/stereo content was decoded and measured, not recorded from hardware speakers."
+  ],
+  "physical_media_changed": false,
+  "new_os_release_published": false,
+  "clean_build": "20261028-162728-860410",
+  "clean_release_verification": "docs/bundled-tor-usb-media-20261027/clean-release-verification.json",
+  "clean_checks": {
+    "encrypted_storage": 78,
+    "full_encrypted_live_boot": 21,
+    "desktop_media_tor": 15
+  },
+  "total_clean_checks": 114,
+  "catalog_sha256": "4d9e2387c3ab4d33b1e6406d9889b38521827a7fcfb871d8a4e03533b8ee6519"
+}

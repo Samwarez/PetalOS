@@ -10,7 +10,7 @@ PROFILES = {
     'fast': {
         'name': 'Fast — Legacy Friendly', 'audience': 'Older hardware',
         'memory_kib': 64 * MIB, 'minimum_memory_kib': 32 * MIB,
-        'target_unlock_ms': 1000, 'parallel': 1, 'minimum_characters': 12,
+        'target_unlock_ms': 1000, 'parallel': 1,
         'description': 'Strong AES-256-XTS protection with a lighter Argon2id unlock cost. '
                        'Targets about 1 second per encrypted volume, using 32–64 MiB of RAM. '
                        'Best for older computers and shorter unlock waits.',
@@ -18,7 +18,7 @@ PROFILES = {
     'balanced': {
         'name': 'Balanced — Recommended', 'audience': 'Default · modern computers',
         'memory_kib': 512 * MIB, 'minimum_memory_kib': 256 * MIB,
-        'target_unlock_ms': 2000, 'parallel': 4, 'minimum_characters': 12,
+        'target_unlock_ms': 2000, 'parallel': 4,
         'description': 'AES-256-XTS with stronger Argon2id protection against passphrase guessing. '
                        'Targets about 2 seconds per encrypted volume, using 256–512 MiB of RAM. '
                        'Recommended for modern computers.',
@@ -26,7 +26,7 @@ PROFILES = {
     'paranoid': {
         'name': 'Paranoid — Maximum Protection', 'audience': 'High-value data · longer unlock waits',
         'memory_kib': 2048 * MIB, 'minimum_memory_kib': 1024 * MIB,
-        'target_unlock_ms': 5000, 'parallel': 4, 'minimum_characters': 32,
+        'target_unlock_ms': 5000, 'parallel': 4,
         'description': 'AES-256-XTS with an aggressive Argon2id memory and work budget. '
                        'Targets about 5 seconds per encrypted volume, using 1–2 GiB of RAM. '
                        'Designed to make offline guessing more expensive for well-funded attackers. '

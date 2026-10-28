@@ -1,0 +1,54 @@
+{
+  "status": "Fresh clean build20261028-162728-860410 and all114 checks passed; verified Bloom export ready.",
+  "tor": {
+    "implemented": true,
+    "production_pin": "15.0.26",
+    "production_payload_prepared": true,
+    "network_limitation": "User prepared actual15.0.26 through normal-terminal helper; independently hash/signature verified and full preflight passed.",
+    "bundle_signature_tests_passed": 7,
+    "full_input_preflight_specimen": "cached signed 15.0.25; all build inputs validated; rejects invalid signature and changed clip",
+    "combined_production_checks_passed": 15
+  },
+  "usb": {
+    "user_metadata": {
+      "ID_BUS": "ata",
+      "ID_FS_TYPE": "exfat",
+      "ID_FS_USAGE": "filesystem",
+      "UDISKS_IGNORE": "1"
+    },
+    "fix": "Match physical USB ancestry as well as ID_BUS=usb; default UDISKS_AUTO=0.",
+    "remaining": "Physical GUI retest after a new OS build; current USB-only VM finished successfully.",
+    "checks_passed": 10,
+    "report": "docs/bundled-tor-usb-media-20261027/usb-results.json"
+  },
+  "media": {
+    "file": "hardware-test.webm",
+    "sha256": "58db56f6a789ef3f1a9922c034ca449e2cec25e266a81b056d0e9ad38f35ee20",
+    "bytes": 1531203,
+    "duration_seconds": 12,
+    "width": 1280,
+    "height": 720,
+    "frames_per_second": 25,
+    "audio_channels": 2,
+    "sample_rate": 48000,
+    "cues": [
+      "0\u20134 s: left 440 Hz",
+      "4\u20138 s: right 880 Hz",
+      "8\u201312 s: both"
+    ],
+    "license": "CC0-1.0",
+    "origin": "Original synthetic Cairo/GStreamer picture and sine-wave audio; no recorded content",
+    "generator_sha256": "d2b1ffb09979046f08e524573faa8f39d81436a2648fc3581b3a484ef790f002"
+  },
+  "additional_checks": {
+    "installer_core_passed": 90,
+    "installer_gui_skipped": 12,
+    "split_build_hook_checks_passed": 12
+  },
+  "remaining": [
+    "Publish reviewed source/release if required.",
+    "Retest actual laptop USB sidebar and Tor/media launch."
+  ],
+  "physical_media_changed": false,
+  "public_release_changed": false
+}

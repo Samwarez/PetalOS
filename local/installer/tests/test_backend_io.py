@@ -5,6 +5,21 @@ import unittest
 
 
 class BackendPipeTests(unittest.TestCase):
+    def test_editing_worker_termination_unwinds_cleanup(self):
+        self.isolated('''import signal,contextlib
+closed=[]
+@contextlib.contextmanager
+def mounted():
+ try:yield
+ finally:closed.append(True)
+worker.editor_signals()
+try:
+ with mounted():os.kill(os.getpid(),signal.SIGTERM)
+except InterruptedError:pass
+else:raise AssertionError('Termination did not interrupt the worker')
+assert closed==[True]
+''')
+
     def isolated(self, body):
         source = Path(__file__).resolve().parents[1] / 'backend.py'
         script = '''import importlib.util,os,threading

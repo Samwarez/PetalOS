@@ -1,0 +1,45 @@
+{
+  "version": "0.4.4",
+  "date": "2026-10-27",
+  "source_commit": "66acf02d10fa5298fb8ec67ded60dd3398361954",
+  "core_tests_passed": 90,
+  "packaged_editor_tests_passed": 14,
+  "portable_files_verified": 7179,
+  "portable_relocation_passed": true,
+  "source_inventory_files": 63,
+  "gitleaks_findings": 0,
+  "public_release_pending": false,
+  "signal_cleanup": [
+    "SIGTERM",
+    "SIGINT",
+    "SIGHUP"
+  ],
+  "encrypted_storage_report": "/tmp/petalos-native-editor-save-signal-tests/20261027-220449-276850/results.json",
+  "prior_portable_worker_acceptance": {
+    "version": "0.4.3",
+    "checks_passed": 27,
+    "report": "/tmp/petalos-portable-tests/20261027-214412-804281/results.json",
+    "limits": "Complete worker acceptance applies to 0.4.3; 0.4.4 adds targeted signal/save cleanup checks and artifact checks."
+  },
+  "physical_media_changed": false,
+  "limits": [
+    "Synthetic encrypted storage VM, test-only PBKDF2; no production KDF or physical media acceptance.",
+    "File manager closure alone does not lock SYSTEM; use Bloom Save/Discard.",
+    "No atomic transaction across all saved files on I/O failure."
+  ],
+  "local_artifacts": {
+    "bloom-0.4.4-linux-amd64.tar.gz": {
+      "bytes": 134152025,
+      "sha256": "deac72a4a392a2484fec2e7eec30da2684160d97322a1e51b2b2abbaedbcf59e"
+    },
+    "bloom-installer_0.4.4_all.deb": {
+      "bytes": 578748,
+      "sha256": "637b1b13a7c842ec143f64bf6aa1cdc46ad8c80b06f2208bbf5be098fe55cc56"
+    }
+  },
+  "encrypted_storage_vm_checks_passed": 78,
+  "encrypted_storage_vm_passed": true,
+  "native_gtk_tests_passed": 12,
+  "public_release": "https://github.com/Samwarez/Bloom/releases/tag/v0.4.4",
+  "clean_ci_report": "docs/bloom-0.4.4-public-release-20261027.json"
+}

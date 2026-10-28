@@ -39,6 +39,7 @@ RULES = {
 # Reviewed distro assets and public Tor verification key, not access keys.
 # Changing one requires deliberate review and updating its content identity.
 BINARY_INPUTS = {'config/includes.chroot/usr/share/icons/hicolor/128x128/apps/portable-tor.png': '33f9c256c82c2c5797cf8835c50ca9b5715922969cbe8f89dd757217d18c8826', 'config/includes.chroot/usr/share/backgrounds/petalos/petalos-lock.png': 'd82383884391b3da1c69a7982518eba7d79cf5c8bb79b71bed9a0806a3fbf49d', 'config/includes.chroot/usr/local/share/portable/tor-browser-developers.keyring': 'c2ed2cb463bf384630f2c746448399ab944c3aeade4619f940f07372a57780d7'}
+BINARY_INPUTS['config/includes.chroot/usr/share/petalos/test-media/hardware-test.webm'] = '58db56f6a789ef3f1a9922c034ca449e2cec25e266a81b056d0e9ad38f35ee20'
 
 
 # Project artwork reviewed for public source publication on 2026-10-26.

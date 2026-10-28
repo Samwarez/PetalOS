@@ -135,7 +135,7 @@ def production_settings_boot():
 
 
 def recovery_and_imports():
-    from petal_installer import linux, recovery, store
+    from petal_installer import linux, recovery, store, store_browser
     def fixture_target(device):
         # The only discovery exception: this dedicated virtual disk is not USB.
         # All mount/holder/partition identity checks still come from real lsblk
@@ -172,11 +172,91 @@ def recovery_and_imports():
     fixture_vpn = Path('/run/public-fixture.conf')
     fixture_vpn.write_text('[Interface]\nPrivateKey = AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=\nAddress = 10.0.0.2/32\nDNS = 1.1.1.1\n'
                            '[Peer]\nPublicKey = AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = 203.0.113.1:51820\n')
+    private_before = filehash(part('private'))
+    linked_folder = Path('/run/fixture-downloads');linked_folder.symlink_to('/run', target_is_directory=True)
     with store.system_session('/dev/vda', writable=True, passphrase=SECRETS['system'].decode()) as selected:
         check('offline_store_imports_wallpaper', store.import_file(selected, 'wallpaper', '/fixture/wallpaper.png', 'fixture')['imported'])
-        check('offline_store_imports_validated_vpn', store.import_file(selected, 'vpn', fixture_vpn, 'fixture')['imported'])
+        check('offline_store_imports_validated_vpn', store.import_file(selected, 'vpn', linked_folder / fixture_vpn.name, 'fixture')['imported'])
+        def browser_request(action, path='Files', **fields):
+            return dict(mode='store', device='/dev/vda', plan_sha256='fixture', action=action, path=path, **fields)
+        check('browser_lists_only_saved_settings', {e['path'] for e in store_browser.browse(selected)['entries']} == set(store_browser.FOLDERS))
+        store_browser.change(selected, browser_request('mkdir', name='Notes'))
+        source = Path('/run/browser-note.txt');source.write_bytes(b'browser-settings')
+        upload = browser_request('put', 'Files/Notes', name='note.txt', source=str(source), replace=False)
+        store_browser.change(selected, upload, store_browser.prepare_upload(upload))
+        check('browser_saves_other_files_in_encrypted_settings', (selected / 'Files/Notes/note.txt').read_bytes() == b'browser-settings')
+        store_browser.change(selected, browser_request('rename', 'Files/Notes', name='note.txt', new_name='saved.txt'))
+        check('browser_renames_without_private', (selected / 'Files/Notes/saved.txt').is_file() and not opened('portable_data'))
+        store_browser.change(selected, browser_request('mkdir', name='Empty'))
+        store_browser.change(selected, browser_request('delete', name='Empty'))
+        check('browser_removes_only_selected_empty_folder', not (selected / 'Files/Empty').exists())
+        try:store_browser.validate(browser_request('put', 'Desktop', name='blocked', source=str(source)));refused = False
+        except Exception:refused = True
+        check('browser_refuses_managed_desktop_writes', refused)
     check('offline_store_closes_its_mapping', not any(Path('/dev/mapper').glob('petalos_installer_*')))
     check('offline_store_never_opened_os_or_private', not opened('portable_os') and not opened('portable_data'))
+    check('browser_private_ciphertext_unchanged', filehash(part('private')) == private_before)
+    # One real unlock stays open through native-folder edits and a rejected save.
+    from petal_installer import store_editor
+    from petal_installer.plans import make_plan
+    import contextlib, shutil
+    runtime = Path('/run/user/1000');runtime.mkdir(parents=True, exist_ok=True)
+    os.chown(runtime, 1000, 1000);runtime.chmod(0o700)
+    workspace = runtime / 'bloom-settings-fixture';workspace.mkdir(mode=0o700);os.chown(workspace, 1000, 1000)
+    original_choose = linux.choose;linux.choose = fixture_target
+    original_session = store.system_session;calls = [];held = {};events = []
+    @contextlib.contextmanager
+    def counted_session(*args, **kwargs):
+        calls.append(True)
+        with original_session(*args, **kwargs) as selected:
+            held['state'] = selected;yield selected
+    store.system_session = counted_session
+    request = dict(mode='store-editor', device='/dev/vda',
+                   plan_sha256=make_plan('system-store',fixture_target('/dev/vda'))['plan_sha256'], workspace=str(workspace))
+    reader, writer = os.pipe();credentials = {'system':SECRETS['system'].decode()}
+    def message(kind, value):
+        events.append(kind)
+        if kind == 'editor-ready':
+            check('native_editor_credentials_cleared_after_unlock', not credentials)
+            (workspace / 'Files/native.txt').write_bytes(b'native-editor-settings');os.chown(workspace / 'Files/native.txt',1000,1000)
+            (workspace / 'Network/Profiles/fixture.conf').write_text('[Interface]\nPostUp = /bin/sh\n')
+            os.write(writer,b'{"action":"save"}\n')
+        elif kind == 'editor-error':
+            check('native_editor_invalid_save_changed_no_files', not (held['state'] / 'Files/native.txt').exists())
+            (workspace / 'Network/Profiles/fixture.conf').write_bytes(fixture_vpn.read_bytes())
+            os.write(writer,b'{"action":"save"}\n')
+    def read_packet(fd):
+        data = bytearray()
+        while not data.endswith(b'\n'):
+            byte = os.read(fd,1)
+            if not byte:break
+            data.extend(byte)
+        return data
+    try:result = store_editor.serve(request,credentials,1000,reader,message,read_packet)
+    finally:
+        os.close(reader);os.close(writer);store.system_session = original_session;linux.choose = original_choose
+        shutil.rmtree(workspace)
+    check('native_editor_one_unlock_for_edit_and_save_retry', len(calls)==1 and events.count('editor-ready')==1 and events.count('editor-error')==1)
+    check('native_editor_saved_and_closed', result['saved'] and not any(Path('/dev/mapper').glob('petalos_installer_*')))
+    check('native_editor_private_ciphertext_unchanged', filehash(part('private')) == private_before)
+    import signal
+    spec=importlib.util.spec_from_file_location('editing_backend','/fixture/editing-backend.py')
+    editing_backend=importlib.util.module_from_spec(spec);spec.loader.exec_module(editing_backend)
+    workspace=runtime/'bloom-settings-signal';workspace.mkdir(mode=0o700);os.chown(workspace,1000,1000)
+    previous_handler=signal.getsignal(signal.SIGTERM);editing_backend.editor_signals()
+    original_choose=linux.choose;linux.choose=fixture_target
+    original_save=store_editor.EditingCopy.save
+    store_editor.EditingCopy.save=lambda self:os.kill(os.getpid(),signal.SIGTERM)
+    request['workspace']=str(workspace);interrupted=False
+    try:
+        store_editor.serve(request,{'system':SECRETS['system'].decode()},1000,-1,
+            lambda *_:None,lambda *_:b'{"action":"save"}\n')
+    except InterruptedError:interrupted=True
+    finally:
+        store_editor.EditingCopy.save=original_save
+        linux.choose=original_choose;signal.signal(signal.SIGTERM,previous_handler);shutil.rmtree(workspace)
+    check('native_editor_sigterm_closes_real_system_mapping',interrupted and not any(Path('/dev/mapper').glob('petalos_installer_*')))
+    check('native_editor_sigterm_preserves_private_ciphertext',filehash(part('private'))==private_before)
 
 
 def provision():
@@ -278,6 +358,8 @@ def verify_reboot():
     root = mount(mapping, '/mnt/verify-preloads', readonly=True)
     check('preloaded_wallpaper_survived_update_and_reboot', (root / '.petalos-state/Wallpapers/fixture.png').read_bytes() == Path('/fixture/wallpaper.png').read_bytes())
     check('preloaded_vpn_survived_update_and_reboot', (root / '.petalos-state/Network/Profiles/fixture.conf').is_file())
+    check('browser_files_survived_update_and_reboot', (root / '.petalos-state/Files/Notes/saved.txt').read_bytes() == b'browser-settings')
+    check('native_editor_files_survived_update_and_reboot', (root / '.petalos-state/Files/native.txt').read_bytes() == b'native-editor-settings')
     unmount(root);close('fixture_verify_settings')
 
 

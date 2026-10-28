@@ -1,0 +1,7 @@
+{
+  "exit": 0,
+  "checks": {
+    "management_HTTP_response_received": true,
+    "ordinary_desktop_identity_denied_management_socket": true
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "format": 1,
+  "build": "20261028-162728-860410",
+  "version": "rc1-layout2-20261028-162728-860410",
+  "layout": 2,
+  "clean_release": true,
+  "runtime_overlay": false,
+  "vm_checks": [
+    {
+      "suite": "desktop-media-results.json",
+      "passed": true,
+      "sha256": "d73c35c85873e4d70b30d28c01783c1f4add026c7f41a98e11705712aaa924ef"
+    },
+    {
+      "suite": "results.json",
+      "passed": true,
+      "sha256": "4092e2024ab60331af0ab3c4b46fe074b1c6ffdbd133b98935898c97d8ac7e68"
+    },
+    {
+      "suite": "fullboot-results.json",
+      "passed": true,
+      "sha256": "a0f89330ede125dd28c3904373fa97a95eb651bc4414cea5c79531a5843555a0"
+    }
+  ],
+  "limits": [
+    "Direct-kernel VM boot; firmware, graphical startup and hardware acceptance remain separate",
+    "Focused VM provisioning uses test-only PBKDF2; production Bloom KDF tests are separate",
+    "No physical drive modified and no release published by this command"
+  ]
+}

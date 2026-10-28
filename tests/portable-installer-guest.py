@@ -2,6 +2,7 @@
 """Portable runtime and administrator acceptance, inside a fresh networkless VM."""
 from pathlib import Path
 import json
+import ast
 import os
 import subprocess
 import sys
@@ -83,7 +84,7 @@ try:
     Path('/mnt').chmod(0o755)
     Path('/tmp').mkdir(exist_ok=True);Path('/tmp').chmod(0o1777)
     sys.path.insert(0, str(APP / 'app'))
-    from petal_installer import linux, portable
+    from petal_installer import linux, portable, __version__
     from petal_installer.plans import make_plan
     from petal_installer.bridge import request_from_plan
     inputs = json.loads(Path('/fixture/test-input.json').read_text())
@@ -92,7 +93,7 @@ try:
     environment = dict(os.environ, HOME='/tmp/portable-user', XDG_RUNTIME_DIR='/tmp/portable-user/runtime',
                        GDK_BACKEND='broadway', BROADWAY_DISPLAY=':73', GTK_THEME='Adwaita:dark')
     # The actual packaged Python/GTK are selected by the portable launcher.
-    check('packaged_cli_has_current_version', run([str(APP / 'bloom'), '--version'], preexec_fn=as_user, env=environment).strip() == b'0.4.0')
+    check('packaged_cli_has_current_version', run([str(APP / 'bloom'), '--version'], preexec_fn=as_user, env=environment).strip() == __version__.encode())
     listing = run([str(APP / 'bloom'), '--portable-tool', '/usr/bin/lsinitramfs',
                    '/mnt/portable/public-initrd.img'], preexec_fn=as_user, env=environment)
     check('bundled_shell_tool_and_subcommands', b'portable-runtime-canary' in listing.splitlines())
@@ -128,14 +129,21 @@ try:
                                  '-s', '-P', '-B', '/mnt/portable/gtk-check.py'], preexec_fn=as_user,
                                 env=environment, capture_output=True, timeout=180)
         if result.returncode:print('PORTABLE_GTK_ERROR ' + (result.stdout + result.stderr).decode(errors='replace')[-3000:].replace('\n', ' '), flush=True)
-        check('six_packaged_native_gtk_checks', result.returncode == 0 and b'PORTABLE_GTK_PASSED 6' in result.stdout)
+        tree = ast.parse(Path('/mnt/portable/test_gui.py').read_text())
+        expected = sum(isinstance(node, ast.FunctionDef) and node.name.startswith('test_') for cls in tree.body
+                       if isinstance(cls, ast.ClassDef) and cls.name == 'GuiTests' for node in cls.body)
+        check('packaged_native_gtk_suite', result.returncode == 0 and ('PORTABLE_GTK_PASSED '+str(expected)).encode() in result.stdout)
     finally:
         if server.poll() is None:server.terminate();server.wait(timeout=10)
         server.stderr.close()
     check('no_installed_petalos_backend', not Path('/usr/lib/petalos-installer').exists() and not Path('/usr/lib/bloom-installer').exists())
     result = run([str(APP / 'bloom'), '--portable-check'], preexec_fn=as_user, env=environment)
     value = json.loads(result)
-    check('packaged_runtime_self_check', value['portable'] and value['name'] == 'Bloom' and value['version'] == '0.4.0' and value['verified_files'] > 1000)
+    check('packaged_runtime_self_check', value['portable'] and value['name'] == 'Bloom' and value['version'] == __version__ and value['verified_files'] > 1000)
+    os.environ['PKEXEC_UID']='1000'
+    try:status,events=call_worker({'mode':'store-editor'})
+    finally:os.environ.pop('PKEXEC_UID',None)
+    check('portable_supervisor_preserves_authorizing_uid', status!=0 and any(e.get('message')=='Invalid editing-session request.' for e in events))
     # Root staging integrity: no invalid packet reaches the disk engine.
     status, events = call_worker(corrupt=True)
     check('altered_payload_refused_before_execution', status != 0 and any('differs from this application build' in e.get('message', '') for e in events))

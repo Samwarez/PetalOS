@@ -1,0 +1,7 @@
+{
+  "version": "15.0.26",
+  "archive": "tor-browser-linux-x86_64-15.0.26.tar.xz",
+  "sha256": "327ac7443724b9eb6d3697506391b110ee159739bdc14bd731caa6fc16ffbf74",
+  "source": "https://dist.torproject.org/torbrowser/15.0.26/",
+  "checksum_source": "https://dist.torproject.org/torbrowser/15.0.26/sha256sums-signed-build.txt"
+}

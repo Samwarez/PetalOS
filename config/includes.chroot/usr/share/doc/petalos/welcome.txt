@@ -6,7 +6,7 @@ Password login for this account is disabled; the desktop starts automatically.
 
 Temporary Files (RAM): ordinary home folders and temporary content.
 Private Files: encrypted personal files, downloads and activity-related app state.
-System Settings: encrypted VPN profiles, signed Tor Browser archives and selected
+System Settings: encrypted VPN profiles and selected
 desktop/app preferences. These remain available while Private is locked.
 
 On new layout 2 media, OS and System Settings have separate encrypted partitions
@@ -46,8 +46,17 @@ and clock. Results appear in the VPN manager and Conky. IPv6 failure is a
 warning; required tunnel, IPv4 or DNS failures reject the connection.
 
 Tor (RAM session) checks current VPN and clock readiness without an
-administrator password. Browser sessions stay in RAM. Downloads use assigned
+administrator password. The OS includes its signed Tor Browser archive; no
+manual archive installation is needed. Browser sessions stay in RAM. Downloads use assigned
 folders in RAM or unlocked Private.
+
+Test Video & Audio plays the bundled 12-second moving picture with left, right
+and stereo speaker cues through the normal offline media player. It works
+without network access or unlocking Private.
+
+Ordinary USB drives appear in the file manager's Devices list. Select a drive
+to mount it manually; automatic mounting is disabled. Administrator authorization
+may be requested. Raw PetalOS boot/encryption volumes remain hidden.
 
 SYSTEM passphrase: boot and desktop unlock.
 Administrator password: privileged system changes.

@@ -1,6 +1,6 @@
 """PetalOS installer: portable core, Linux adapters, optional GTK overlay."""
 
-__version__ = '0.4.0'
+__version__ = '0.4.4'
 
 
 class InstallerError(Exception):

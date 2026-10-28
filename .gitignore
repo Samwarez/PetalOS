@@ -109,3 +109,9 @@ wg*.conf
 # Regenerated pinned Crystal Dock executable/provenance.
 /config/includes.chroot/usr/local/share/portable/native-crystal-dock/
 /config/includes.chroot/usr/local/share/portable/native-split-unlock/
+/config/includes.chroot/usr/local/share/portable/tor-browser/
+
+# Historical desktop-test captures remain local; only reviewed assets ship.
+/docs/crystal-dock-20261023/*.png
+/docs/phase2-branding-20261023/*.png
+/docs/installer-gui-20261024.png

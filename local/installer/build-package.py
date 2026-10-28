@@ -65,7 +65,7 @@ Maintainer: Bloom local development
 Conflicts: petalos-installer
 Replaces: petalos-installer
 Provides: petalos-installer
-Depends: python3 (>= 3.11), python3-gi, gir1.2-gtk-3.0, cryptsetup-bin, dmsetup, gdisk, parted, udev, dosfstools, e2fsprogs, util-linux, psmisc, openssl, sbsigntool, initramfs-tools-core, squashfs-tools, pkexec, cpio, gzip, zstd
+Depends: python3 (>= 3.11), python3-gi, gir1.2-gtk-3.0, libzxcvbn0, cryptsetup-bin, dmsetup, gdisk, parted, udev, dosfstools, e2fsprogs, util-linux, psmisc, openssl, sbsigntool, initramfs-tools-core, squashfs-tools, pkexec, cpio, gzip, zstd
 Section: admin
 Priority: optional
 Description: Bloom, a portable PetalOS installer with a soft-pink graphical overlay

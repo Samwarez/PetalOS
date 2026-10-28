@@ -1,0 +1,10 @@
+{
+  "expected_named_users_only": true,
+  "owner_is_desktop": true,
+  "no_other_permission_bits": true,
+  "other_ACL_entry_none": true,
+  "group_ACL_entry_none": true,
+  "mode_after_named_ACL": "0o670",
+  "other_app_cannot_see_Parole_folder": true,
+  "prior_media_probe_0600_check_was_invalid_after_named_ACL_normalization": true
+}

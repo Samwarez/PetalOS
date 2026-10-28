@@ -58,13 +58,21 @@ class EncryptionTests(unittest.TestCase):
         self.assertEqual(result['target_unlock_ms'], 4000)
         self.assertEqual(command.call_count, 2)
 
-    def test_paranoid_enforces_long_distinct_new_credentials_but_reads_legacy(self):
-        values = {'system': 's' * 32, 'private': 'p' * 32, 'administrator': 'a' * 32}
-        engine.credentials_checked(values, 'install', encryption='paranoid')
-        with self.assertRaises(InstallerError):engine.credentials_checked(dict(values, private='p' * 31), 'install', encryption='paranoid')
-        with self.assertRaises(InstallerError):engine.credentials_checked(dict(values, private=values['system']), 'install', encryption='paranoid')
+    def test_role_minimums_apply_in_every_tier_and_read_legacy_credentials(self):
+        values = {'system': 's' * 15, 'private': 'p' * 24, 'administrator': 'a' * 15}
+        for tier in encryption.PROFILES:
+            with self.subTest(tier=tier):
+                engine.credentials_checked(values, 'install', encryption=tier)
+                for role, size in [('system', 14), ('administrator', 14), ('private', 23)]:
+                    with self.assertRaises(InstallerError):
+                        engine.credentials_checked(dict(values, **{role: 'x' * size}), 'install', encryption=tier)
+                with self.assertRaises(InstallerError):
+                    engine.credentials_checked(dict(values, administrator=values['system']), 'install', encryption=tier)
+        # Unicode length is measured in characters, with the separate UTF-8 byte cap.
+        engine.credentials_checked(dict(values, system='🌸' * 15), 'install')
         # Existing keys are verified using their existing credential, never silently rotated.
-        engine.credentials_checked({'system': 'old'}, 'update')
+        for mode in ('update', 'store', 'recovery'):
+            engine.credentials_checked({'system': 'old'}, mode)
 
     def test_failed_calibration_never_opens_or_erases_target(self):
         with tempfile.TemporaryDirectory() as temporary:
@@ -76,7 +84,8 @@ class EncryptionTests(unittest.TestCase):
                  patch.object(engine.ctypes, 'CDLL', return_value=Mock(prctl=Mock(return_value=0))), \
                  patch.object(engine.linux, 'choose', return_value=record), patch.object(engine, 'validate_os'), \
                  patch.object(engine, 'calibrate', side_effect=InstallerError('Insufficient memory.')), patch.object(engine, 'Target') as target:
-                with self.assertRaises(InstallerError):engine.execute(request, {'system': 'system-test-unique', 'private': 'private-test-unique', 'administrator': 'admin-test-unique'})
+                with self.assertRaisesRegex(InstallerError, 'Insufficient memory'):
+                    engine.execute(request, {'system': 'system-test-unique', 'private': 'private-test-unique-longer', 'administrator': 'admin-test-unique'})
                 target.assert_not_called()
 
 

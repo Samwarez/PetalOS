@@ -9,6 +9,7 @@ import subprocess
 import tempfile
 
 ROOT = Path('/mnt/system-state/Applications/TorBrowser')
+BUNDLED = Path('/usr/local/share/portable/tor-browser')
 KEYRING = Path('/usr/local/share/portable/tor-browser-developers.keyring')
 ARCHIVE = re.compile(r'tor-browser-linux-x86_64-[0-9]+(?:\.[0-9]+)+(?:\.tar\.xz|\.tar\.gz)\Z')
 
@@ -35,7 +36,34 @@ def verify(archive, signature, keyring=KEYRING):
         raise ArchiveError('Tor Browser signature verification failed. The selected archive was not installed.')
 
 
-def current(root=ROOT):
+def bundled(root=BUNDLED):
+    """The reviewed OS supplies its default browser; never trust an unsigned copy."""
+    safe(root)
+    marker = root / 'manifest.json'
+    safe(marker)
+    if not marker.is_file() or marker.stat().st_size > 4096:
+        raise ArchiveError('The bundled Tor Browser manifest is missing or invalid.')
+    try:
+        record = json.loads(marker.read_text())
+        name, checksum = record['archive'], record['sha256']
+        if not ARCHIVE.fullmatch(name) or not re.fullmatch('[a-f0-9]{64}', checksum):raise ValueError()
+    except (KeyError, TypeError, ValueError):
+        raise ArchiveError('The bundled Tor Browser manifest is invalid.') from None
+    archive = root / name
+    safe(archive)
+    import hashlib
+    if not archive.is_file() or not 0 < archive.stat().st_size <= 512*1024**2:
+        raise ArchiveError('The bundled Tor Browser archive is missing or invalid.')
+    with archive.open('rb') as contents:actual = hashlib.file_digest(contents, 'sha256').hexdigest()
+    if actual != checksum:raise ArchiveError('The bundled Tor Browser checksum failed.')
+    verify(archive, Path(str(archive)+'.asc'))
+    return archive
+
+
+def current(root=ROOT, bundle=BUNDLED):
+    # Bundled applications follow the reviewed OS release. Legacy releases
+    # without a bundle retain their separately installed archive workflow.
+    if bundle.exists() or bundle.is_symlink():return bundled(bundle)
     safe(root)
     marker = root / 'current-archive.json'
     if marker.exists() or marker.is_symlink():

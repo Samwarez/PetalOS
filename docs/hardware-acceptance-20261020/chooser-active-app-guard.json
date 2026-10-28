@@ -1,0 +1,6 @@
+{
+  "running_application_fixture_refused": true,
+  "same_worker_untouched": true,
+  "no_policy_or_credential_changes": true,
+  "fixture_now_serializes_with_normal_broker": true
+}

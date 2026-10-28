@@ -1,0 +1,66 @@
+{
+  "hardware-media-start.py": {
+    "exit": 0,
+    "seconds": 7.26,
+    "result": {
+      "fixture_bytes": 1742681,
+      "parole_ready": true,
+      "opened_from_downloads_via_readonly_handoff": true,
+      "duration_seconds": 120
+    }
+  },
+  "hardware-audio-monitor.py": {
+    "exit": 0,
+    "seconds": 2.05,
+    "result": {
+      "checks": {
+        "guest_output_samples_received": true,
+        "synthetic_tone_reached_output": true
+      },
+      "samples": 187400,
+      "rms": 58.32,
+      "capture_source": "guest output monitor only; raw PCM not saved"
+    }
+  },
+  "hardware-av-pipeline.py": {
+    "exit": 0,
+    "seconds": 21.34,
+    "result": {
+      "clock": "GstPulseSinkClock",
+      "clock_tracks_real_time": true,
+      "completed": true,
+      "dropped": 0,
+      "elapsed": 21.007,
+      "native_window_mapped": true,
+      "position_does_not_race": true,
+      "positions": [
+        0.989,
+        1.988,
+        2.988,
+        3.989,
+        4.989,
+        5.989,
+        6.99,
+        7.99,
+        8.99,
+        9.991,
+        10.991,
+        11.991,
+        12.991,
+        13.991,
+        14.991,
+        15.992,
+        16.992,
+        17.992,
+        18.993,
+        19.993,
+        20.0
+      ],
+      "real_role_uid": true,
+      "rendered": 600,
+      "synthetic_window_app_ids": [
+        "petalos-av-fixture"
+      ]
+    }
+  }
+}

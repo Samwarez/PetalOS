@@ -20,6 +20,7 @@ from .plans import make_plan, existing_layout, WIPE_LIMITS
 from .releases import require, file_digest
 from .target import Target, atomic_copy, write_public, random_fill
 from .encryption import PROFILES, calibrate, verify_header
+from .passwords import MINIMUM_CHARACTERS, ROLE_NAMES
 
 CONFIGS = ('EFI/BOOT/grub.cfg', 'EFI/debian/grub.cfg', 'boot/grub/grub.cfg')
 
@@ -36,9 +37,9 @@ def credentials_checked(credentials, mode, *, encryption='balanced'):
         encoded[role] = value
     if mode == 'install':
         require(encryption in PROFILES, 'Unknown encryption tier.')
-        minimum = PROFILES[encryption]['minimum_characters']
-        require(all(len(v) >= minimum for v in credentials.values()),
-                'This tier requires at least ' + str(minimum) + ' characters for each new passphrase. Use unique, randomly chosen words or characters; length alone does not ensure strength.')
+        for role, minimum in MINIMUM_CHARACTERS.items():
+            require(len(credentials[role]) >= minimum,
+                    ROLE_NAMES[role] + ' requires at least ' + str(minimum) + ' characters. Use unique, randomly chosen words or characters; length alone does not ensure strength.')
         require(len(set(encoded.values())) == 3, 'SYSTEM, Private and PetalOS administrator passwords must be different.')
     return encoded
 
@@ -268,7 +269,7 @@ def perform(request, credentials, progress=lambda event: None):
         return execute(request, credentials, progress)
     mode = request.get('mode')
     require(mode in ('store', 'recovery'), 'Unsupported administrator operation.')
-    require(request.keys() <= {'mode', 'device', 'plan_sha256', 'action', 'kind', 'source', 'name', 'replace'},
+    require(request.keys() <= {'mode', 'device', 'plan_sha256', 'action', 'kind', 'source', 'name', 'replace', 'path', 'new_name'},
             'Unexpected maintenance request.')
     encoded = credentials_checked(credentials, mode)
     plan = make_plan('system-store', linux.choose(request['device']))
@@ -276,6 +277,17 @@ def perform(request, credentials, progress=lambda event: None):
     if mode == 'recovery':
         from .recovery import verify_pair
         return verify_pair(request['device'], credentials['system'])
+    from . import store_browser
+    if request.get('action') in store_browser.ACTIONS:
+        store_browser.validate(request)
+        payload = store_browser.prepare_upload(request) if request['action'] == 'put' else None
+        try:
+            from .store import system_session
+            with system_session(request['device'], writable=request['action'] != 'browse', passphrase=credentials['system']) as selected:
+                return store_browser.browse(selected, request['path']) if request['action'] == 'browse' else store_browser.change(selected, request, payload)
+        except OSError:
+            raise InstallerError('Settings operation stopped. Refresh the folder to check its current state. Only empty folders can be removed.') from None
+        finally:encoded.clear()
     require(request.get('action') in ('list', 'import'), 'Unsupported settings action.')
     from .store import system_session, inventory, import_file, checked_payload
     if request['action'] == 'import':

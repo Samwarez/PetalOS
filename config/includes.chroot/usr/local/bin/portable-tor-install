@@ -7,7 +7,7 @@ import sys
 import threading
 
 sys.path.insert(0, '/usr/local/lib/portable')
-from tor_archives import ArchiveError, install
+from tor_archives import ArchiveError, BUNDLED, install
 
 
 def main():
@@ -36,6 +36,10 @@ def main():
         filename = dialog.get_filename()
         dialog.destroy()
         return Path(filename) if response == Gtk.ResponseType.OK and filename else None
+
+    if BUNDLED.exists() or BUNDLED.is_symlink():
+        message('Tor Browser is included in this OS build. Install a reviewed PetalOS update from Bloom to update it.')
+        return 0
 
     archive = choose('Choose the Tor Browser Linux x86_64 archive')
     if archive is None:

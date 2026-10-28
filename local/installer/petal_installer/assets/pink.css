@@ -33,6 +33,9 @@ notebook tab:checked label { color: #513646; }
 progressbar trough { background-color: #ead0dd; border-radius: 6px; }
 progressbar progress { background-color: #a8376a; border-radius: 6px; }
 progressbar text { color: #513646; }
+progressbar.strength-0 progress, progressbar.strength-1 progress { background-color: #ae3448; }
+progressbar.strength-2 progress { background-color: #997009; }
+progressbar.strength-3 progress, progressbar.strength-4 progress { background-color: #38754d; }
 scrollbar trough { background-color: #f6e6ee; }
 scrollbar slider { background-color: #bf7a9a; }
 tooltip, tooltip label { background-color: #613748; color: #ffffff; }

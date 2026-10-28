@@ -1,0 +1,11 @@
+{
+  "media_decode_passed": true,
+  "source_vm_stage": "media checks passed; unrelated USB check failed in the same exploratory fixture",
+  "records": [
+    "MEDIA_GENERATOR {\"file\": \"hardware-test.webm\", \"sha256\": \"58db56f6a789ef3f1a9922c034ca449e2cec25e266a81b056d0e9ad38f35ee20\", \"bytes\": 1531203, \"duration_seconds\": 12, \"width\": 1280, \"height\": 720, \"frames_per_second\": 25, \"audio_channels\": 2, \"sample_rate\": 48000, \"cues\": [\"0\\u20134 s: left 440 Hz\", \"4\\u20138 s: right 880 Hz\", \"8\\u201312 s: both\"], \"license\": \"CC0-1.0\", \"origin\": \"Original synthetic Cairo/GStreamer picture and sine-wave audio; no recorded content\", \"generator_sha256\": \"d2b1ffb09979046f08e524573faa8f39d81436a2648fc3581b3a484ef790f002\"}",
+    "MEDIA_DECODE {\"decoded_frames\": 300, \"left_right_stereo_rms\": [[0.1172014193364656, 0.0], [0.0, 0.11706227221676863], [0.11719667949697582, 0.11706185175214096]], \"passed\": true}"
+  ],
+  "limits": [
+    "Synthetic media decode, not speaker/hardware playback acceptance"
+  ]
+}

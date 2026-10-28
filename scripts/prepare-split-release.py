@@ -77,9 +77,10 @@ def main():
         # initrds contain disposable credentials and never enter the export.
         run(ROOT / 'tests/run-split-storage-vm.py', release, '--work-root', work / 'focused')
         run(ROOT / 'tests/run-split-fullboot-vm.py', release, '--clean-release', '--work-root', work / 'fullboot')
+        run(ROOT / 'tests/run-desktop-media-vm.py', release, '--clean-release', '--work-root', work / 'desktop-media')
         reports = sorted(work.rglob('*results.json'))
-        if len(reports) != 2:
-            raise RuntimeError('Expected both split-storage VM result reports.')
+        if len(reports) != 3:
+            raise RuntimeError('Expected storage, full-boot and desktop/media VM result reports.')
         checks = []
         for report in reports:
             record = json.loads(report.read_text())
@@ -89,6 +90,9 @@ def main():
                     or record.get('runtime_delta_sha256') is not None
                     or record.get('base_release') != release.name):
                 raise RuntimeError('Full-boot results do not attest to this clean release without a runtime overlay.')
+            if report.name == 'desktop-media-results.json' and (record.get('clean_release') is not True
+                    or record.get('base_release') != release.name):
+                raise RuntimeError('Desktop/media results do not attest to this clean release.')
             checks.append({'suite': report.name, 'passed': True,
                            'sha256': hashlib.sha256(report.read_bytes()).hexdigest()})
         destination.parent.mkdir(parents=True, exist_ok=True)

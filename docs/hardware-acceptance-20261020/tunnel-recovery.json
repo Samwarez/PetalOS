@@ -1,0 +1,49 @@
+{
+  "apps_alive_before": {
+    "transmission": false,
+    "pan": false,
+    "amule": false,
+    "sabnzbd": false
+  },
+  "current_gate_denies_link_loss": true,
+  "historical_connection_report_still_exists": true,
+  "underlay_negative_probes": {
+    "1000": {
+      "underlay_bind_succeeded": 3,
+      "send_calls_succeeded": 0
+    },
+    "942": {
+      "underlay_bind_succeeded": 3,
+      "send_calls_succeeded": 0
+    },
+    "943": {
+      "underlay_bind_succeeded": 3,
+      "send_calls_succeeded": 0
+    },
+    "944": {
+      "underlay_bind_succeeded": 3,
+      "send_calls_succeeded": 0
+    },
+    "945": {
+      "underlay_bind_succeeded": 3,
+      "send_calls_succeeded": 0
+    }
+  },
+  "gate_after_link_restore": false,
+  "normal_disconnect": true,
+  "disconnected_gate_denied": true,
+  "normal_reconnect": true,
+  "live_gate_after_reconnect": true,
+  "apps_alive_after": {
+    "transmission": false,
+    "pan": false,
+    "amule": false,
+    "sabnzbd": false
+  },
+  "firewall_rules_unchanged": true,
+  "packet_counts": {
+    "WireGuard": 128
+  },
+  "no_unexpected_IP_in_bounded_capture": true,
+  "Private_remains_open": true
+}

@@ -22,7 +22,7 @@ from test_installer import bundle, disk
 
 class ExecutionTests(unittest.TestCase):
     def test_separate_passwords_and_byte_limits(self):
-        valid = {'system': 'system-test-unique', 'private': 'private-test-unique', 'administrator': 'admin-test-unique'}
+        valid = {'system': 'system-test-unique', 'private': 'private-test-unique-longer', 'administrator': 'admin-test-unique'}
         self.assertEqual(engine.credentials_checked(valid, 'install')['system'], b'system-test-unique')
         for invalid in [dict(valid, private=valid['system']), dict(valid, system=''),
                         dict(valid, system='x\ny'), dict(valid, private='x\0y'), dict(valid, system='🌸' * 129)]:

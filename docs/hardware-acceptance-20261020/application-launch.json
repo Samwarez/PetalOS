@@ -1,0 +1,58 @@
+{
+  "exit": 0,
+  "seconds": 132.78,
+  "results": {
+    "transmission": {
+      "approved_launch_succeeded": true,
+      "seconds": 3.7,
+      "ready": true,
+      "worker_alive": true,
+      "main_application_profile_enforced": true,
+      "namespace_helper_processes_without_AppArmor_label": 6
+    },
+    "pan": {
+      "approved_launch_succeeded": true,
+      "seconds": 2.9,
+      "ready": true,
+      "worker_alive": true,
+      "main_application_profile_enforced": true,
+      "namespace_helper_processes_without_AppArmor_label": 6
+    },
+    "amule": {
+      "approved_launch_succeeded": true,
+      "seconds": 4.26,
+      "ready": true,
+      "worker_alive": true,
+      "main_application_profile_enforced": true,
+      "namespace_helper_processes_without_AppArmor_label": 9
+    },
+    "sabnzbd": {
+      "approved_launch_succeeded": true,
+      "seconds": 8.13,
+      "ready": true,
+      "worker_alive": true,
+      "main_application_profile_enforced": true,
+      "namespace_helper_processes_without_AppArmor_label": 0
+    },
+    "tor": {
+      "approved_launch_succeeded": true,
+      "seconds": 113.72,
+      "ready": true,
+      "worker_alive": true,
+      "main_application_profile_enforced": true,
+      "namespace_helper_processes_without_AppArmor_label": 0
+    },
+    "sab-viewer": {
+      "ready": true,
+      "worker_alive": true,
+      "main_application_profile_enforced": true,
+      "namespace_helper_processes_without_AppArmor_label": 6
+    },
+    "browser": {
+      "ready": true,
+      "worker_alive": true,
+      "main_application_profile_enforced": true,
+      "namespace_helper_processes_without_AppArmor_label": 10
+    }
+  }
+}

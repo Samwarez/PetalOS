@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Test Video & Audio
+Comment=Play the built-in moving picture and left/right speaker test
+Exec=/usr/local/bin/portable-desktop offline-parole /usr/share/petalos/test-media/hardware-test.webm
+Icon=multimedia-player
+Terminal=false
+Categories=AudioVideo;Player;

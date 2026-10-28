@@ -28,7 +28,7 @@ ERRORS = {
     'printing-stop': 'Printing could not be stopped, or administrator authorization was cancelled.',
     'save-app-preferences': 'Preferences were not saved. Close Transmission, Pan, aMule, Geany, KeePassXC and Quod Libet first, then retry. Keep Private unlocked if they used it; SYSTEM settings must be available.',
     'private': 'Private Storage could not be unlocked, or authorization was cancelled.',
-    'tor': 'Tor was not started. Connect VPN and synchronize the clock. Check that a signed Tor archive is installed in SYSTEM settings.',
+    'tor': 'Tor was not started. Check the current VPN connection, clock synchronization and bundled browser integrity. Application confinement must be available.',
     'exit-ip': 'Exit IP check failed. Connect VPN and check its current status before retrying.',
     'exit-ipv6': 'VPN IPv6 check failed. IPv4 may still work. Verify the selected provider profile supports IPv6 before retrying.',
     'save-settings': 'Settings were not saved. Check encrypted SYSTEM storage and the supported desktop settings.',

@@ -1,0 +1,14 @@
+{
+  "Tor_check_page_confirms_Tor": true,
+  "Parole_moving_video_seen": true,
+  "speaker_beeps_heard_on_replay": true,
+  "initial_quiet_tone_not_heard_by_user": true,
+  "replay_default_output_was_speakers": true,
+  "replay_output_not_muted": true,
+  "desktop_volume_unchanged_at_33_percent": true,
+  "replay_test_stopped_and_RAM_WAV_removed": true,
+  "KeePassXC_GUI_Private_database_save_and_reopen": true,
+  "KeePass_Private_sidebar_visible_and_usable": true,
+  "lid_close_reopen_and_desktop_unlock_without_visible_issues": true,
+  "normal_desktop_shutdown_works": true
+}

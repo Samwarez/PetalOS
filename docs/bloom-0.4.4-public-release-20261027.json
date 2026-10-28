@@ -1,0 +1,30 @@
+{
+  "url": "https://github.com/Samwarez/Bloom/releases/tag/v0.4.4",
+  "source_commit": "66acf02d10fa5298fb8ec67ded60dd3398361954",
+  "ci_run": "https://github.com/Samwarez/Bloom/actions/runs/40609853199",
+  "clean_ci_tests_passed": 102,
+  "clean_ci_gtk_tests_passed": 12,
+  "clean_ci_portable_files_verified": 5727,
+  "assets": [
+    {
+      "name": "bloom-0.4.4-linux-amd64.tar.gz",
+      "bytes": 103143668,
+      "digest": "sha256:c69a9bb0eac870941559b1844eee572905e267a1ceeb6d5ffaaddf5e6e857230"
+    },
+    {
+      "name": "bloom-0.4.4-linux-amd64.tar.gz.sha256",
+      "bytes": 97,
+      "digest": "sha256:bef4993480ee1bf81a97ef1e0c5fd10fa93584a919f4f92ce897c9d05908cddd"
+    },
+    {
+      "name": "bloom-installer_0.4.4_all.deb",
+      "bytes": 578636,
+      "digest": "sha256:ae7d6309324ec7ea64f25b149177f8b29aaa1a78c90dbc3ccf358fd365697836"
+    },
+    {
+      "name": "bloom-installer_0.4.4_all.deb.sha256",
+      "bytes": 96,
+      "digest": "sha256:1a9d56fc53acf4d1d8efdd4907e778fefbcb28870a83ec41464f14092e1267d3"
+    }
+  ]
+}

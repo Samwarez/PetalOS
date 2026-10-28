@@ -2,6 +2,7 @@
 """Verify the complete portable artifact in a fresh, networkless disposable VM."""
 from pathlib import Path
 import argparse
+import errno
 import gzip
 import hashlib
 import importlib.util
@@ -17,6 +18,13 @@ spec = importlib.util.spec_from_file_location('portable_vm_base', ROOT / 'tests/
 vm = importlib.util.module_from_spec(spec);spec.loader.exec_module(vm)
 
 
+def link_or_copy(source, target):
+    try:os.link(source, target)
+    except OSError as error:
+        if error.errno != errno.EXDEV:raise
+        shutil.copy2(source, target)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('release', type=Path);parser.add_argument('portable', type=Path)
@@ -26,7 +34,7 @@ def main():
     os.umask(0o077)
     work, inputs = vm.prepare(release, base=Path('/tmp/petalos-portable-tests'))
     source = work / 'iso';source.mkdir()
-    shutil.copytree(app, source / 'app', copy_function=os.link)
+    shutil.copytree(app, source / 'app', copy_function=link_or_copy)
     shutil.copy2(ROOT / 'local/installer/tests/test_gui.py', source / 'test_gui.py')
     canary = work / 'initrd-canary';canary.mkdir()
     (canary / 'portable-runtime-canary').write_bytes(b'public runtime fixture')

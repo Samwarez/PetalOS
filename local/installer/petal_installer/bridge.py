@@ -9,6 +9,7 @@ import threading
 from . import InstallerError
 from . import portable
 from .releases import require
+from .passwords import MINIMUM_CHARACTERS
 
 BACKEND = Path('/usr/lib/bloom-installer/backend.py')
 MAX_REQUEST = 65536
@@ -33,7 +34,8 @@ def collect_credentials(mode, *, encryption='balanced'):
         for role in roles:
             title = {'system': 'SYSTEM passphrase (OS and settings)', 'private': 'Private passphrase',
                      'administrator': 'PetalOS administrator password'}[role]
-            values[role] = getpass.getpass(title + ': ')
+            hint = ' (at least ' + str(MINIMUM_CHARACTERS[role]) + ' characters)' if mode == 'install' else ''
+            values[role] = getpass.getpass(title + hint + ': ')
             if mode == 'install':
                 require(values[role] == getpass.getpass('Confirm ' + title + ': '), 'Password confirmation did not match; no drive changes made.')
         credentials_checked(values, mode, encryption=encryption)

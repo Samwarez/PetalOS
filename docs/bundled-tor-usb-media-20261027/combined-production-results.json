@@ -1,0 +1,37 @@
+{
+  "passed": true,
+  "result": {
+    "passed": true,
+    "stage": "desktop-media",
+    "checks": {
+      "only_disposable_usb": true,
+      "usb_serial_is_fixture": true,
+      "fresh_usb_partition_ready": true,
+      "legacy_bus_rule_reproduces_hidden_ata_usb_bridge": true,
+      "usb_ata_bridge_is_visible_without_automount": true,
+      "internal_filesystem_stays_hidden": true,
+      "no_automatic_mount": true,
+      "usb_visible_in_native_volume_monitor": true,
+      "usb_manual_mount_only": true,
+      "manual_mount_works": true,
+      "bundled_video_and_distinct_stereo_cues_decoded": true,
+      "media_uses_existing_readonly_file_delegation": true,
+      "signed_tor_available_without_system_archive": true,
+      "signed_bundled_tor_extracts_into_ram": true,
+      "bundled_tor_binary_runs_in_readonly_unprivileged_namespace": true
+    },
+    "single_system_prompt": false,
+    "acceleration": "tcg"
+  },
+  "base_release": "20261026-145911-818721",
+  "clean_release": false,
+  "usb_only": false,
+  "bundled_tor_specimen": {
+    "production_pin": true,
+    "version": "15.0.26"
+  },
+  "limits": [
+    "Production-file overlays: True; not a hardware test",
+    "No NIC, host share, existing image or physical media"
+  ]
+}

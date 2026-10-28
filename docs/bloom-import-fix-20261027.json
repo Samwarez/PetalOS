@@ -1,0 +1,60 @@
+{
+  "version": "0.4.2",
+  "date": "2026-10-27",
+  "cause": "A regular import file under a linked source folder was rejected by the release-input no-symlink validator.",
+  "fix": "Resolve import source folders, pin canonical directory descriptors and open the final regular file without following links.",
+  "core_tests_passed": 75,
+  "packaged_import_regressions_passed": 7,
+  "source_inventory_entries": 59,
+  "gitleaks_findings": 0,
+  "portable_integrity_files": 7176,
+  "relocation_verified": true,
+  "physical_media_changed": false,
+  "personal_vpn_profiles_read": false,
+  "public_release_pending": false,
+  "artifacts": {
+    "bloom-0.4.2-linux-amd64.tar.gz": {
+      "bytes": 134147880,
+      "sha256": "4fc0b3124cfbe264d25854a48c551a348aea3c515344ab468025d7ecd8be7f2d"
+    },
+    "bloom-installer_0.4.2_all.deb": {
+      "bytes": 573876,
+      "sha256": "208fbc676e85a8b50adfdfa4a61e1fb73a3bbda663e316c669f6e9bc6c7b9677"
+    }
+  },
+  "native_gtk_tests_passed": 10,
+  "packaged_store_regressions_passed": 16,
+  "encrypted_storage_vm_checks_passed": 70,
+  "encrypted_storage_vm_report": "/tmp/petalos-browser-storage-tests/20261027-210456-071277/results.json",
+  "native_gtk_report": "/tmp/petalos-gtk-tests/20261027-210207-214194/gui-results.json",
+  "browser_feature": "Browse SYSTEM saved-settings folders; validated imports, other saved files, rename/delete, empty folders and read-only managed areas; Private stays closed.",
+  "source_commit": "b61fa979834f378110724ad94be0419013503ccb",
+  "published": true,
+  "release_url": "https://github.com/Samwarez/Bloom/releases/tag/v0.4.2",
+  "ci_run": "https://github.com/Samwarez/Bloom/actions/runs/40603621694",
+  "ci_status": "success",
+  "ci_tests_passed": 85,
+  "ci_portable_integrity_files": 5724,
+  "public_assets": [
+    {
+      "name": "bloom-0.4.2-linux-amd64.tar.gz",
+      "bytes": 103141683,
+      "digest": "sha256:3274ebfe38a7b29504809956b94a77006bcd4a51e97dbd00d38d1192fd753608"
+    },
+    {
+      "name": "bloom-0.4.2-linux-amd64.tar.gz.sha256",
+      "bytes": 97,
+      "digest": "sha256:7fadfb4d93b0730876b5b1cd975329d84715a95558c1a2a3425a9eb55f1d2eb2"
+    },
+    {
+      "name": "bloom-installer_0.4.2_all.deb",
+      "bytes": 573756,
+      "digest": "sha256:dfde030af78602a81d40955c0ba8f36810712736f05b17fef45b8c9ef3fb8b2f"
+    },
+    {
+      "name": "bloom-installer_0.4.2_all.deb.sha256",
+      "bytes": 96,
+      "digest": "sha256:f799aa07b9e014a2ad029da797c732d5e0625e489a64441dfe663c941939fba6"
+    }
+  ]
+}

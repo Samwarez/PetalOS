@@ -1,6 +1,7 @@
 """Selected offline SYSTEM access and constrained, explicit asset imports."""
 from pathlib import Path
 import contextlib
+import errno
 import getpass
 import importlib.util
 import json
@@ -13,7 +14,7 @@ import tempfile
 from . import InstallerError
 from .linux import choose, command
 from .plans import existing_layout
-from .releases import plain_file, require
+from .releases import require
 
 ROOT = Path(__file__).resolve().parents[3]
 NAME = re.compile(r'[A-Za-z0-9][A-Za-z0-9_-]{0,63}\Z')
@@ -41,18 +42,30 @@ def directory_fd(path):
 
 
 def read_import(path, limit):
+    """Read a regular source through linked folders, pinning its resolved path.
+
+    Downloads/home directories may legitimately be links to another filesystem.
+    Resolve only the parent, then open every resolved component and the final
+    file with O_NOFOLLOW. Later link swaps cannot redirect the pinned read.
+    Settings destinations and release inputs retain their separate strict rules.
+    """
     path = Path(path).absolute()
-    parent = directory_fd(path.parent)
     try:
-        fd = os.open(path.name, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK, dir_fd=parent)
-    finally:
-        os.close(parent)
-    with os.fdopen(fd, 'rb') as source:
-        info = os.fstat(source.fileno())
-        require(stat.S_ISREG(info.st_mode) and info.st_size <= limit, 'Import must be a size-bounded regular file.')
-        data = source.read(limit + 1)
-        require(len(data) <= limit, 'Selected import grew beyond its size limit.')
-        return data
+        parent = directory_fd(path.parent.resolve(strict=True))
+        try:
+            fd = os.open(path.name, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK, dir_fd=parent)
+        finally:
+            os.close(parent)
+        with os.fdopen(fd, 'rb') as source:
+            info = os.fstat(source.fileno())
+            require(stat.S_ISREG(info.st_mode) and info.st_size <= limit, 'Import must be a size-bounded regular file.')
+            data = source.read(limit + 1)
+            require(len(data) <= limit, 'Selected import grew beyond its size limit.')
+            return data
+    except (OSError, RuntimeError) as error:
+        if isinstance(error, OSError) and error.errno == errno.ELOOP:
+            raise InstallerError('Selected import file is a symbolic link. Select the original file instead.') from None
+        raise InstallerError('Import source could not be read safely. Select the original regular file and check folder access.') from None
 
 
 def inventory(state):
@@ -75,9 +88,15 @@ def inventory(state):
 
 def checked_payload(kind, source):
     require(kind in KINDS, 'Unsupported settings import kind.')
-    source = plain_file(Path(source).absolute())
     limit = 32 * 1024**2 if kind == 'wallpaper' else 16384
     data = read_import(source, limit)
+    return checked_data(kind, data)
+
+
+def checked_data(kind, data):
+    """Validate already pinned bytes, including native-editor snapshots."""
+    require(kind in KINDS and isinstance(data, bytes), 'Invalid settings payload.')
+    require(len(data) <= (32 * 1024**2 if kind == 'wallpaper' else 16384), 'Selected settings file exceeds its size limit.')
     if kind == 'vpn':
         candidate = ROOT / 'config/includes.chroot/usr/local/lib/portable/vpn_profiles.py'
         if not candidate.exists():candidate = Path(__file__).with_name('shared') / 'vpn_profiles.py'
@@ -127,11 +146,26 @@ def import_file(state, kind, source, name, *, replace=False):
     safe_directory(state)
     require(isinstance(name, str) and NAME.fullmatch(name), 'Import name must use letters, numbers, underscores or hyphens.')
     folder, suffix, data, active = checked_payload(kind, source)
+    publish_file(state, folder, name + suffix, data, replace=replace)
+    return {'imported': True, 'kind': kind, 'name': name, 'available_to_current_os': active,
+            'status': 'Imported; VPN selection is unchanged.' if kind == 'vpn' else
+                      'Imported; choose it in Desktop Settings.' if kind == 'wallpaper' else
+                      'Staged inactive; current OS has no theme/override pack loader.'}
+
+
+def publish_file(state, folder, filename, data, *, replace=False):
+    """Atomic publication shared by typed imports and the bounded file browser."""
+    state = Path(state)
+    safe_directory(state)
+    parts = folder.split('/')
+    require(parts and all(p and p not in ('.', '..') and '\0' not in p for p in parts)
+            and filename and filename not in ('.', '..') and '/' not in filename and '\0' not in filename,
+            'Invalid settings destination.')
     parentfd = directory_fd(state)
     staging = '.petalos-import-' + secrets.token_hex(12)
     fd = None
     try:
-        for part in folder.split('/'):
+        for part in parts:
             created = False
             try:
                 following = os.open(part, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW, dir_fd=parentfd)
@@ -156,12 +190,12 @@ def import_file(state, kind, source, name, *, replace=False):
         # Same-filesystem no-overwrite publication, even if the destination appears late.
         if replace:
             try:
-                existing = os.stat(name + suffix, dir_fd=parentfd, follow_symlinks=False)
+                existing = os.stat(filename, dir_fd=parentfd, follow_symlinks=False)
                 require(stat.S_ISREG(existing.st_mode), 'Existing settings destination is not a regular file.')
             except FileNotFoundError:pass
-            os.replace(staging, name + suffix, src_dir_fd=parentfd, dst_dir_fd=parentfd)
+            os.replace(staging, filename, src_dir_fd=parentfd, dst_dir_fd=parentfd)
         else:
-            os.link(staging, name + suffix, src_dir_fd=parentfd, dst_dir_fd=parentfd, follow_symlinks=False)
+            os.link(staging, filename, src_dir_fd=parentfd, dst_dir_fd=parentfd, follow_symlinks=False)
         os.fsync(parentfd)
     except OSError as error:
         if not isinstance(error, FileExistsError):
@@ -172,10 +206,6 @@ def import_file(state, kind, source, name, *, replace=False):
             try:os.unlink(staging, dir_fd=parentfd)
             except FileNotFoundError:pass
         os.close(parentfd)
-    return {'imported': True, 'kind': kind, 'name': name, 'available_to_current_os': active,
-            'status': 'Imported; VPN selection is unchanged.' if kind == 'vpn' else
-                      'Imported; choose it in Desktop Settings.' if kind == 'wallpaper' else
-                      'Staged inactive; current OS has no theme/override pack loader.'}
 
 
 @contextlib.contextmanager

@@ -1,0 +1,7 @@
+#!/usr/bin/python3
+"""Fail the build if its mandatory browser payload is missing or unverified."""
+import sys
+sys.path.insert(0,'/usr/local/lib/portable')
+from tor_archives import bundled
+archive = bundled()
+print('Verified bundled Tor Browser: '+archive.name)

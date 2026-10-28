@@ -1,0 +1,6 @@
+{
+  "user_confirmed_shutdown_works": true,
+  "SSH_exit_after_shutdown": 255,
+  "SSH_not_accessible": true,
+  "bounded_probe_seconds": 5.02
+}

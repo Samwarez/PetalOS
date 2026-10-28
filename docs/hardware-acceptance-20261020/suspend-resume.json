@@ -1,0 +1,91 @@
+{
+  "observer_report_present": true,
+  "observer_report": {
+    "phase": "resumed_and_desktop_unlocked",
+    "events": [
+      {
+        "Private_mapping": true,
+        "lid_closed": false,
+        "locker_running": false,
+        "elapsed": 0.0
+      },
+      {
+        "Private_mapping": false,
+        "lid_closed": false,
+        "locker_running": false,
+        "elapsed": 28.73
+      },
+      {
+        "Private_mapping": false,
+        "lid_closed": false,
+        "locker_running": true,
+        "elapsed": 29.25
+      },
+      {
+        "Private_mapping": false,
+        "lid_closed": true,
+        "locker_running": true,
+        "elapsed": 44.32
+      },
+      {
+        "Private_mapping": false,
+        "lid_closed": false,
+        "locker_running": true,
+        "elapsed": 63.57
+      },
+      {
+        "Private_mapping": false,
+        "lid_closed": false,
+        "locker_running": false,
+        "elapsed": 75.59
+      }
+    ],
+    "Private_initially_open": true,
+    "last_observation_before_detected_suspend": {
+      "Private_mapping": false,
+      "lid_closed": true,
+      "locker_running": true
+    },
+    "first_observation_after_suspend": {
+      "Private_mapping": false,
+      "lid_closed": false,
+      "locker_running": true
+    },
+    "kernel_event_deltas": {
+      "entries": 1,
+      "exits": 1,
+      "GPU_hangs": 0,
+      "storage_errors": 0
+    },
+    "suspend_time_observed_seconds": 16.0,
+    "locker_observed": true,
+    "Private_mapping_closed_after_resume": true,
+    "Private_unmounted_after_resume": true,
+    "SYSTEM_state_ready": true,
+    "no_swap": true,
+    "desktop_components_running": {
+      "labwc": true,
+      "xfce4-panel": true,
+      "swaybg": true,
+      "conky": true
+    },
+    "no_failed_units": true,
+    "firewall_default_drop": true,
+    "locked_Private_Qt_sidebar_fixture": {
+      "exit": 1,
+      "result": {
+        "Private_open": false,
+        "exit": 137,
+        "result": null
+      }
+    }
+  },
+  "Private_mapping_present": false,
+  "kernel": "6.12.113+deb13-amd64",
+  "desktop_components": {
+    "labwc": true,
+    "xfce4-panel": true,
+    "swaybg": true,
+    "conky": true
+  }
+}

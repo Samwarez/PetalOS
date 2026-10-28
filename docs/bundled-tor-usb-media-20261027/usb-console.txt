@@ -1,0 +1,15 @@
+SPLIT_PASS only_disposable_usb
+SPLIT_PASS usb_serial_is_fixture
+SPLIT_PASS fresh_usb_partition_ready
+OLD_USB_PROPERTIES ["ID_BUS=ata", "ID_FS_LABEL=PETAL_TEST", "ID_FS_LABEL_ENC=PETAL_TEST", "ID_FS_UUID=EBED-F210", "ID_FS_UUID_ENC=EBED-F210", "ID_FS_VERSION=1.0", "ID_FS_BLOCKSIZE=512", "ID_FS_SIZE=133152256", "ID_FS_TYPE=exfat", "ID_FS_USAGE=filesystem", "UDISKS_IGNORE=1"]
+SPLIT_PASS legacy_bus_rule_reproduces_hidden_ata_usb_bridge
+USB_PROPERTIES ["ID_BUS=ata", "ID_FS_LABEL=PETAL_TEST", "ID_FS_LABEL_ENC=PETAL_TEST", "ID_FS_UUID=EBED-F210", "ID_FS_UUID_ENC=EBED-F210", "ID_FS_VERSION=1.0", "ID_FS_BLOCKSIZE=512", "ID_FS_SIZE=133152256", "ID_FS_TYPE=exfat", "ID_FS_USAGE=filesystem", "UDISKS_IGNORE=0", "UDISKS_AUTO=0"]
+SPLIT_PASS usb_ata_bridge_is_visible_without_automount
+SPLIT_PASS internal_filesystem_stays_hidden
+SPLIT_PASS no_automatic_mount
+GUI_VOLUMES MONITOR_ACTIVATED (1,)
+USB_VISIBILITY [{'device': '/dev/sda1', 'name': 'PETAL_TEST', 'automount': False}]
+SPLIT_PASS usb_visible_in_native_volume_monitor
+SPLIT_PASS usb_manual_mount_only
+SPLIT_PASS manual_mount_works
+SPLIT_RESULT {"passed": true, "stage": "desktop-media", "checks": {"only_disposable_usb": true, "usb_serial_is_fixture": true, "fresh_usb_partition_ready": true, "legacy_bus_rule_reproduces_hidden_ata_usb_bridge": true, "usb_ata_bridge_is_visible_without_automount": true, "internal_filesystem_stays_hidden": true, "no_automatic_mount": true, "usb_visible_in_native_volume_monitor": true, "usb_manual_mount_only": true, "manual_mount_works": true}}

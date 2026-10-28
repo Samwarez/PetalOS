@@ -6,6 +6,20 @@ SYSTEM settings and a separately unlocked Private store. Network applications
 use a guarded WireGuard connection; Tor Browser and offline applications have
 additional isolation.
 
+Current builds include a pinned, developer-signed Tor Browser archive in the
+read-only OS. Fresh installations can launch Tor after VPN/clock readiness
+without importing a separate archive. Browser profiles still start in RAM;
+browser updates arrive with reviewed OS builds. The archive pin is in
+`config/tor-browser.json`; the build coordinator fetches and verifies it before
+starting live-build. Offline builders can prepare the exact downloaded pair with
+`python3 -B scripts/prepare-tor-browser.py --from-directory /path/to/downloads`.
+
+**Test Video & Audio** opens an included 12-second 720p moving picture with a
+frame counter and left/right/stereo speaker cues in the regular offline media
+player. It requires no download or Private unlock. Ordinary USB filesystems
+appear in the file manager for manual mounting; automount remains disabled.
+These additions are included in build `20261028-162728-860410`.
+
 The new [layout 2 storage target](docs/split-storage-20261024.md) separates the
 encrypted OS payload from encrypted SYSTEM settings, with independent keys and
 one shared SYSTEM boot passphrase. Existing physical media retains the earlier
@@ -19,9 +33,10 @@ explicitly confirmed. The [portable Linux edition](docs/portable-installer.md)
 bundles its runtime and uses a protected temporary administrator backend without
 package installation; a root-owned Debian package remains available. Card
 deployment requires a verified split-storage OS build and separately authorized
-physical installation; no card was changed here. Build `20261026-145911-818721`
-passed clean layout-2 VM verification and is available as a
-[public release](https://github.com/Samwarez/PetalOS/releases/tag/rc1-layout2-20261026-145911-818721).
+physical installation; no card was changed here. Build `20261028-162728-860410`
+passed 114 checks across encrypted storage, full encrypted live boot and
+desktop/media suites. Published Bloom-compatible bundles are distributed through
+[PetalOS releases](https://github.com/Samwarez/PetalOS/releases).
 
 Download Bloom from its [public releases](https://github.com/Samwarez/Bloom/releases).
 Its [instructions](https://github.com/Samwarez/Bloom#readme) describe portable

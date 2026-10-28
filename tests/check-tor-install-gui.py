@@ -29,7 +29,7 @@ for scenario in ('cancel','valid','invalid'):
     scope['install']=install
     with patch.object(Gtk.Widget,'show_all',lambda _:None),patch.object(Gtk.Dialog,'run',dialog_run), \
          patch.object(Gtk.FileChooserDialog,'get_filename',lambda _:str(archive)), \
-         patch('subprocess.run',return_value=SimpleNamespace(returncode=0,stdout='/dev/mapper/portable_data\n')):
+         patch('subprocess.run',return_value=SimpleNamespace(returncode=0,stdout='/dev/mapper/portable_system\n')):
         result=scope['main']()
     assert result==(1 if scenario=='invalid' else 0)
     assert bool(calls)==(scenario!='cancel')

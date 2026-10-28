@@ -1,0 +1,11 @@
+#!/usr/bin/python3
+"""The hardware-test clip is a required, hash-checked public OS asset."""
+from pathlib import Path
+import hashlib
+import json
+root=Path('/usr/share/petalos/test-media')
+record=json.loads((root/'hardware-test.json').read_text())
+assert record['file']=='hardware-test.webm'
+assert hashlib.sha256((root/record['file']).read_bytes()).hexdigest()==record['sha256']
+assert (record['width'],record['height'],record['audio_channels'])==(1280,720,2)
+print('Verified bundled picture/stereo hardware-test clip.')

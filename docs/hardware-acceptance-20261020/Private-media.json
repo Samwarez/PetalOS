@@ -1,0 +1,16 @@
+{
+  "Parole_ready_from_Private_selection": true,
+  "audio_monitor_fixture_exit": 0,
+  "audio": {
+    "checks": {
+      "guest_output_samples_received": true,
+      "synthetic_tone_reached_output": true
+    },
+    "samples": 190092,
+    "rms": 58.31,
+    "capture_source": "guest output monitor only; raw PCM not saved"
+  },
+  "synthetic_source_preserved": true,
+  "Private_file_desktop_owned_mode0600": false,
+  "owned_Private_test_file_removed": true
+}

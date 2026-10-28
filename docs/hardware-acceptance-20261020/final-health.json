@@ -1,0 +1,13 @@
+{
+  "checks": {
+    "Private_mapping_closed": true,
+    "SYSTEM_selective_state_ready": true,
+    "no_swap": true,
+    "no_failed_system_units": true,
+    "running_library_matches_sidebar_fix": true,
+    "all_PetalOS_profiles_enforcing": true
+  },
+  "profile_count": 30,
+  "SYSTEM_available_MiB": 29,
+  "poweroff_test_pending": true
+}

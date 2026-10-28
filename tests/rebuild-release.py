@@ -43,6 +43,19 @@ def validate_split_storage(config):
 def validate_inputs(config):
     validate_split_storage(config)
     includes = config / 'includes.chroot'
+    import importlib.util
+    spec = importlib.util.spec_from_file_location('prepare_tor', PROJECT/'scripts/prepare-tor-browser.py')
+    tor = importlib.util.module_from_spec(spec);spec.loader.exec_module(tor)
+    pin = json.loads((config/'tor-browser.json').read_text())
+    bundle = includes/'usr/local/share/portable/tor-browser'
+    if json.loads((bundle/'manifest.json').read_text()) != pin:
+        raise RuntimeError('Bundled Tor manifest does not match this OS build.')
+    tor.validate(bundle,pin,includes/'usr/local/share/portable/tor-browser-developers.keyring')
+    media = includes/'usr/share/petalos/test-media'
+    clip = json.loads((media/'hardware-test.json').read_text())
+    if (clip['file']!='hardware-test.webm' or digest(media/clip['file'])!=clip['sha256']
+            or clip['generator_sha256']!=digest(PROJECT/'scripts/generate-test-media.py')):
+        raise RuntimeError('Bundled hardware test media differs from its reviewed generator/manifest.')
     dock=includes/'usr/local/share/portable/native-crystal-dock'
     meta=json.loads((dock/'provenance.json').read_text())
     if (meta.get('version')!='2.16' or meta.get('ctest')!='passed'
@@ -184,6 +197,13 @@ def verify_release(release, state):
     validate_inputs(stage/'config')
     squashfs = stage / "binary/live/filesystem.squashfs"
     verification_paths = (
+        'usr/local/lib/portable/tor_archives.py',
+        'usr/local/share/portable/tor-browser/manifest.json',
+        'usr/local/share/portable/tor-browser-developers.keyring',
+        'usr/share/petalos/test-media/hardware-test.json',
+        'usr/share/petalos/test-media/hardware-test.webm',
+        'usr/share/applications/portable-test-media.desktop',
+        'etc/udev/rules.d/99-portable-storage.rules',
         'usr/local/sbin/portable-check-vpn', 'usr/local/sbin/portable-vpn',
         'usr/local/sbin/portable-check-tor-ready',
         'usr/local/bin/portable-tor', 'usr/local/bin/portable-offline',
@@ -224,6 +244,16 @@ def verify_release(release, state):
         )
         if actual != (stage / "config/includes.chroot" / relative).read_bytes():
             raise RuntimeError("Built configuration differs from staged input; contents suppressed.")
+    tor_pin = json.loads((stage/'config/tor-browser.json').read_text())
+    relative = 'usr/local/share/portable/tor-browser/'+tor_pin['archive']
+    checksum = hashlib.sha256()
+    with subprocess.Popen(['unsquashfs','-cat',str(squashfs),relative],stdout=subprocess.PIPE) as process:
+        while block := process.stdout.read(1024**2):checksum.update(block)
+        if process.wait() or checksum.hexdigest()!=tor_pin['sha256']:
+            raise RuntimeError('Built Tor Browser archive differs from the pinned signed input.')
+    signature = subprocess.check_output(['unsquashfs','-cat',str(squashfs),relative+'.asc'])
+    if signature!=(stage/'config/includes.chroot'/str(relative+'.asc')).read_bytes():
+        raise RuntimeError('Built Tor Browser signature differs from its verified input.')
     listing = subprocess.check_output(
         ["/usr/bin/unsquashfs", "-ll", str(squashfs)], text=True
     )
@@ -330,6 +360,7 @@ def verify_release(release, state):
 def main():
     if os.geteuid() == 0:
         raise RuntimeError("Run this coordinator as Sam, not root.")
+    subprocess.run([sys.executable,'-B',str(PROJECT/'scripts/prepare-tor-browser.py')],check=True)
     validate_inputs(PROJECT / "config")
     stamp = datetime.datetime.now().strftime("%Y%m%d-%H%M%S-%f")
     release = PROJECT.parent / "releases" / stamp

@@ -1,0 +1,76 @@
+{
+  "AppArmor_profiles_checked": 30,
+  "SYSTEM_available_MiB": 29,
+  "backlights": [
+    {
+      "brightness": 32,
+      "driver": "amdgpu_bl0",
+      "maximum": 255
+    }
+  ],
+  "battery": [
+    {
+      "capacity": 34,
+      "status": "Discharging"
+    }
+  ],
+  "checks": {
+    "Documents_RAM": true,
+    "Downloads_RAM": true,
+    "PetalOS_profiles_enforcing": true,
+    "Petal_password_disabled": true,
+    "Private_closed": true,
+    "RAM_live_medium": true,
+    "Secure_Boot_enabled": true,
+    "administrator_auth_in_SYSTEM": true,
+    "correct_generation": true,
+    "desktop_running": true,
+    "firewall_default_drop": true,
+    "full_SYSTEM_read_only": true,
+    "kernel_lockdown": true,
+    "legacy_Private_key_absent": true,
+    "memory_zeroing_flags": true,
+    "no_failed_units": true,
+    "no_storage_GPU_crash_OOM_markers": false,
+    "no_swap": true,
+    "printing_off": true,
+    "public_runtime_files_match": true,
+    "root_overlay": true,
+    "selective_SYSTEM_ready": true,
+    "sudo_config_valid": true,
+    "synaptic_absent": true,
+    "vlc_absent": true
+  },
+  "interfaces": [
+    {
+      "name": "wlp1s0",
+      "state": "DOWN",
+      "wireless": true
+    }
+  ],
+  "kernel_error_marker_counts": {
+    "GPU_hangs": 0,
+    "kernel_crashes": 0,
+    "out_of_memory": 0,
+    "storage_IO_errors": 1
+  },
+  "mismatched_public_paths": [],
+  "packages": {
+    "amule": "1:2.3.3-3.2+petalos1",
+    "keepassxc": "2.7.10+dfsg1-1",
+    "libpoppler147": "25.03.0-5+deb13u4+petalos1",
+    "libxml2": "2.12.7+dfsg+really2.9.14-2.1+deb13u3+petalos1",
+    "linux-image-6.12.113+deb13-amd64": "6.12.113-1",
+    "polkitd": "126-2+petalos1"
+  },
+  "public_files_checked": 218,
+  "storage_log_review": {
+    "broad_marker_was": "r8152-cfgselector USB Ethernet adapter reset",
+    "card_read_errors_observed": false,
+    "GPU_hangs_observed": false,
+    "kernel_crashes_observed": false,
+    "broad_marker_is_not_a_confirmed_card_fault": true
+  },
+  "release": "20261019-211301-083244",
+  "generation": "5508b17fe0e494723bdf3086"
+}

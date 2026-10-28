@@ -128,6 +128,7 @@ def prepare(release, *, base=None):
     # SSH access, release chroot, existing VM disk or personal secret is read.
     shutil.copytree(ROOT / 'local/installer/petal_installer', fixture / 'installer/petal_installer',
                     ignore=shutil.ignore_patterns('__pycache__', '*.pyc', 'assets'))
+    shutil.copy2(ROOT / 'local/installer/backend.py', fixture / 'editing-backend.py')
     shutil.copy2(ROOT / 'tests/split-storage-guest.py', fixture / 'test.py')
     shutil.copy2(ROOT / 'tests/release_generations.py', fixture / 'release_generations.py')
     shutil.copy2(ROOT / 'local/installer/petal_installer/assets/petal-emblem.png', fixture / 'wallpaper.png')
@@ -193,7 +194,7 @@ poweroff -f
     return work, data
 
 
-def boot(work, data, release, stage, timeout, *, expected_prompts=1, initrd=None, memory=1536, iso=None, full_os=False, work_root=None):
+def boot(work, data, release, stage, timeout, *, expected_prompts=1, initrd=None, memory=1536, iso=None, full_os=False, work_root=None, usb_image=None):
     image = work / 'disposable.img'
     initial = image.stat()
     assert stat.S_ISREG(initial.st_mode) and initial.st_uid == os.getuid() and initial.st_nlink == 1
@@ -216,6 +217,15 @@ def boot(work, data, release, stage, timeout, *, expected_prompts=1, initrd=None
                '-nic', 'none', '-display', 'none', '-serial', 'stdio', '-monitor', 'none', '-no-reboot']
     if iso:
         command += ['-drive', 'file=' + str(iso) + ',format=raw,if=virtio,readonly=on']
+    if usb_image is not None:
+        usb_image = Path(usb_image)
+        info = usb_image.stat()
+        assert usb_image.parent == work and not usb_image.is_symlink()
+        assert stat.S_ISREG(info.st_mode) and info.st_uid == os.getuid() and info.st_nlink == 1
+        assert subprocess.run(['/usr/bin/fuser', str(usb_image)], capture_output=True).returncode == 1
+        command += ['-device', 'qemu-xhci,id=usbfixture', '-drive',
+                    'file=' + str(usb_image) + ',format=raw,if=none,id=flashfixture',
+                    '-device', 'usb-storage,drive=flashfixture,removable=on,serial=PETALOS_GUI_USB_TEST']
     process = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     tail = bytearray()
     pending = bytearray()

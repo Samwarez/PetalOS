@@ -7,8 +7,27 @@ from .cli import dispatch, human, parser
 from .plans import ENCRYPTION, WIPE_METHODS
 from .presentation import local_build_message, release_choices, variant_title
 from .encryption import SHARED_EXPLANATION, PORTABILITY_EXPLANATION
+from .passwords import MINIMUM_CHARACTERS, strength
 
 ASSETS = Path(__file__).with_name('assets')
+
+
+def password_meter(Gtk, entry, role):
+    """A local, advisory gauge; entry contents never leave this process."""
+    meter = Gtk.ProgressBar(show_text=True)
+    meter.set_name('bloom-strength-' + role)
+    meter.set_tooltip_text('Local estimate of common words and patterns, not a security guarantee. '
+                          'Use unique, randomly chosen words or characters. Estimates use up to '
+                          '128 ASCII characters; other text may not have an estimate.')
+    def changed(*_):
+        result = strength(entry.get_text(), role)
+        meter.set_fraction(result['score'] / 4)
+        meter.set_text(result['text'])
+        style = meter.get_style_context()
+        for score in range(5):style.remove_class('strength-' + str(score))
+        style.add_class('strength-' + str(result['score']))
+    entry.connect('changed', changed);changed()
+    return meter
 
 
 def create_window(repository, *, dispatcher=dispatch, autoload=True):
@@ -297,7 +316,7 @@ def create_window(repository, *, dispatcher=dispatch, autoload=True):
         dialog = Gtk.Dialog(title='Confirm ' + current['mode'], transient_for=window, modal=True)
         dialog.add_buttons('Cancel', Gtk.ResponseType.CANCEL, 'Start ' + current['mode'], Gtk.ResponseType.OK)
         dialog.set_default_size(620, -1)
-        content = dialog.get_content_area();content.set_border_width(16);content.set_spacing(8)
+        content = dialog.get_content_area();content.set_border_width(16);content.set_spacing(6)
         target = current['target']
         content.add(label(target['model'] + ' · ' + str(round(target['bytes'] / 1024**3, 1)) + ' GiB\n' + target['path'], 'section'))
         content.add(label('This erases the selected drive.' if current['mode'] in ('install', 'wipe') else 'Only OS contents and boot selection will change.'))
@@ -305,13 +324,21 @@ def create_window(repository, *, dispatcher=dispatch, autoload=True):
         entries = {};confirmations = {}
         for role in roles:
             title = {'system': 'SYSTEM passphrase', 'private': 'Private passphrase', 'administrator': 'PetalOS admin password'}[role]
-            entry = Gtk.Entry(visibility=False);entry.set_input_purpose(Gtk.InputPurpose.PASSWORD);entries[role] = field(content, title, entry)
+            entry = Gtk.Entry(visibility=False);entry.set_input_purpose(Gtk.InputPurpose.PASSWORD)
+            entry.set_name('bloom-password-' + role)
+            entries[role] = entry
             if current['mode'] == 'install':
+                group = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
+                entry.set_placeholder_text('At least ' + str(MINIMUM_CHARACTERS[role]) + ' characters')
+                group.pack_start(entry, False, False, 0)
+                group.pack_start(password_meter(Gtk, entry, role), False, False, 0)
+                field(content, title, group)
                 other = Gtk.Entry(visibility=False);other.set_input_purpose(Gtk.InputPurpose.PASSWORD);confirmations[role] = field(content, 'Confirm', other)
+            else:field(content, title, entry)
         if current['mode'] == 'install':
-            tier = current['encryption']
             content.add(label('SYSTEM unlocks OS and settings together. Private and administrator passphrases must each be different. '
-                             + str(tier['minimum_characters']) + '+ characters each; use unique, randomly chosen words or characters.', 'subtitle'))
+                             'Minimums: SYSTEM and admin 15 characters; Private 24. '
+                             'Strength estimates run locally and are guidance, not a guarantee.', 'subtitle'))
         typed = field(content, 'Type ERASE', Gtk.Entry()) if current['mode'] in ('install', 'wipe') else None
         content.add(label('Linux administrator authorization is requested separately. Passwords are not saved.', 'subtitle'))
         content.show_all();values = None
@@ -351,6 +378,18 @@ def create_window(repository, *, dispatcher=dispatch, autoload=True):
             if action == 'import':body.add(label('Import ' + settings_name.get_text() + (' · replacing that name if present.' if replace_existing.get_active() else ' · existing files are preserved.')))
             body.show_all();response = dialog.run();secret = password.get_text();password.set_text('');dialog.destroy()
             if response != Gtk.ResponseType.OK:return
+            if action == 'browse':
+                from .native_store_gui import edit_store
+                credentials = {'system': secret}
+                secret = None
+                job['busy'] = True;spinner.start();sync()
+                try:
+                    saved = edit_store(Gtk, GLib, window, value, credentials,
+                                       session_created=lambda session: job.update(cancel=session.cancel))
+                    status.set_text('SYSTEM changes saved and locked.' if saved else 'SYSTEM locked; unsaved changes discarded.')
+                except InstallerError as error:error_dialog(str(error))
+                finally:job['busy'] = False;job['cancel'] = None;spinner.stop();sync()
+                return
             request = {'mode': 'recovery' if action == 'recovery' else 'store', 'device': disk, 'plan_sha256': value['plan_sha256']}
             if action != 'recovery':request['action'] = action
             if action == 'import':request.update(kind=settings_kind.get_active_id(), source=settings_source.get_filename(), name=settings_name.get_text(), replace=replace_existing.get_active())
@@ -358,6 +397,7 @@ def create_window(repository, *, dispatcher=dispatch, autoload=True):
         invoke(['system-store', '--device', disk], ready)
     button(settings, 'Import selected file…', lambda _: settings_action('import'), True)
     maintenance = Gtk.Box(spacing=8);settings.add(maintenance)
+    button(maintenance, 'Browse SYSTEM folders…', lambda _: settings_action('browse'))
     button(maintenance, 'List saved settings', lambda _: settings_action('list'))
     button(maintenance, 'Check SYSTEM passphrase', lambda _: settings_action('recovery'))
     settings.add(label('Themes and overrides stay inactive until their OS loader is implemented.', 'subtitle'))

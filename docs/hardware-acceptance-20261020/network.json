@@ -1,0 +1,27 @@
+{
+  "checks": {
+    "tunnel": "passed",
+    "ipv4": "passed",
+    "ipv6": "passed",
+    "dns": "passed",
+    "clock": "passed"
+  },
+  "gates": {
+    "portable-check-network-ready": true,
+    "portable-check-tor-ready": true
+  },
+  "WireGuard_transfer_increased": true,
+  "egress_packet_counts": {
+    "WireGuard": 73
+  },
+  "no_unexpected_IP_packets_in_bounded_capture": true,
+  "encrypted_egress_observed": true,
+  "WiFi_MAC_randomization": {
+    "locally_administered": true,
+    "differs_from_permanent": true,
+    "permanent_address_available": true
+  },
+  "Private_remains_closed": true,
+  "external_power": true,
+  "fixture_retry_note": "Initial diagnostic attempt required absent ethtool; replaced that fixture dependency with kernel netlink permanent-address data. No production package or policy was changed."
+}

@@ -1,0 +1,27 @@
+{
+  "Private_open": true,
+  "exit": 0,
+  "result": {
+    "checks": {
+      "RAM_Documents_in_actual_sidebar": true,
+      "Private_sidebar_matches_storage_state": true,
+      "Private_label_matches_storage_state": true,
+      "Private_navigation_matches_storage_state": true,
+      "sibling_app_folder_hidden": true,
+      "SYSTEM_hidden": true,
+      "IPv4_denied": true,
+      "IPv6_denied": true
+    },
+    "sidebar_labels": [
+      "Private",
+      "Documents"
+    ]
+  },
+  "source_sha256": "a0e23225236a956228ff161a9e5d37e379ff2f27907f281264b015ae13e642d8",
+  "source_change": "Qt sidebar defaults only; sandbox grants unchanged",
+  "original_sidebar_missing_Private_reproduced": true,
+  "first_partial_seed_ignored_by_Qt": true,
+  "corrected_seed_supplies_sidebar_width": true,
+  "test_database_still_present": true,
+  "KeePass_native_window_restarted": true
+}

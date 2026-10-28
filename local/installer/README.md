@@ -1,4 +1,4 @@
-# Bloom 0.4.0
+# Bloom 0.4.4
 
 Bloom is a CLI-first Linux installer with a soft-pink GTK overlay. It installs new
 layout-2 media, updates OS contents, wipes selected drives and manages offline
@@ -12,8 +12,8 @@ the disk/encryption tools from checksum-verified installed trixie packages.
 It does not need FUSE or unprivileged user namespaces.
 
 ```sh
-tar -xzf bloom-0.4.0-linux-amd64.tar.gz
-./bloom-0.4.0-linux-amd64/bloom
+tar -xzf bloom-0.4.4-linux-amd64.tar.gz
+./bloom-0.4.4-linux-amd64/bloom
 ```
 
 The launcher opens the GUI by default; append `--help` for the CLI or
@@ -56,7 +56,7 @@ Build the Debian package without administrator rights:
 
 ```sh
 python3 -B local/installer/build-package.py
-sudo apt install ../installer-dist/bloom-installer_0.4.0_all.deb
+sudo apt install ../installer-dist/bloom-installer_0.4.4_all.deb
 bloom gui
 ```
 
@@ -86,11 +86,20 @@ All three tiers use **AES-256-XTS with two 256-bit keys** and LUKS2/Argon2id.
 They change the cost of unlocking and guessing passphrases, not ongoing cipher
 throughput. A CPU without AES acceleration may limit disk speed in every tier.
 
-| Tier | Intended use | Argon2id memory | Initial work target per volume | New passphrases |
-| --- | --- | --- | --- | --- |
-| Fast — Legacy Friendly | Older computers and shorter unlock waits | 32–64 MiB | About 1 second | At least 12 characters each |
-| Balanced — Recommended | Default for modern computers | 256–512 MiB | About 2 seconds | At least 12 characters each |
-| Paranoid — Maximum Protection | High-value data and expensive offline guessing | 1–2 GiB | About 5 seconds | At least 32 characters each |
+| Tier | Intended use | Argon2id memory | Initial work target per volume |
+| --- | --- | --- | --- |
+| Fast — Legacy Friendly | Older computers and shorter unlock waits | 32–64 MiB | About 1 second |
+| Balanced — Recommended | Default for modern computers | 256–512 MiB | About 2 seconds |
+| Paranoid — Maximum Protection | High-value data and expensive offline guessing | 1–2 GiB | About 5 seconds |
+
+For every tier, new SYSTEM and administrator passwords need at least **15
+characters** and Private needs at least **24 characters**. Spaces are allowed,
+and no special character mix is required. Each new-password field has a live
+local strength meter based on zxcvbn-c, bundled in the portable app. The meter
+checks common words and predictable patterns; it sends nothing over the network
+and saves no passwords or scores. Its estimate is advisory, with minimum length
+shown separately. It examines up to 128 ASCII characters; other text can be used
+but may show no strength estimate. There are no cracking-time guarantees.
 
 Use unique, randomly chosen words or characters. Length requirements do not
 measure entropy and cannot make predictable phrases strong. All three new
@@ -221,6 +230,32 @@ flash spare/remapped pages.
 
 The GUI's SYSTEM settings tab lists saved assets, imports or explicitly replaces
 one named asset, and verifies the shared SYSTEM passphrase against OS/settings.
+Use **Browse SYSTEM folders…** to open a normal desktop file-manager window.
+Bloom requests host administrator authorization and SYSTEM's passphrase once,
+keeps one scoped worker/mapping open, and creates a private RAM working copy
+under `/run/user/UID`. Navigation and drag-and-drop use ordinary local file
+operations, without restaging the portable runtime or repeating Argon2id.
+
+Drag files into `Files` for general saved files, `Network/Profiles` for WireGuard
+profiles, `Wallpapers` for PNGs, or the pending theme/override JSON folders.
+Return to Bloom and choose **Save changes and lock** to validate changes and
+apply them to the card; **Discard and lock** leaves unsaved edits off the card.
+Simply closing the file-manager window does not end the Bloom editing session.
+
+The file manager runs as the desktop user, never root. Private, administrator
+credentials, and managed desktop/application files are excluded from the working
+copy. VPN/schema validation, active-profile deletion protection, no-link and
+regular-file checks remain enforced on save. General files do not become active
+OS settings. The copy is bounded to 128 MiB, 1000 entries, 12 directory levels
+and 32 MiB per file. Native desktop metadata files are ignored.
+
+Bloom validates all changed files before starting card writes. Each file is
+published atomically; a hardware/I/O failure can still interrupt a multi-file
+save. Unexpected changes to card files outside the session stop the save.
+Normal close, discard, client exit and EOF close the worker's mappings; the
+client removes its RAM copy after worker cleanup. The host file manager retains
+its usual preview, cache and Trash behavior; Bloom does not reconfigure it.
+
 Only the settings operation opens SYSTEM; Private remains closed. CLI equivalents:
 
 ```sh
@@ -231,6 +266,11 @@ sudo bloom recovery --device /dev/SELECTED
 ```
 
 `--replace` explicitly permits atomic replacement of that exact stored name.
+Import source folders may be symbolic links, including Downloads folders on
+another filesystem. Bloom resolves the source folder and pins its directories
+before opening the selected regular file. A symbolic link used as the selected
+file itself is refused; choose its original file. Settings destinations and OS
+release inputs retain their separate strict no-symlink protections.
 Imports validate WireGuard profiles and PNG dimensions; they never connect VPNs
 automatically. The full SYSTEM view stays read-only and imports write only the
 selected settings view. Theme palettes and bounded desktop overrides are staged
